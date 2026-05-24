@@ -1,0 +1,5549 @@
+[
+  {
+    "id": 1,
+    "title": "Find Maximum Element",
+    "difficulty": "Easy",
+    "difficultyScore": 1000,
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "max"
+    ],
+    "problemStatement": "## Find Maximum Element\n\n**Problem:** Given an integer array `arr`, find and return the maximum element.\n\n### Example 1\n**Input:** `[1, 5, 3, 9, 2]`\n**Output:** `9`\n**Explanation:** 9 is the largest element in the array.\n\n### Example 2\n**Input:** `[−4, −1, −7]`\n**Output:** `−1`\n**Explanation:** −1 is the largest among all negative numbers.\n\n### Constraints\n- `1 <= arr.length <= 10^5`\n- `-10^4 <= arr[i] <= 10^4`",
+    "starterCode": "function findMax(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 5 3 9 2",
+        "expectedOutput": "9",
+        "isHidden": false
+      },
+      {
+        "input": "-4 -1 -7",
+        "expectedOutput": "-1",
+        "isHidden": false
+      },
+      {
+        "input": "42",
+        "expectedOutput": "42",
+        "isHidden": true
+      },
+      {
+        "input": "3 3 3 3",
+        "expectedOutput": "3",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 2,
+    "title": "Find Minimum Element",
+    "difficulty": "Easy",
+    "difficultyScore": 1000,
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "min"
+    ],
+    "problemStatement": "## Find Minimum Element\n\n**Problem:** Given an integer array `arr`, find and return the minimum element.\n\n### Example 1\n**Input:** `[4, 2, 8, 1]`\n**Output:** `1`\n**Explanation:** 1 is the smallest element in the array.\n\n### Example 2\n**Input:** `[10, 20, 30]`\n**Output:** `10`\n\n### Constraints\n- `1 <= arr.length <= 10^5`\n- `-10^4 <= arr[i] <= 10^4`",
+    "starterCode": "function findMin(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "4 2 8 1",
+        "expectedOutput": "1",
+        "isHidden": false
+      },
+      {
+        "input": "10 20 30",
+        "expectedOutput": "10",
+        "isHidden": false
+      },
+      {
+        "input": "-5 -2 -9",
+        "expectedOutput": "-9",
+        "isHidden": true
+      },
+      {
+        "input": "7",
+        "expectedOutput": "7",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 3,
+    "title": "Reverse Array",
+    "difficulty": "Easy",
+    "difficultyScore": 1050,
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "reverse",
+      "two-pointers"
+    ],
+    "problemStatement": "## Reverse Array\n\n**Problem:** Reverse the given array in-place and return the reversed array.\n\n### Example 1\n**Input:** `[1, 2, 3, 4]`\n**Output:** `[4, 3, 2, 1]`\n\n### Example 2\n**Input:** `[5, 10]`\n**Output:** `[10, 5]`\n\n### Constraints\n- `1 <= arr.length <= 10^5`\n- `-10^4 <= arr[i] <= 10^4`",
+    "starterCode": "function reverseArray(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 4",
+        "expectedOutput": "4 3 2 1",
+        "isHidden": false
+      },
+      {
+        "input": "5 10",
+        "expectedOutput": "10 5",
+        "isHidden": false
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "7 7 7",
+        "expectedOutput": "7 7 7",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 4,
+    "title": "Check Sorted Array",
+    "difficulty": "Easy",
+    "difficultyScore": 1050,
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "sorted"
+    ],
+    "problemStatement": "## Check Sorted Array\n\n**Problem:** Check whether the given array is sorted in non-decreasing (ascending) order.\n\n### Example 1\n**Input:** `[1, 2, 3, 4]`\n**Output:** `true`\n\n### Example 2\n**Input:** `[3, 1, 2]`\n**Output:** `false`\n\n### Constraints\n- `1 <= arr.length <= 10^5`",
+    "starterCode": "function isSorted(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 4",
+        "expectedOutput": "true",
+        "isHidden": false
+      },
+      {
+        "input": "3 1 2",
+        "expectedOutput": "false",
+        "isHidden": false
+      },
+      {
+        "input": "1 1 1",
+        "expectedOutput": "true",
+        "isHidden": true
+      },
+      {
+        "input": "5",
+        "expectedOutput": "true",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 5,
+    "title": "Second Largest Element",
+    "difficulty": "Easy",
+    "difficultyScore": 1100,
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "max"
+    ],
+    "problemStatement": "## Second Largest Element\n\n**Problem:** Find the second largest distinct element in the array. If it doesn't exist, return -1.\n\n### Example 1\n**Input:** `[4, 1, 9, 7]`\n**Output:** `7`\n\n### Example 2\n**Input:** `[5, 5, 5]`\n**Output:** `-1`\n**Explanation:** All elements are the same, no second largest exists.\n\n### Constraints\n- `1 <= arr.length <= 10^5`\n- `-10^4 <= arr[i] <= 10^4`",
+    "starterCode": "function secondLargest(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "4 1 9 7",
+        "expectedOutput": "7",
+        "isHidden": false
+      },
+      {
+        "input": "5 5 5",
+        "expectedOutput": "-1",
+        "isHidden": false
+      },
+      {
+        "input": "10 20",
+        "expectedOutput": "10",
+        "isHidden": true
+      },
+      {
+        "input": "1",
+        "expectedOutput": "-1",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 6,
+    "title": "Move Zeroes",
+    "difficulty": "Easy",
+    "difficultyScore": 1150,
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "two-pointers"
+    ],
+    "problemStatement": "## Move Zeroes\n\n**Problem:** Move all zeroes to the end of the array while maintaining the relative order of non-zero elements.\n\n### Example 1\n**Input:** `[0, 1, 0, 3, 12]`\n**Output:** `[1, 3, 12, 0, 0]`\n\n### Example 2\n**Input:** `[0, 0, 1]`\n**Output:** `[1, 0, 0]`\n\n### Constraints\n- `1 <= arr.length <= 10^4`",
+    "starterCode": "function moveZeroes(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "0 1 0 3 12",
+        "expectedOutput": "1 3 12 0 0",
+        "isHidden": false
+      },
+      {
+        "input": "0 0 1",
+        "expectedOutput": "1 0 0",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3",
+        "expectedOutput": "1 2 3",
+        "isHidden": true
+      },
+      {
+        "input": "0",
+        "expectedOutput": "0",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 7,
+    "title": "Remove Duplicates From Sorted Array",
+    "difficulty": "Easy",
+    "difficultyScore": 1150,
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "duplicates",
+      "two-pointers"
+    ],
+    "problemStatement": "## Remove Duplicates From Sorted Array\n\n**Problem:** Given a sorted array, remove duplicates in-place and return the unique elements.\n\n### Example 1\n**Input:** `[1, 1, 2, 2, 3]`\n**Output:** `[1, 2, 3]`\n\n### Example 2\n**Input:** `[1, 1, 1]`\n**Output:** `[1]`\n\n### Constraints\n- `1 <= arr.length <= 3 * 10^4`\n- Array is sorted in non-decreasing order.",
+    "starterCode": "function removeDuplicates(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 1 2 2 3",
+        "expectedOutput": "1 2 3",
+        "isHidden": false
+      },
+      {
+        "input": "1 1 1",
+        "expectedOutput": "1",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3",
+        "expectedOutput": "1 2 3",
+        "isHidden": true
+      },
+      {
+        "input": "5",
+        "expectedOutput": "5",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 8,
+    "title": "Kadane's Algorithm",
+    "difficulty": "Medium",
+    "difficultyScore": 1500,
+    "pattern": "Dynamic Programming",
+    "tags": [
+      "array",
+      "subarray",
+      "kadane",
+      "dp"
+    ],
+    "problemStatement": "## Kadane's Algorithm — Maximum Subarray Sum\n\n**Problem:** Find the contiguous subarray (containing at least one number) which has the largest sum and return that sum.\n\n### Example 1\n**Input:** `[-2, 1, -3, 4, -1, 2, 1, -5, 4]`\n**Output:** `6`\n**Explanation:** The subarray `[4, -1, 2, 1]` has the largest sum = 6.\n\n### Example 2\n**Input:** `[-1, -2, -3]`\n**Output:** `-1`\n\n### Constraints\n- `1 <= arr.length <= 10^5`\n- `-10^4 <= arr[i] <= 10^4`",
+    "starterCode": "function maxSubarraySum(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "-2 1 -3 4 -1 2 1 -5 4",
+        "expectedOutput": "6",
+        "isHidden": false
+      },
+      {
+        "input": "-1 -2 -3",
+        "expectedOutput": "-1",
+        "isHidden": false
+      },
+      {
+        "input": "5 4 -1 7 8",
+        "expectedOutput": "23",
+        "isHidden": true
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 9,
+    "title": "Two Sum",
+    "difficulty": "Easy",
+    "difficultyScore": 1200,
+    "pattern": "Hashing",
+    "tags": [
+      "array",
+      "hashmap",
+      "two-sum"
+    ],
+    "problemStatement": "## Two Sum\n\n**Problem:** Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.\n\n### Example 1\n**Input:** `nums = [2, 7, 11, 15], target = 9`\n**Output:** `[0, 1]`\n**Explanation:** Because nums[0] + nums[1] = 2 + 7 = 9.\n\n### Example 2\n**Input:** `nums = [3, 2, 4], target = 6`\n**Output:** `[1, 2]`\n\n### Constraints\n- `2 <= nums.length <= 10^4`\n- Each input has exactly one solution.",
+    "starterCode": "function twoSum(nums, target) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "2 7 11 15\n9",
+        "expectedOutput": "0 1",
+        "isHidden": false
+      },
+      {
+        "input": "3 2 4\n6",
+        "expectedOutput": "1 2",
+        "isHidden": false
+      },
+      {
+        "input": "3 3\n6",
+        "expectedOutput": "0 1",
+        "isHidden": true
+      },
+      {
+        "input": "1 5 3 7\n8",
+        "expectedOutput": "1 2",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 10,
+    "title": "Best Time to Buy and Sell Stock",
+    "difficulty": "Easy",
+    "difficultyScore": 1250,
+    "pattern": "Greedy",
+    "tags": [
+      "array",
+      "stocks",
+      "greedy"
+    ],
+    "problemStatement": "## Best Time to Buy and Sell Stock\n\n**Problem:** Given an array `prices` where `prices[i]` is the price on the i-th day, find the maximum profit from one buy-sell transaction. If no profit is possible, return 0.\n\n### Example 1\n**Input:** `[7, 1, 5, 3, 6, 4]`\n**Output:** `5`\n**Explanation:** Buy on day 2 (price=1), sell on day 5 (price=6), profit = 5.\n\n### Example 2\n**Input:** `[7, 6, 4, 3, 1]`\n**Output:** `0`\n**Explanation:** Prices only decrease, no profit possible.\n\n### Constraints\n- `1 <= prices.length <= 10^5`\n- `0 <= prices[i] <= 10^4`",
+    "starterCode": "function maxProfit(prices) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "7 1 5 3 6 4",
+        "expectedOutput": "5",
+        "isHidden": false
+      },
+      {
+        "input": "7 6 4 3 1",
+        "expectedOutput": "0",
+        "isHidden": false
+      },
+      {
+        "input": "2 4 1",
+        "expectedOutput": "2",
+        "isHidden": true
+      },
+      {
+        "input": "1 2",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 11,
+    "title": "Container With Most Water",
+    "difficulty": "Medium",
+    "difficultyScore": 1500,
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "two-pointers",
+      "greedy"
+    ],
+    "problemStatement": "## Container With Most Water\n\n**Problem:** Given `n` non-negative integers representing heights of lines, find two lines that together with the x-axis form a container that holds the most water.\n\n### Example 1\n**Input:** `[1, 8, 6, 2, 5, 4, 8, 3, 7]`\n**Output:** `49`\n\n### Example 2\n**Input:** `[1, 1]`\n**Output:** `1`\n\n### Constraints\n- `2 <= height.length <= 10^5`\n- `0 <= height[i] <= 10^4`",
+    "starterCode": "function maxArea(height) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 8 6 2 5 4 8 3 7",
+        "expectedOutput": "49",
+        "isHidden": false
+      },
+      {
+        "input": "1 1",
+        "expectedOutput": "1",
+        "isHidden": false
+      },
+      {
+        "input": "4 3 2 1 4",
+        "expectedOutput": "16",
+        "isHidden": true
+      },
+      {
+        "input": "1 2 1",
+        "expectedOutput": "2",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 12,
+    "title": "Trapping Rain Water",
+    "difficulty": "Hard",
+    "difficultyScore": 2000,
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "rainwater",
+      "two-pointers",
+      "stack"
+    ],
+    "problemStatement": "## Trapping Rain Water\n\n**Problem:** Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.\n\n### Example 1\n**Input:** `[4, 2, 0, 3, 2, 5]`\n**Output:** `9`\n\n### Example 2\n**Input:** `[0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]`\n**Output:** `6`\n\n### Constraints\n- `n == height.length`\n- `1 <= n <= 2 * 10^4`\n- `0 <= height[i] <= 10^5`",
+    "starterCode": "function trap(height) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "4 2 0 3 2 5",
+        "expectedOutput": "9",
+        "isHidden": false
+      },
+      {
+        "input": "0 1 0 2 1 0 1 3 2 1 2 1",
+        "expectedOutput": "6",
+        "isHidden": false
+      },
+      {
+        "input": "3 0 3",
+        "expectedOutput": "3",
+        "isHidden": true
+      },
+      {
+        "input": "1 2 3 4",
+        "expectedOutput": "0",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 13,
+    "title": "Product of Array Except Self",
+    "difficulty": "Medium",
+    "difficultyScore": 1500,
+    "pattern": "Prefix Sum",
+    "tags": [
+      "array",
+      "prefix"
+    ],
+    "problemStatement": "## Product of Array Except Self\n\n**Problem:** Given an integer array `nums`, return an array `answer` such that `answer[i]` is equal to the product of all elements of `nums` except `nums[i]`. You must solve it without using division.\n\n### Example 1\n**Input:** `[1, 2, 3, 4]`\n**Output:** `[24, 12, 8, 6]`\n\n### Example 2\n**Input:** `[-1, 1, 0, -3, 3]`\n**Output:** `[0, 0, 9, 0, 0]`\n\n### Constraints\n- `2 <= nums.length <= 10^5`\n- `-30 <= nums[i] <= 30`",
+    "starterCode": "function productExceptSelf(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 4",
+        "expectedOutput": "24 12 8 6",
+        "isHidden": false
+      },
+      {
+        "input": "-1 1 0 -3 3",
+        "expectedOutput": "0 0 9 0 0",
+        "isHidden": false
+      },
+      {
+        "input": "2 3",
+        "expectedOutput": "3 2",
+        "isHidden": true
+      },
+      {
+        "input": "1 1 1 1",
+        "expectedOutput": "1 1 1 1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 14,
+    "title": "Maximum Product Subarray",
+    "difficulty": "Medium",
+    "difficultyScore": 1600,
+    "pattern": "Dynamic Programming",
+    "tags": [
+      "array",
+      "subarray",
+      "dp"
+    ],
+    "problemStatement": "## Maximum Product Subarray\n\n**Problem:** Given an integer array `nums`, find the contiguous subarray within the array that has the largest product, and return it.\n\n### Example 1\n**Input:** `[2, 3, -2, 4]`\n**Output:** `6`\n**Explanation:** `[2, 3]` has the largest product = 6.\n\n### Example 2\n**Input:** `[-2, 0, -1]`\n**Output:** `0`\n\n### Constraints\n- `1 <= nums.length <= 2 * 10^4`\n- `-10 <= nums[i] <= 10`",
+    "starterCode": "function maxProduct(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "2 3 -2 4",
+        "expectedOutput": "6",
+        "isHidden": false
+      },
+      {
+        "input": "-2 0 -1",
+        "expectedOutput": "0",
+        "isHidden": false
+      },
+      {
+        "input": "-2 3 -4",
+        "expectedOutput": "24",
+        "isHidden": true
+      },
+      {
+        "input": "0 2",
+        "expectedOutput": "2",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 15,
+    "title": "Merge Intervals",
+    "difficulty": "Medium",
+    "difficultyScore": 1500,
+    "pattern": "Intervals",
+    "tags": [
+      "array",
+      "intervals",
+      "sorting"
+    ],
+    "problemStatement": "## Merge Intervals\n\n**Problem:** Given an array of intervals where `intervals[i] = [start_i, end_i]`, merge all overlapping intervals, and return an array of the non-overlapping intervals.\n\n### Example 1\n**Input:** `[[1,3],[2,6],[8,10],[15,18]]`\n**Output:** `[[1,6],[8,10],[15,18]]`\n**Explanation:** Intervals [1,3] and [2,6] overlap, merged to [1,6].\n\n### Example 2\n**Input:** `[[1,4],[4,5]]`\n**Output:** `[[1,5]]`\n\n### Constraints\n- `1 <= intervals.length <= 10^4`",
+    "starterCode": "function mergeIntervals(intervals) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1,3 2,6 8,10 15,18",
+        "expectedOutput": "1,6 8,10 15,18",
+        "isHidden": false
+      },
+      {
+        "input": "1,4 4,5",
+        "expectedOutput": "1,5",
+        "isHidden": false
+      },
+      {
+        "input": "1,4 2,3",
+        "expectedOutput": "1,4",
+        "isHidden": true
+      },
+      {
+        "input": "1,2 3,4",
+        "expectedOutput": "1,2 3,4",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 16,
+    "title": "Linear Search",
+    "difficulty": "Easy",
+    "difficultyScore": 900,
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "search"
+    ],
+    "problemStatement": "## Linear Search\n\n**Problem:** Find the index of a given target element in the array. Return -1 if not present.\n\n### Example 1\n**Input:** `arr = [10, 20, 30, 40], target = 30`\n**Output:** `2`\n\n### Example 2\n**Input:** `arr = [1, 2, 3], target = 5`\n**Output:** `-1`\n\n### Constraints\n- `1 <= arr.length <= 10^4`",
+    "starterCode": "function linearSearch(arr, target) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "10 20 30 40\n30",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3\n5",
+        "expectedOutput": "-1",
+        "isHidden": false
+      },
+      {
+        "input": "5\n5",
+        "expectedOutput": "0",
+        "isHidden": true
+      },
+      {
+        "input": "1 2 3 4 5\n1",
+        "expectedOutput": "0",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 17,
+    "title": "Binary Search",
+    "difficulty": "Easy",
+    "difficultyScore": 1100,
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "binary-search",
+      "search"
+    ],
+    "problemStatement": "## Binary Search\n\n**Problem:** Given a sorted array, find the index of a target element using binary search. Return -1 if not found.\n\n### Example 1\n**Input:** `arr = [-1, 0, 3, 5, 9, 12], target = 9`\n**Output:** `4`\n\n### Example 2\n**Input:** `arr = [-1, 0, 3, 5, 9, 12], target = 2`\n**Output:** `-1`\n\n### Constraints\n- `1 <= arr.length <= 10^4`\n- Array is sorted in ascending order.\n- All elements are unique.",
+    "starterCode": "function binarySearch(arr, target) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "-1 0 3 5 9 12\n9",
+        "expectedOutput": "4",
+        "isHidden": false
+      },
+      {
+        "input": "-1 0 3 5 9 12\n2",
+        "expectedOutput": "-1",
+        "isHidden": false
+      },
+      {
+        "input": "5\n5",
+        "expectedOutput": "0",
+        "isHidden": true
+      },
+      {
+        "input": "1 3 5 7 9\n7",
+        "expectedOutput": "3",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 18,
+    "title": "Find Missing Number",
+    "difficulty": "Easy",
+    "difficultyScore": 1100,
+    "pattern": "Math",
+    "tags": [
+      "array",
+      "missing-number",
+      "math"
+    ],
+    "problemStatement": "## Find Missing Number\n\n**Problem:** Given an array containing `n` distinct numbers taken from `0` to `n`, find the one number that is missing.\n\n### Example 1\n**Input:** `[3, 0, 1]`\n**Output:** `2`\n\n### Example 2\n**Input:** `[0, 1]`\n**Output:** `2`\n\n### Constraints\n- `n == nums.length`\n- `1 <= n <= 10^4`\n- All numbers are unique.",
+    "starterCode": "function missingNumber(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "3 0 1",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "0 1",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "9 6 4 2 3 5 7 0 1",
+        "expectedOutput": "8",
+        "isHidden": true
+      },
+      {
+        "input": "0",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 19,
+    "title": "Find Duplicate Number",
+    "difficulty": "Easy",
+    "difficultyScore": 1150,
+    "pattern": "Hashing",
+    "tags": [
+      "array",
+      "duplicate",
+      "hashmap"
+    ],
+    "problemStatement": "## Find Duplicate Number\n\n**Problem:** Given an array of integers containing `n+1` integers where each integer is in range `[1, n]`, find the duplicate number.\n\n### Example 1\n**Input:** `[1, 3, 4, 2, 2]`\n**Output:** `2`\n\n### Example 2\n**Input:** `[3, 1, 3, 4, 2]`\n**Output:** `3`\n\n### Constraints\n- `1 <= n <= 10^5`\n- There is only one repeated number.",
+    "starterCode": "function findDuplicate(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 3 4 2 2",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "3 1 3 4 2",
+        "expectedOutput": "3",
+        "isHidden": false
+      },
+      {
+        "input": "1 1",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "2 5 9 6 9 3 8 9 7 1",
+        "expectedOutput": "9",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 20,
+    "title": "Rotate Array",
+    "difficulty": "Easy",
+    "difficultyScore": 1200,
+    "pattern": "Reversal",
+    "tags": [
+      "array",
+      "rotation"
+    ],
+    "problemStatement": "## Rotate Array\n\n**Problem:** Rotate the array to the right by `k` steps.\n\n### Example 1\n**Input:** `nums = [1, 2, 3, 4, 5, 6, 7], k = 3`\n**Output:** `[5, 6, 7, 1, 2, 3, 4]`\n\n### Example 2\n**Input:** `nums = [-1, -100, 3, 99], k = 2`\n**Output:** `[3, 99, -1, -100]`\n\n### Constraints\n- `1 <= nums.length <= 10^5`\n- `-2^31 <= nums[i] <= 2^31 - 1`\n- `0 <= k <= 10^5`",
+    "starterCode": "function rotateArray(nums, k) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 4 5 6 7\n3",
+        "expectedOutput": "5 6 7 1 2 3 4",
+        "isHidden": false
+      },
+      {
+        "input": "-1 -100 3 99\n2",
+        "expectedOutput": "3 99 -1 -100",
+        "isHidden": false
+      },
+      {
+        "input": "1 2\n3",
+        "expectedOutput": "2 1",
+        "isHidden": true
+      },
+      {
+        "input": "1\n0",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 21,
+    "title": "Left Rotate Array by One",
+    "difficulty": "Easy",
+    "difficultyScore": 950,
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "rotation"
+    ],
+    "problemStatement": "## Left Rotate Array by One\n\n**Problem:** Left rotate the array by one position.\n\n### Example 1\n**Input:** `[1, 2, 3, 4, 5]`\n**Output:** `[2, 3, 4, 5, 1]`\n\n### Example 2\n**Input:** `[10, 20]`\n**Output:** `[20, 10]`\n\n### Constraints\n- `1 <= arr.length <= 10^5`",
+    "starterCode": "function leftRotateByOne(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 4 5",
+        "expectedOutput": "2 3 4 5 1",
+        "isHidden": false
+      },
+      {
+        "input": "10 20",
+        "expectedOutput": "20 10",
+        "isHidden": false
+      },
+      {
+        "input": "5",
+        "expectedOutput": "5",
+        "isHidden": true
+      },
+      {
+        "input": "1 1 1",
+        "expectedOutput": "1 1 1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 22,
+    "title": "Right Rotate Array by K",
+    "difficulty": "Medium",
+    "difficultyScore": 1300,
+    "pattern": "Reversal",
+    "tags": [
+      "array",
+      "rotation"
+    ],
+    "problemStatement": "## Right Rotate Array by K\n\n**Problem:** Rotate the array to the right by `k` steps using the reversal algorithm.\n\n### Example 1\n**Input:** `nums = [1, 2, 3, 4, 5], k = 2`\n**Output:** `[4, 5, 1, 2, 3]`\n\n### Constraints\n- `1 <= nums.length <= 10^5`\n- `0 <= k <= 10^5`",
+    "starterCode": "function rotateRight(nums, k) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 4 5\n2",
+        "expectedOutput": "4 5 1 2 3",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3\n1",
+        "expectedOutput": "3 1 2",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3\n3",
+        "expectedOutput": "1 2 3",
+        "isHidden": true
+      },
+      {
+        "input": "1\n5",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 23,
+    "title": "Union of Two Arrays",
+    "difficulty": "Easy",
+    "difficultyScore": 1100,
+    "pattern": "Hashing",
+    "tags": [
+      "array",
+      "set",
+      "hashmap"
+    ],
+    "problemStatement": "## Union of Two Arrays\n\n**Problem:** Find the union of two arrays (unique elements from both).\n\n### Example 1\n**Input:** `arr1 = [1, 2, 3, 4], arr2 = [3, 4, 5, 6]`\n**Output:** `[1, 2, 3, 4, 5, 6]`\n\n### Constraints\n- `1 <= arr.length <= 10^5`",
+    "starterCode": "function unionArrays(arr1, arr2) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 4\n3 4 5 6",
+        "expectedOutput": "1 2 3 4 5 6",
+        "isHidden": false
+      },
+      {
+        "input": "1 2\n3 4",
+        "expectedOutput": "1 2 3 4",
+        "isHidden": false
+      },
+      {
+        "input": "1 1 1\n1 1 1",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "5\n5",
+        "expectedOutput": "5",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 24,
+    "title": "Intersection of Two Arrays",
+    "difficulty": "Easy",
+    "difficultyScore": 1100,
+    "pattern": "Hashing",
+    "tags": [
+      "array",
+      "set",
+      "hashmap"
+    ],
+    "problemStatement": "## Intersection of Two Arrays\n\n**Problem:** Find the intersection of two arrays (common elements).\n\n### Example 1\n**Input:** `arr1 = [1, 2, 3, 4], arr2 = [3, 4, 5, 6]`\n**Output:** `[3, 4]`\n\n### Constraints\n- `1 <= arr.length <= 10^5`",
+    "starterCode": "function intersectionArrays(arr1, arr2) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 4\n3 4 5 6",
+        "expectedOutput": "3 4",
+        "isHidden": false
+      },
+      {
+        "input": "1 2\n3 4",
+        "expectedOutput": "",
+        "isHidden": false
+      },
+      {
+        "input": "4 9 5\n9 4 9 8 4",
+        "expectedOutput": "4 9",
+        "isHidden": true
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 25,
+    "title": "Count Frequency of Elements",
+    "difficulty": "Easy",
+    "difficultyScore": 1050,
+    "pattern": "HashMap",
+    "tags": [
+      "array",
+      "frequency",
+      "hashmap"
+    ],
+    "problemStatement": "## Count Frequency of Elements\n\n**Problem:** Count the frequency of each element in the array and return it as a map/object.\n\n### Example 1\n**Input:** `[1, 2, 2, 3, 3, 3]`\n**Output:** `{1: 1, 2: 2, 3: 3}`\n\n### Constraints\n- `1 <= arr.length <= 10^5`",
+    "starterCode": "function countFrequency(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 2 3 3 3",
+        "expectedOutput": "1:1 2:2 3:3",
+        "isHidden": false
+      },
+      {
+        "input": "5 5 5",
+        "expectedOutput": "5:3",
+        "isHidden": false
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1:1",
+        "isHidden": true
+      },
+      {
+        "input": "4 4 2 2 1 1",
+        "expectedOutput": "1:2 2:2 4:2",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 26,
+    "title": "Majority Element",
+    "difficulty": "Easy",
+    "difficultyScore": 1200,
+    "pattern": "Boyer Moore",
+    "tags": [
+      "array",
+      "majority",
+      "voting"
+    ],
+    "problemStatement": "## Majority Element\n\n**Problem:** Find the element that appears more than `⌊n/2⌋` times. You may assume the majority element always exists.\n\n### Example 1\n**Input:** `[3, 2, 3]`\n**Output:** `3`\n\n### Example 2\n**Input:** `[2, 2, 1, 1, 1, 2, 2]`\n**Output:** `2`\n\n### Constraints\n- `n == nums.length`\n- `1 <= n <= 5 * 10^4`",
+    "starterCode": "function majorityElement(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "3 2 3",
+        "expectedOutput": "3",
+        "isHidden": false
+      },
+      {
+        "input": "2 2 1 1 1 2 2",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "6 6 6 7 7",
+        "expectedOutput": "6",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 27,
+    "title": "Sort Colors",
+    "difficulty": "Medium",
+    "difficultyScore": 1400,
+    "pattern": "Dutch National Flag",
+    "tags": [
+      "array",
+      "sorting",
+      "two-pointers"
+    ],
+    "problemStatement": "## Sort Colors (Dutch National Flag)\n\n**Problem:** Given an array with `n` objects colored red (0), white (1), and blue (2), sort them in-place so that objects of the same color are adjacent, in order 0, 1, 2.\n\n### Example 1\n**Input:** `[2, 0, 2, 1, 1, 0]`\n**Output:** `[0, 0, 1, 1, 2, 2]`\n\n### Constraints\n- `n == nums.length`\n- `1 <= n <= 300`\n- `nums[i]` is 0, 1, or 2.",
+    "starterCode": "function sortColors(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "2 0 2 1 1 0",
+        "expectedOutput": "0 0 1 1 2 2",
+        "isHidden": false
+      },
+      {
+        "input": "2 0 1",
+        "expectedOutput": "0 1 2",
+        "isHidden": false
+      },
+      {
+        "input": "0",
+        "expectedOutput": "0",
+        "isHidden": true
+      },
+      {
+        "input": "1 0",
+        "expectedOutput": "0 1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 28,
+    "title": "Rearrange Positive and Negative Numbers",
+    "difficulty": "Medium",
+    "difficultyScore": 1400,
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "rearrange",
+      "two-pointers"
+    ],
+    "problemStatement": "## Rearrange Positive and Negative Numbers\n\n**Problem:** Rearrange the array so that positive and negative numbers alternate. Start with a positive number. If there are extra positives or negatives, append them at the end.\n\n### Example 1\n**Input:** `[1, 2, 3, -4, -1, 4]`\n**Output:** `[1, -4, 2, -1, 3, 4]`\n\n### Constraints\n- `1 <= arr.length <= 10^5`",
+    "starterCode": "function rearrange(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 -4 -1 4",
+        "expectedOutput": "1 -4 2 -1 3 4",
+        "isHidden": false
+      },
+      {
+        "input": "-1 -2 3 4",
+        "expectedOutput": "3 -1 4 -2",
+        "isHidden": false
+      },
+      {
+        "input": "1 -1",
+        "expectedOutput": "1 -1",
+        "isHidden": true
+      },
+      {
+        "input": "-5 -3 1",
+        "expectedOutput": "1 -5 -3",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 29,
+    "title": "Longest Consecutive Sequence",
+    "difficulty": "Medium",
+    "difficultyScore": 1600,
+    "pattern": "HashSet",
+    "tags": [
+      "array",
+      "sequence",
+      "hashset"
+    ],
+    "problemStatement": "## Longest Consecutive Sequence\n\n**Problem:** Given an unsorted array of integers, find the length of the longest consecutive elements sequence. Your algorithm should run in O(n) time.\n\n### Example 1\n**Input:** `[100, 4, 200, 1, 3, 2]`\n**Output:** `4`\n**Explanation:** The longest consecutive sequence is `[1, 2, 3, 4]`. Length = 4.\n\n### Constraints\n- `0 <= nums.length <= 10^5`",
+    "starterCode": "function longestConsecutive(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "100 4 200 1 3 2",
+        "expectedOutput": "4",
+        "isHidden": false
+      },
+      {
+        "input": "0 3 7 2 5 8 4 6 0 1",
+        "expectedOutput": "9",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 0 1",
+        "expectedOutput": "3",
+        "isHidden": true
+      },
+      {
+        "input": "9 1 4 7 3 -1 0 5 8 -1 6",
+        "expectedOutput": "7",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 30,
+    "title": "Subarray Sum Equals K",
+    "difficulty": "Medium",
+    "difficultyScore": 1500,
+    "pattern": "Prefix Sum",
+    "tags": [
+      "array",
+      "prefix-sum",
+      "hashmap"
+    ],
+    "problemStatement": "## Subarray Sum Equals K\n\n**Problem:** Given an array of integers and an integer `k`, return the total number of subarrays whose sum equals `k`.\n\n### Example 1\n**Input:** `nums = [1, 1, 1], k = 2`\n**Output:** `2`\n\n### Example 2\n**Input:** `nums = [1, 2, 3], k = 3`\n**Output:** `2`\n\n### Constraints\n- `1 <= nums.length <= 2 * 10^4`\n- `-1000 <= nums[i] <= 1000`",
+    "starterCode": "function subarraySum(nums, k) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 1 1\n2",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3\n3",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "1\n0",
+        "expectedOutput": "0",
+        "isHidden": true
+      },
+      {
+        "input": "-1 -1 1\n0",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 31,
+    "title": "Maximum Circular Subarray Sum",
+    "difficulty": "Medium",
+    "difficultyScore": 1600,
+    "pattern": "Kadane",
+    "tags": [
+      "array",
+      "subarray",
+      "kadane"
+    ],
+    "problemStatement": "## Maximum Circular Subarray Sum\n\n**Problem:** Given a circular integer array `nums`, find the maximum possible sum of a non-empty subarray.\n\n### Example 1\n**Input:** `[5, -3, 5]`\n**Output:** `10`\n**Explanation:** Subarray `[5, 5]` wrapping around gives sum 10.\n\n### Constraints\n- `n == nums.length`\n- `1 <= n <= 3 * 10^4`",
+    "starterCode": "function maxSubarraySumCircular(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "5 -3 5",
+        "expectedOutput": "10",
+        "isHidden": false
+      },
+      {
+        "input": "1 -2 3 -2",
+        "expectedOutput": "3",
+        "isHidden": false
+      },
+      {
+        "input": "3 -1 2 -1",
+        "expectedOutput": "4",
+        "isHidden": true
+      },
+      {
+        "input": "-3 -2 -3",
+        "expectedOutput": "-2",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 32,
+    "title": "Find Peak Element",
+    "difficulty": "Medium",
+    "difficultyScore": 1400,
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "peak",
+      "binary-search"
+    ],
+    "problemStatement": "## Find Peak Element\n\n**Problem:** A peak element is an element that is strictly greater than its neighbors. Find a peak element's index. The array may contain multiple peaks; return any.\n\n### Example 1\n**Input:** `[1, 2, 3, 1]`\n**Output:** `2`\n**Explanation:** 3 is a peak element.\n\n### Constraints\n- `1 <= nums.length <= 1000`\n- `nums[i] != nums[i+1]` for all valid `i`.",
+    "starterCode": "function findPeakElement(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 1",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 1 3 5 6 4",
+        "expectedOutput": "5",
+        "isHidden": false
+      },
+      {
+        "input": "1",
+        "expectedOutput": "0",
+        "isHidden": true
+      },
+      {
+        "input": "1 2",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 33,
+    "title": "Find Pivot Index",
+    "difficulty": "Easy",
+    "difficultyScore": 1150,
+    "pattern": "Prefix Sum",
+    "tags": [
+      "array",
+      "prefix-sum"
+    ],
+    "problemStatement": "## Find Pivot Index\n\n**Problem:** Find the pivot index where the sum of all elements to the left equals the sum of all elements to the right. Return -1 if no such index exists.\n\n### Example 1\n**Input:** `[1, 7, 3, 6, 5, 6]`\n**Output:** `3`\n**Explanation:** Left sum = 1+7+3 = 11. Right sum = 5+6 = 11.\n\n### Constraints\n- `1 <= nums.length <= 10^4`",
+    "starterCode": "function pivotIndex(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 7 3 6 5 6",
+        "expectedOutput": "3",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3",
+        "expectedOutput": "-1",
+        "isHidden": false
+      },
+      {
+        "input": "2 1 -1",
+        "expectedOutput": "0",
+        "isHidden": true
+      },
+      {
+        "input": "-1 -1 0 1 1 0",
+        "expectedOutput": "5",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 34,
+    "title": "Merge Sorted Arrays",
+    "difficulty": "Easy",
+    "difficultyScore": 1100,
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "merge",
+      "two-pointers"
+    ],
+    "problemStatement": "## Merge Sorted Arrays\n\n**Problem:** Merge two sorted arrays into one sorted array.\n\n### Example 1\n**Input:** `arr1 = [1, 3, 5], arr2 = [2, 4, 6]`\n**Output:** `[1, 2, 3, 4, 5, 6]`\n\n### Constraints\n- Both arrays are sorted in non-decreasing order.",
+    "starterCode": "function mergeSorted(arr1, arr2) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 3 5\n2 4 6",
+        "expectedOutput": "1 2 3 4 5 6",
+        "isHidden": false
+      },
+      {
+        "input": "1\n2",
+        "expectedOutput": "1 2",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3\n4 5 6",
+        "expectedOutput": "1 2 3 4 5 6",
+        "isHidden": true
+      },
+      {
+        "input": "2 4\n1 3 5",
+        "expectedOutput": "1 2 3 4 5",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 35,
+    "title": "Squares of Sorted Array",
+    "difficulty": "Easy",
+    "difficultyScore": 1100,
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "two-pointers"
+    ],
+    "problemStatement": "## Squares of a Sorted Array\n\n**Problem:** Given a sorted array, return a sorted array of the squares of each number.\n\n### Example 1\n**Input:** `[-4, -1, 0, 3, 10]`\n**Output:** `[0, 1, 9, 16, 100]`\n\n### Constraints\n- `1 <= nums.length <= 10^4`\n- Array is sorted in non-decreasing order.",
+    "starterCode": "function sortedSquares(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "-4 -1 0 3 10",
+        "expectedOutput": "0 1 9 16 100",
+        "isHidden": false
+      },
+      {
+        "input": "-7 -3 2 3 11",
+        "expectedOutput": "4 9 9 49 121",
+        "isHidden": false
+      },
+      {
+        "input": "0",
+        "expectedOutput": "0",
+        "isHidden": true
+      },
+      {
+        "input": "-5 -3 -1",
+        "expectedOutput": "1 9 25",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 36,
+    "title": "Maximum Average Subarray",
+    "difficulty": "Easy",
+    "difficultyScore": 1200,
+    "pattern": "Sliding Window",
+    "tags": [
+      "array",
+      "window",
+      "sliding-window"
+    ],
+    "problemStatement": "## Maximum Average Subarray I\n\n**Problem:** Find the contiguous subarray of length `k` that has the maximum average value. Return the maximum average.\n\n### Example 1\n**Input:** `nums = [1, 12, -5, -6, 50, 3], k = 4`\n**Output:** `12.75`\n**Explanation:** Maximum average is (12-5-6+50)/4 = 12.75.\n\n### Constraints\n- `n == nums.length`\n- `1 <= k <= n <= 10^5`",
+    "starterCode": "function findMaxAverage(nums, k) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 12 -5 -6 50 3\n4",
+        "expectedOutput": "12.75",
+        "isHidden": false
+      },
+      {
+        "input": "5\n1",
+        "expectedOutput": "5.00",
+        "isHidden": false
+      },
+      {
+        "input": "0 4 0 3 2\n1",
+        "expectedOutput": "4.00",
+        "isHidden": true
+      },
+      {
+        "input": "-1\n1",
+        "expectedOutput": "-1.00",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 37,
+    "title": "Minimum Size Subarray Sum",
+    "difficulty": "Medium",
+    "difficultyScore": 1500,
+    "pattern": "Sliding Window",
+    "tags": [
+      "array",
+      "window",
+      "sliding-window"
+    ],
+    "problemStatement": "## Minimum Size Subarray Sum\n\n**Problem:** Given an array of positive integers and a positive integer `target`, return the minimal length of a subarray whose sum is greater than or equal to `target`. If no such subarray, return 0.\n\n### Example 1\n**Input:** `target = 7, nums = [2, 3, 1, 2, 4, 3]`\n**Output:** `2`\n**Explanation:** The subarray `[4, 3]` has the minimal length under the constraint.\n\n### Constraints\n- `1 <= target <= 10^9`\n- `1 <= nums.length <= 10^5`",
+    "starterCode": "function minSubArrayLen(target, nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "7\n2 3 1 2 4 3",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "4\n1 4 4",
+        "expectedOutput": "1",
+        "isHidden": false
+      },
+      {
+        "input": "11\n1 1 1 1 1 1 1 1",
+        "expectedOutput": "0",
+        "isHidden": true
+      },
+      {
+        "input": "15\n1 2 3 4 5",
+        "expectedOutput": "5",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 38,
+    "title": "Contains Duplicate",
+    "difficulty": "Easy",
+    "difficultyScore": 1000,
+    "pattern": "HashSet",
+    "tags": [
+      "array",
+      "duplicate",
+      "hashset"
+    ],
+    "problemStatement": "## Contains Duplicate\n\n**Problem:** Given an integer array, return `true` if any value appears at least twice, and `false` if every element is distinct.\n\n### Example 1\n**Input:** `[1, 2, 3, 1]`\n**Output:** `true`\n\n### Example 2\n**Input:** `[1, 2, 3, 4]`\n**Output:** `false`\n\n### Constraints\n- `1 <= nums.length <= 10^5`",
+    "starterCode": "function containsDuplicate(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 1",
+        "expectedOutput": "true",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3 4",
+        "expectedOutput": "false",
+        "isHidden": false
+      },
+      {
+        "input": "1 1 1 3 3 4 3 2 4 2",
+        "expectedOutput": "true",
+        "isHidden": true
+      },
+      {
+        "input": "1",
+        "expectedOutput": "false",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 39,
+    "title": "Contains Nearby Duplicate",
+    "difficulty": "Easy",
+    "difficultyScore": 1200,
+    "pattern": "HashMap",
+    "tags": [
+      "array",
+      "hashmap",
+      "sliding-window"
+    ],
+    "problemStatement": "## Contains Nearby Duplicate\n\n**Problem:** Given an integer array and an integer `k`, return `true` if there are two distinct indices `i` and `j` such that `nums[i] == nums[j]` and `|i - j| <= k`.\n\n### Example 1\n**Input:** `nums = [1, 2, 3, 1], k = 3`\n**Output:** `true`\n\n### Constraints\n- `1 <= nums.length <= 10^5`\n- `0 <= k <= 10^5`",
+    "starterCode": "function containsNearbyDuplicate(nums, k) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3 1\n3",
+        "expectedOutput": "true",
+        "isHidden": false
+      },
+      {
+        "input": "1 0 1 1\n1",
+        "expectedOutput": "true",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3 1 2 3\n2",
+        "expectedOutput": "false",
+        "isHidden": true
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "false",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 40,
+    "title": "Find All Duplicates in Array",
+    "difficulty": "Medium",
+    "difficultyScore": 1400,
+    "pattern": "Index Marking",
+    "tags": [
+      "array",
+      "index-marking"
+    ],
+    "problemStatement": "## Find All Duplicates in Array\n\n**Problem:** Given an integer array where `1 <= a[i] <= n` (n = size of array), find all elements that appear twice.\n\n### Example 1\n**Input:** `[4, 3, 2, 7, 8, 2, 3, 1]`\n**Output:** `[2, 3]`\n\n### Constraints\n- `n == nums.length`\n- `1 <= n <= 10^5`\n- `1 <= nums[i] <= n`\n- Each element appears once or twice.",
+    "starterCode": "function findDuplicates(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "4 3 2 7 8 2 3 1",
+        "expectedOutput": "2 3",
+        "isHidden": false
+      },
+      {
+        "input": "1 1 2",
+        "expectedOutput": "1",
+        "isHidden": false
+      },
+      {
+        "input": "1",
+        "expectedOutput": "",
+        "isHidden": true
+      },
+      {
+        "input": "2 2",
+        "expectedOutput": "2",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 41,
+    "title": "Find Disappeared Numbers",
+    "difficulty": "Easy",
+    "difficultyScore": 1150,
+    "pattern": "Index Marking",
+    "tags": [
+      "array",
+      "index-marking"
+    ],
+    "problemStatement": "## Find All Numbers Disappeared in an Array\n\n**Problem:** Given an array of integers where `1 <= a[i] <= n`, find all numbers from 1 to n that do not appear.\n\n### Example 1\n**Input:** `[4, 3, 2, 7, 8, 2, 3, 1]`\n**Output:** `[5, 6]`\n\n### Constraints\n- `n == nums.length`\n- `1 <= n <= 10^5`",
+    "starterCode": "function findDisappearedNumbers(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "4 3 2 7 8 2 3 1",
+        "expectedOutput": "5 6",
+        "isHidden": false
+      },
+      {
+        "input": "1 1",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "2 2",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "1",
+        "expectedOutput": "",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 42,
+    "title": "Third Maximum Number",
+    "difficulty": "Easy",
+    "difficultyScore": 1100,
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "max"
+    ],
+    "problemStatement": "## Third Maximum Number\n\n**Problem:** Given an integer array, return the third distinct maximum number. If it does not exist, return the maximum number.\n\n### Example 1\n**Input:** `[3, 2, 1]`\n**Output:** `1`\n\n### Example 2\n**Input:** `[1, 2]`\n**Output:** `2`\n**Explanation:** Third maximum does not exist, so the maximum (2) is returned.\n\n### Constraints\n- `1 <= nums.length <= 10^4`",
+    "starterCode": "function thirdMax(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "3 2 1",
+        "expectedOutput": "1",
+        "isHidden": false
+      },
+      {
+        "input": "1 2",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "2 2 3 1",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "1 1 1",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 43,
+    "title": "Find Max Consecutive Ones",
+    "difficulty": "Easy",
+    "difficultyScore": 1000,
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "consecutive"
+    ],
+    "problemStatement": "## Max Consecutive Ones\n\n**Problem:** Given a binary array, find the maximum number of consecutive 1's.\n\n### Example 1\n**Input:** `[1, 1, 0, 1, 1, 1]`\n**Output:** `3`\n\n### Example 2\n**Input:** `[1, 0, 1, 1, 0, 1]`\n**Output:** `2`\n\n### Constraints\n- `1 <= nums.length <= 10^5`\n- `nums[i]` is 0 or 1.",
+    "starterCode": "function findMaxConsecutiveOnes(nums) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 1 0 1 1 1",
+        "expectedOutput": "3",
+        "isHidden": false
+      },
+      {
+        "input": "1 0 1 1 0 1",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "0",
+        "expectedOutput": "0",
+        "isHidden": true
+      },
+      {
+        "input": "1 1 1 1 1",
+        "expectedOutput": "5",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 44,
+    "title": "Plus One",
+    "difficulty": "Easy",
+    "difficultyScore": 1000,
+    "pattern": "Simulation",
+    "tags": [
+      "array",
+      "math",
+      "simulation"
+    ],
+    "problemStatement": "## Plus One\n\n**Problem:** Given a large integer represented as an array of digits, increment one to the integer.\n\n### Example 1\n**Input:** `[1, 2, 3]`\n**Output:** `[1, 2, 4]`\n\n### Example 2\n**Input:** `[9, 9]`\n**Output:** `[1, 0, 0]`\n\n### Constraints\n- `1 <= digits.length <= 100`\n- `0 <= digits[i] <= 9`",
+    "starterCode": "function plusOne(digits) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 3",
+        "expectedOutput": "1 2 4",
+        "isHidden": false
+      },
+      {
+        "input": "9 9",
+        "expectedOutput": "1 0 0",
+        "isHidden": false
+      },
+      {
+        "input": "0",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "8 9 9 9",
+        "expectedOutput": "9 0 0 0",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 45,
+    "title": "Pascal's Triangle",
+    "difficulty": "Easy",
+    "difficultyScore": 1100,
+    "pattern": "Simulation",
+    "tags": [
+      "array",
+      "matrix",
+      "simulation"
+    ],
+    "problemStatement": "## Pascal's Triangle\n\n**Problem:** Given an integer `numRows`, return the first `numRows` of Pascal's triangle.\n\n### Example 1\n**Input:** `5`\n**Output:** `[[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1]]`\n\n### Example 2\n**Input:** `1`\n**Output:** `[[1]]`\n\n### Constraints\n- `1 <= numRows <= 30`",
+    "starterCode": "function generate(numRows) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "5",
+        "expectedOutput": "[[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1]]",
+        "isHidden": false
+      },
+      {
+        "input": "1",
+        "expectedOutput": "[[1]]",
+        "isHidden": false
+      },
+      {
+        "input": "3",
+        "expectedOutput": "[[1],[1,1],[1,2,1]]",
+        "isHidden": true
+      },
+      {
+        "input": "2",
+        "expectedOutput": "[[1],[1,1]]",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 46,
+    "title": "Set Matrix Zeroes",
+    "difficulty": "Medium",
+    "difficultyScore": 1400,
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "array"
+    ],
+    "problemStatement": "## Set Matrix Zeroes\n\n**Problem:** Given an `m x n` integer matrix, if an element is 0, set its entire row and column to 0's. Do it in-place.\n\n### Example 1\n**Input:** `[[1,1,1],[1,0,1],[1,1,1]]`\n**Output:** `[[1,0,1],[0,0,0],[1,0,1]]`\n\n### Constraints\n- `m == matrix.length`\n- `n == matrix[0].length`\n- `1 <= m, n <= 200`",
+    "starterCode": "function setZeroes(matrix) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1,1,1;1,0,1;1,1,1",
+        "expectedOutput": "1,0,1;0,0,0;1,0,1",
+        "isHidden": false
+      },
+      {
+        "input": "0,1,2,0;3,4,5,2;1,3,1,5",
+        "expectedOutput": "0,0,0,0;0,4,5,0;0,3,1,0",
+        "isHidden": false
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "0,0;0,0",
+        "expectedOutput": "0,0;0,0",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 47,
+    "title": "Spiral Matrix",
+    "difficulty": "Medium",
+    "difficultyScore": 1500,
+    "pattern": "Matrix Traversal",
+    "tags": [
+      "matrix",
+      "simulation"
+    ],
+    "problemStatement": "## Spiral Matrix\n\n**Problem:** Given an `m x n` matrix, return all elements in spiral order.\n\n### Example 1\n**Input:** `[[1,2,3],[4,5,6],[7,8,9]]`\n**Output:** `[1,2,3,6,9,8,7,4,5]`\n\n### Constraints\n- `m == matrix.length`\n- `n == matrix[i].length`\n- `1 <= m, n <= 10`",
+    "starterCode": "function spiralOrder(matrix) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1,2,3;4,5,6;7,8,9",
+        "expectedOutput": "1 2 3 6 9 8 7 4 5",
+        "isHidden": false
+      },
+      {
+        "input": "1,2,3,4;5,6,7,8;9,10,11,12",
+        "expectedOutput": "1 2 3 4 8 12 11 10 9 5 6 7",
+        "isHidden": false
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "1;2;3",
+        "expectedOutput": "1 2 3",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 48,
+    "title": "Rotate Matrix",
+    "difficulty": "Medium",
+    "difficultyScore": 1500,
+    "pattern": "Matrix",
+    "tags": [
+      "matrix"
+    ],
+    "problemStatement": "## Rotate Image\n\n**Problem:** Rotate an `n x n` 2D matrix by 90 degrees clockwise in-place.\n\n### Example 1\n**Input:** `[[1,2,3],[4,5,6],[7,8,9]]`\n**Output:** `[[7,4,1],[8,5,2],[9,6,3]]`\n\n### Constraints\n- `n == matrix.length == matrix[i].length`\n- `1 <= n <= 20`",
+    "starterCode": "function rotate(matrix) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1,2,3;4,5,6;7,8,9",
+        "expectedOutput": "7,4,1;8,5,2;9,6,3",
+        "isHidden": false
+      },
+      {
+        "input": "1,2;3,4",
+        "expectedOutput": "3,1;4,2",
+        "isHidden": false
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "5,1,9,11;2,4,8,10;13,3,6,7;15,14,12,16",
+        "expectedOutput": "15,13,2,5;14,3,4,1;12,6,8,9;16,7,10,11",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 49,
+    "title": "Search in 2D Matrix",
+    "difficulty": "Medium",
+    "difficultyScore": 1400,
+    "pattern": "Binary Search",
+    "tags": [
+      "matrix",
+      "binary-search"
+    ],
+    "problemStatement": "## Search a 2D Matrix\n\n**Problem:** Given a sorted 2D matrix (each row is sorted, first integer of each row is greater than last integer of previous row), determine if a target value exists.\n\n### Example 1\n**Input:** `matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3`\n**Output:** `true`\n\n### Constraints\n- `m == matrix.length`\n- `n == matrix[i].length`\n- `1 <= m, n <= 100`",
+    "starterCode": "function searchMatrix(matrix, target) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1,3,5,7;10,11,16,20;23,30,34,60\n3",
+        "expectedOutput": "true",
+        "isHidden": false
+      },
+      {
+        "input": "1,3,5,7;10,11,16,20;23,30,34,60\n13",
+        "expectedOutput": "false",
+        "isHidden": false
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "true",
+        "isHidden": true
+      },
+      {
+        "input": "1;2\n2",
+        "expectedOutput": "true",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 50,
+    "title": "Row With Maximum Ones",
+    "difficulty": "Easy",
+    "difficultyScore": 1050,
+    "pattern": "Matrix",
+    "tags": [
+      "matrix"
+    ],
+    "problemStatement": "## Row With Maximum Ones\n\n**Problem:** Given a binary matrix, find the row with the maximum number of 1's.\n\n### Example 1\n**Input:** `[[0,1,1],[0,0,1],[1,1,1]]`\n**Output:** `2`\n**Explanation:** Row 2 has three 1's.\n\n### Constraints\n- `m == matrix.length`\n- `n == matrix[i].length`\n- `matrix[i][j]` is 0 or 1.",
+    "starterCode": "function rowWithMaxOnes(matrix) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "0,1,1;0,0,1;1,1,1",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "1,1;0,0",
+        "expectedOutput": "0",
+        "isHidden": false
+      },
+      {
+        "input": "0;0;1",
+        "expectedOutput": "2",
+        "isHidden": true
+      },
+      {
+        "input": "1,1,1;1,1,1",
+        "expectedOutput": "0",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 51,
+    "title": "Diagonal Sum",
+    "difficulty": "Easy",
+    "difficultyScore": 1050,
+    "pattern": "Matrix",
+    "tags": [
+      "matrix"
+    ],
+    "problemStatement": "## Matrix Diagonal Sum\n\n**Problem:** Given a square matrix, return the sum of the primary and secondary diagonal elements. Count center element only once if matrix has odd dimensions.\n\n### Example 1\n**Input:** `[[1,2,3],[4,5,6],[7,8,9]]`\n**Output:** `25`\n**Explanation:** Primary: 1+5+9=15. Secondary: 3+5+7=15. Center 5 counted once. Sum = 25.\n\n### Constraints\n- `n == mat.length == mat[i].length`\n- `1 <= n <= 100`",
+    "starterCode": "function diagonalSum(mat) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1,2,3;4,5,6;7,8,9",
+        "expectedOutput": "25",
+        "isHidden": false
+      },
+      {
+        "input": "1,1,1,1;1,1,1,1;1,1,1,1;1,1,1,1",
+        "expectedOutput": "8",
+        "isHidden": false
+      },
+      {
+        "input": "5",
+        "expectedOutput": "5",
+        "isHidden": true
+      },
+      {
+        "input": "1,2;3,4",
+        "expectedOutput": "10",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 52,
+    "title": "Transpose Matrix",
+    "difficulty": "Easy",
+    "difficultyScore": 1000,
+    "pattern": "Matrix",
+    "tags": [
+      "matrix"
+    ],
+    "problemStatement": "## Transpose Matrix\n\n**Problem:** Given a 2D matrix, return its transpose.\n\n### Example 1\n**Input:** `[[1,2,3],[4,5,6]]`\n**Output:** `[[1,4],[2,5],[3,6]]`\n\n### Constraints\n- `m == matrix.length`\n- `n == matrix[i].length`",
+    "starterCode": "function transpose(matrix) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1,2,3;4,5,6",
+        "expectedOutput": "1,4;2,5;3,6",
+        "isHidden": false
+      },
+      {
+        "input": "1,2;3,4;5,6",
+        "expectedOutput": "1,3,5;2,4,6",
+        "isHidden": false
+      },
+      {
+        "input": "1",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "1,2,3",
+        "expectedOutput": "1;2;3",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 53,
+    "title": "Game of Life",
+    "difficulty": "Medium",
+    "difficultyScore": 1600,
+    "pattern": "Simulation",
+    "tags": [
+      "matrix",
+      "simulation"
+    ],
+    "problemStatement": "## Game of Life\n\n**Problem:** Apply Conway's Game of Life rules to compute the next state of the board.\n\nRules:\n1. Live cell with < 2 live neighbors dies (under-population).\n2. Live cell with 2 or 3 live neighbors lives.\n3. Live cell with > 3 live neighbors dies (over-population).\n4. Dead cell with exactly 3 live neighbors becomes alive (reproduction).\n\n### Example 1\n**Input:** `[[0,1,0],[0,0,1],[1,1,1],[0,0,0]]`\n**Output:** `[[0,0,0],[1,0,1],[0,1,1],[0,1,0]]`\n\n### Constraints\n- `m == board.length`\n- `n == board[i].length`\n- `1 <= m, n <= 25`",
+    "starterCode": "function gameOfLife(board) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "0,1,0;0,0,1;1,1,1;0,0,0",
+        "expectedOutput": "0,0,0;1,0,1;0,1,1;0,1,0",
+        "isHidden": false
+      },
+      {
+        "input": "1,1;1,0",
+        "expectedOutput": "1,1;1,1",
+        "isHidden": false
+      },
+      {
+        "input": "0,0;0,0",
+        "expectedOutput": "0,0;0,0",
+        "isHidden": true
+      },
+      {
+        "input": "1",
+        "expectedOutput": "0",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 54,
+    "title": "Sliding Window Maximum",
+    "difficulty": "Hard",
+    "difficultyScore": 1900,
+    "pattern": "Deque",
+    "tags": [
+      "array",
+      "window",
+      "deque",
+      "sliding-window"
+    ],
+    "problemStatement": "## Sliding Window Maximum\n\n**Problem:** Given an array and a window size `k`, return the max of each sliding window.\n\n### Example 1\n**Input:** `nums = [1,3,-1,-3,5,3,6,7], k = 3`\n**Output:** `[3,3,5,5,6,7]`\n\n### Constraints\n- `1 <= nums.length <= 10^5`\n- `1 <= k <= nums.length`",
+    "starterCode": "function maxSlidingWindow(nums, k) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 3 -1 -3 5 3 6 7\n3",
+        "expectedOutput": "3 3 5 5 6 7",
+        "isHidden": false
+      },
+      {
+        "input": "1\n1",
+        "expectedOutput": "1",
+        "isHidden": false
+      },
+      {
+        "input": "1 -1\n1",
+        "expectedOutput": "1 -1",
+        "isHidden": true
+      },
+      {
+        "input": "7 2 4\n2",
+        "expectedOutput": "7 4",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 55,
+    "title": "Maximum Sum of Distinct Subarray",
+    "difficulty": "Medium",
+    "difficultyScore": 1500,
+    "pattern": "Sliding Window",
+    "tags": [
+      "array",
+      "hashset",
+      "sliding-window"
+    ],
+    "problemStatement": "## Maximum Sum of Distinct Subarray\n\n**Problem:** Find the maximum sum of a contiguous subarray of length `k` where all elements are distinct.\n\n### Example 1\n**Input:** `nums = [4, 2, 4, 5, 6], k = 3`\n**Output:** `15`\n**Explanation:** The subarray `[4, 5, 6]` has all distinct elements and sum = 15.\n\n### Constraints\n- `1 <= k <= nums.length <= 10^5`",
+    "starterCode": "function maxSumDistinct(nums, k) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "4 2 4 5 6\n3",
+        "expectedOutput": "15",
+        "isHidden": false
+      },
+      {
+        "input": "1 1 1 1\n2",
+        "expectedOutput": "0",
+        "isHidden": false
+      },
+      {
+        "input": "9 9 9 1 2 3\n3",
+        "expectedOutput": "12",
+        "isHidden": true
+      },
+      {
+        "input": "1 2\n2",
+        "expectedOutput": "3",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 56,
+    "title": "Longest Subarray With Sum K",
+    "difficulty": "Medium",
+    "difficultyScore": 1500,
+    "pattern": "Prefix Sum",
+    "tags": [
+      "array",
+      "prefix-sum",
+      "hashmap"
+    ],
+    "problemStatement": "## Longest Subarray With Sum K\n\n**Problem:** Find the length of the longest subarray with sum equal to `k`.\n\n### Example 1\n**Input:** `nums = [10, 5, 2, 7, 1, 9], k = 15`\n**Output:** `4`\n**Explanation:** The subarray `[5, 2, 7, 1]` sums to 15 and has length 4.\n\n### Constraints\n- `1 <= nums.length <= 10^5`",
+    "starterCode": "function longestSubarrayWithSumK(nums, k) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "10 5 2 7 1 9\n15",
+        "expectedOutput": "4",
+        "isHidden": false
+      },
+      {
+        "input": "-1 1 1\n1",
+        "expectedOutput": "3",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3\n6",
+        "expectedOutput": "3",
+        "isHidden": true
+      },
+      {
+        "input": "1 0 -1\n-1",
+        "expectedOutput": "3",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 57,
+    "title": "Count Inversions",
+    "difficulty": "Hard",
+    "difficultyScore": 1900,
+    "pattern": "Merge Sort",
+    "tags": [
+      "array",
+      "sorting",
+      "divide-and-conquer"
+    ],
+    "problemStatement": "## Count Inversions\n\n**Problem:** Count the number of pairs `(i, j)` such that `i < j` and `arr[i] > arr[j]`.\n\n### Example 1\n**Input:** `[2, 4, 1, 3, 5]`\n**Output:** `3`\n**Explanation:** Inversions are (2,1), (4,1), (4,3).\n\n### Constraints\n- `1 <= arr.length <= 10^5`",
+    "starterCode": "function countInversions(arr) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "2 4 1 3 5",
+        "expectedOutput": "3",
+        "isHidden": false
+      },
+      {
+        "input": "5 4 3 2 1",
+        "expectedOutput": "10",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3 4 5",
+        "expectedOutput": "0",
+        "isHidden": true
+      },
+      {
+        "input": "1 1 1",
+        "expectedOutput": "0",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 58,
+    "title": "Chocolate Distribution Problem",
+    "difficulty": "Easy",
+    "difficultyScore": 1150,
+    "pattern": "Sorting",
+    "tags": [
+      "array",
+      "sorting",
+      "greedy"
+    ],
+    "problemStatement": "## Chocolate Distribution Problem\n\n**Problem:** Given packets with chocolates and `m` students, distribute packets such that the difference between max and min chocolates given is minimized. Return this minimum difference.\n\n### Example 1\n**Input:** `arr = [7, 3, 2, 4, 9, 12, 56], m = 3`\n**Output:** `2`\n**Explanation:** Distribute packets [2,3,4]. Max-Min = 4-2 = 2.\n\n### Constraints\n- `1 <= m <= arr.length <= 10^5`",
+    "starterCode": "function chocolateDistribution(arr, m) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "7 3 2 4 9 12 56\n3",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "3 4 1 9 56 7 9 12\n5",
+        "expectedOutput": "6",
+        "isHidden": false
+      },
+      {
+        "input": "7 3 2 4 9 12 56\n7",
+        "expectedOutput": "54",
+        "isHidden": true
+      },
+      {
+        "input": "1 2 3\n2",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 59,
+    "title": "Minimum Platforms",
+    "difficulty": "Medium",
+    "difficultyScore": 1600,
+    "pattern": "Greedy",
+    "tags": [
+      "array",
+      "intervals",
+      "greedy",
+      "sorting"
+    ],
+    "problemStatement": "## Minimum Platforms\n\n**Problem:** Find the minimum number of platforms required at a railway station so no train waits.\n\n### Example 1\n**Input:** `arr = [900, 940, 950, 1100, 1500, 1800], dep = [910, 1200, 1120, 1130, 1900, 2000]`\n**Output:** `3`\n\n### Constraints\n- `1 <= n <= 10^4`\n- All times are in 24-hour format.",
+    "starterCode": "function minPlatforms(arr, dep) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "900 940 950 1100 1500 1800\n910 1200 1120 1130 1900 2000",
+        "expectedOutput": "3",
+        "isHidden": false
+      },
+      {
+        "input": "900 1100 1235\n1000 1200 1240",
+        "expectedOutput": "1",
+        "isHidden": false
+      },
+      {
+        "input": "100 200\n200 300",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "100 200 300\n200 300 400",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 60,
+    "title": "Aggressive Cows",
+    "difficulty": "Hard",
+    "difficultyScore": 1900,
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "binary-search",
+      "greedy"
+    ],
+    "problemStatement": "## Aggressive Cows\n\n**Problem:** Given positions of stalls and a number of cows, place the cows in stalls such that the minimum distance between any two cows is maximized. Return this maximum minimum distance.\n\n### Example 1\n**Input:** `stalls = [1, 2, 4, 8, 9], cows = 3`\n**Output:** `3`\n**Explanation:** Place cows at stalls 1, 4, 8. Minimum distance = 3.\n\n### Constraints\n- `2 <= stalls.length <= 10^5`\n- `2 <= cows <= stalls.length`",
+    "starterCode": "function aggressiveCows(stalls, cows) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 2 4 8 9\n3",
+        "expectedOutput": "3",
+        "isHidden": false
+      },
+      {
+        "input": "10 1 2 7 5\n3",
+        "expectedOutput": "4",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3\n3",
+        "expectedOutput": "1",
+        "isHidden": true
+      },
+      {
+        "input": "0 3 4 7 10 9\n4",
+        "expectedOutput": "3",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 61,
+    "title": "Allocate Minimum Pages",
+    "difficulty": "Hard",
+    "difficultyScore": 2000,
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "binary-search"
+    ],
+    "problemStatement": "## Allocate Minimum Pages (Book Allocation)\n\n**Problem:** Given an array where each element represents the number of pages in a book, allocate books to `m` students such that the maximum number of pages assigned to a student is minimized.\n\n### Example 1\n**Input:** `pages = [12, 34, 67, 90], students = 2`\n**Output:** `113`\n**Explanation:** [12, 34, 67] and [90] → max = 113.\n\n### Constraints\n- `1 <= pages.length <= 10^5`\n- `1 <= students <= pages.length`",
+    "starterCode": "function allocatePages(pages, students) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "12 34 67 90\n2",
+        "expectedOutput": "113",
+        "isHidden": false
+      },
+      {
+        "input": "10 20 30 40\n2",
+        "expectedOutput": "60",
+        "isHidden": false
+      },
+      {
+        "input": "15 17 20\n2",
+        "expectedOutput": "32",
+        "isHidden": true
+      },
+      {
+        "input": "12 34 67 90\n4",
+        "expectedOutput": "90",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 62,
+    "title": "Painter Partition Problem",
+    "difficulty": "Hard",
+    "difficultyScore": 2000,
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "binary-search"
+    ],
+    "problemStatement": "## Painter's Partition Problem\n\n**Problem:** Given boards of different lengths and `k` painters, partition the boards so that the maximum length assigned to any painter is minimized. Each painter paints contiguous boards.\n\n### Example 1\n**Input:** `boards = [10, 20, 30, 40], painters = 2`\n**Output:** `60`\n**Explanation:** [10, 20, 30] and [40] → max = 60.\n\n### Constraints\n- `1 <= boards.length <= 10^5`\n- `1 <= painters <= boards.length`",
+    "starterCode": "function painterPartition(boards, painters) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "10 20 30 40\n2",
+        "expectedOutput": "60",
+        "isHidden": false
+      },
+      {
+        "input": "5 10 30 20 15\n3",
+        "expectedOutput": "35",
+        "isHidden": false
+      },
+      {
+        "input": "10\n1",
+        "expectedOutput": "10",
+        "isHidden": true
+      },
+      {
+        "input": "10 10 10 10\n2",
+        "expectedOutput": "20",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 63,
+    "title": "Maximum Meetings",
+    "difficulty": "Medium",
+    "difficultyScore": 1400,
+    "pattern": "Greedy",
+    "tags": [
+      "array",
+      "greedy",
+      "intervals"
+    ],
+    "problemStatement": "## Maximum Meetings in One Room\n\n**Problem:** Given start and end times of meetings, find the maximum number of meetings that can be scheduled without overlap.\n\n### Example 1\n**Input:** `start = [1, 3, 0, 5, 8, 5], end = [2, 4, 6, 7, 9, 9]`\n**Output:** `4`\n\n### Constraints\n- `1 <= n <= 10^5`",
+    "starterCode": "function maxMeetings(start, end) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 3 0 5 8 5\n2 4 6 7 9 9",
+        "expectedOutput": "4",
+        "isHidden": false
+      },
+      {
+        "input": "75250 50074 43659 8931 11273 27545\n112960 114515 81825 93424 54316 35533",
+        "expectedOutput": "2",
+        "isHidden": false
+      },
+      {
+        "input": "1 2\n3 4",
+        "expectedOutput": "2",
+        "isHidden": true
+      },
+      {
+        "input": "1 1 1\n2 2 2",
+        "expectedOutput": "1",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 64,
+    "title": "Merge Without Extra Space",
+    "difficulty": "Hard",
+    "difficultyScore": 1800,
+    "pattern": "Gap Method",
+    "tags": [
+      "array",
+      "merge",
+      "sorting"
+    ],
+    "problemStatement": "## Merge Two Sorted Arrays Without Extra Space\n\n**Problem:** Given two sorted arrays, merge them so that all elements are in sorted order across both arrays, without using extra space.\n\n### Example 1\n**Input:** `arr1 = [1, 3, 5, 7], arr2 = [0, 2, 6, 8, 9]`\n**Output:** `arr1 = [0, 1, 2, 3], arr2 = [5, 6, 7, 8, 9]`\n\n### Constraints\n- `1 <= arr1.length, arr2.length <= 10^5`\n- Both arrays are sorted.",
+    "starterCode": "function mergeWithoutExtraSpace(arr1, arr2) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 3 5 7\n0 2 6 8 9",
+        "expectedOutput": "0 1 2 3\n5 6 7 8 9",
+        "isHidden": false
+      },
+      {
+        "input": "10\n2 3",
+        "expectedOutput": "2\n3 10",
+        "isHidden": false
+      },
+      {
+        "input": "1 2 3\n4 5 6",
+        "expectedOutput": "1 2 3\n4 5 6",
+        "isHidden": true
+      },
+      {
+        "input": "2 3 5\n1 4",
+        "expectedOutput": "1 2 3\n4 5",
+        "isHidden": true
+      }
+    ],
+    "recommended": false
+  },
+  {
+    "id": 65,
+    "title": "Median of Two Sorted Arrays",
+    "difficulty": "Hard",
+    "difficultyScore": 2100,
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "median",
+      "binary-search"
+    ],
+    "problemStatement": "## Median of Two Sorted Arrays\n\n**Problem:** Given two sorted arrays `nums1` and `nums2`, return the median of the two sorted arrays. The overall run time complexity should be O(log(m+n)).\n\n### Example 1\n**Input:** `nums1 = [1, 3], nums2 = [2]`\n**Output:** `2.0`\n\n### Example 2\n**Input:** `nums1 = [1, 2], nums2 = [3, 4]`\n**Output:** `2.5`\n\n### Constraints\n- `nums1.length == m, nums2.length == n`\n- `0 <= m, n <= 1000`\n- `m + n >= 1`",
+    "starterCode": "function findMedianSortedArrays(nums1, nums2) {\n  // Your code here\n}",
+    "testCases": [
+      {
+        "input": "1 3\n2",
+        "expectedOutput": "2.0",
+        "isHidden": false
+      },
+      {
+        "input": "1 2\n3 4",
+        "expectedOutput": "2.5",
+        "isHidden": false
+      },
+      {
+        "input": "\n1",
+        "expectedOutput": "1.0",
+        "isHidden": true
+      },
+      {
+        "input": "2\n",
+        "expectedOutput": "2.0",
+        "isHidden": true
+      }
+    ],
+    "recommended": true
+  },
+  {
+    "id": 66,
+    "title": "The Haunted House Frequency",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "search",
+      "linear-search",
+      "story"
+    ],
+    "problemStatement": "You are a paranormal investigator exploring a haunted house with 100 identical rooms arranged in a straight corridor. Each room emits a unique sound frequency (stored in an array) based on the ghost trapped inside. At exactly midnight, you hear a specific frequency through your ghost detector. You must walk from the first room to the last, listening at each door, to find which room contains that frequency. If you find it, you can perform the exorcism. If not, you must report that the ghost isn't there. Return True if the frequency exists, otherwise False.",
+    "examples": [
+      {
+        "input": {
+          "frequencies": [
+            112,
+            345,
+            678,
+            234,
+            889,
+            456
+          ],
+          "target": 234
+        },
+        "output": true
+      }
+    ],
+    "storyContext": "Linear search through array to find target element."
+  },
+  {
+    "id": 67,
+    "title": "The Farmer's Annual Harvest",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "sum",
+      "accumulation",
+      "story"
+    ],
+    "problemStatement": "You are a farmer who owns 12 apple trees, one for each month of the year. Each tree produces a different number of apples recorded in an array (month 1 to month 12). Before the winter arrives, you want to calculate your total annual harvest to decide how much to store and how much to sell. Walk through each tree's production and add them up to find the grand total. Return the sum of all apples.",
+    "examples": [
+      {
+        "input": [
+          120,
+          95,
+          110,
+          85,
+          130,
+          145,
+          160,
+          155,
+          140,
+          125,
+          115,
+          105
+        ],
+        "output": 1485
+      }
+    ],
+    "storyContext": "Sum of all elements in array."
+  },
+  {
+    "id": 68,
+    "title": "The Missing Roll Number Mystery",
+    "difficulty": "Easy",
+    "pattern": "Math",
+    "tags": [
+      "array",
+      "missing-number",
+      "mystery",
+      "story"
+    ],
+    "problemStatement": "A school has 50 students with roll numbers from 1 to 50. One day, the teacher collects the roll numbers of present students but accidentally loses one roll number before recording. Now the array has 49 unique numbers from 1 to 50, with exactly one missing. The teacher needs to find which student is absent to inform the parents. Help the teacher find the missing roll number without sorting the list.",
+    "examples": [
+      {
+        "input": [
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "output": 4
+      }
+    ],
+    "storyContext": "Find missing number from 1 to N."
+  },
+  {
+    "id": 69,
+    "title": "The Twin Amulets Curse",
+    "difficulty": "Easy",
+    "pattern": "Hashing",
+    "tags": [
+      "array",
+      "duplicate",
+      "frequency",
+      "story"
+    ],
+    "problemStatement": "You are an archaeologist who discovers 101 ancient amulets in a tomb. Each amulet has a unique ID from 1 to 100, but one ID appears twice due to a cloning curse (the twin amulet). The duplicate amulet causes bad luck if not destroyed. All other amulets appear exactly once. Find the cursed duplicate amulet ID that appears twice in the array.",
+    "examples": [
+      {
+        "input": [
+          1,
+          3,
+          4,
+          2,
+          5,
+          3,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "output": 3
+      }
+    ],
+    "storyContext": "Find duplicate number in array containing 1 to N with one duplicate."
+  },
+  {
+    "id": 70,
+    "title": "The Spinning Carousel",
+    "difficulty": "Easy",
+    "pattern": "Reversal",
+    "tags": [
+      "array",
+      "rotation",
+      "circular",
+      "story"
+    ],
+    "problemStatement": "You are at a carnival riding a circular carousel that has 7 seats, each numbered. The carousel rotates to the right by K positions. After the rotation, the seat that was at position 0 moves to position K (wrapping around). You need to predict the final arrangement of seats to find where your favorite seat ends up. Rotate the array to the right by K steps.",
+    "examples": [
+      {
+        "input": {
+          "seats": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "k": 3
+        },
+        "output": [
+          5,
+          6,
+          7,
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "storyContext": "Rotate array right by K positions."
+  },
+  {
+    "id": 71,
+    "title": "The Treasure Hunter's Map",
+    "difficulty": "Easy",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "reverse",
+      "in-place",
+      "story"
+    ],
+    "problemStatement": "A treasure hunter finds a map where locations are listed in order from east to west. But his compass is broken and he must travel from west to east instead. He needs to reverse the order of locations on the map before starting his journey. Reverse the array in-place (without creating a new map) so that the first location becomes last and last becomes first.",
+    "examples": [
+      {
+        "input": [
+          "CaveA",
+          "RiverB",
+          "MountainC",
+          "ForestD",
+          "LakeE"
+        ],
+        "output": [
+          "LakeE",
+          "ForestD",
+          "MountainC",
+          "RiverB",
+          "CaveA"
+        ]
+      }
+    ],
+    "storyContext": "Reverse array in-place using two pointers."
+  },
+  {
+    "id": 72,
+    "title": "The Bakery's Peak Hour",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "max",
+      "peak",
+      "story"
+    ],
+    "problemStatement": "You own a bakery and record the number of customers every hour for 24 hours. You want to know the busiest hour so you can schedule more staff. Find the maximum number of customers in any single hour and also report which hour (index) it occurred. If multiple hours have the same maximum, return the earliest hour.",
+    "examples": [
+      {
+        "input": [
+          12,
+          15,
+          22,
+          35,
+          28,
+          40,
+          38,
+          30,
+          25,
+          20,
+          18,
+          15,
+          12,
+          10,
+          8,
+          7,
+          9,
+          14,
+          22,
+          30,
+          28,
+          20,
+          15,
+          10
+        ],
+        "output": {
+          "maxCustomers": 40,
+          "hour": 5
+        }
+      }
+    ],
+    "storyContext": "Find maximum element and its index."
+  },
+  {
+    "id": 73,
+    "title": "The Glacier Meltdown",
+    "difficulty": "Medium",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "two-sum",
+      "pointers",
+      "story"
+    ],
+    "problemStatement": "Climate scientists have recorded the temperature rise at 50 different glacier points. They want to find two distinct glaciers whose combined temperature rise exactly equals the critical threshold T (global warming limit). If they find such a pair, they can predict the collapse point. Return the indices of the two glaciers. Assume exactly one valid pair exists.",
+    "examples": [
+      {
+        "input": {
+          "temperatures": [
+            2,
+            7,
+            11,
+            15,
+            3,
+            6
+          ],
+          "target": 9
+        },
+        "output": [
+          0,
+          1
+        ]
+      }
+    ],
+    "storyContext": "Two sum problem - find indices of two numbers that sum to target."
+  },
+  {
+    "id": 74,
+    "title": "The Space Station Airlock",
+    "difficulty": "Easy",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "move-zeroes",
+      "zero",
+      "story"
+    ],
+    "problemStatement": "On a space station, astronauts store equipment in a zero-gravity cargo bay represented as an array. Empty containers are marked as 0. Due to a malfunction, all empty containers float to the end of the bay when the gravity is turned off. The astronauts need to move all zeroes to the end while maintaining the relative order of non-zero equipment. Do this in-place to fix the cargo bay.",
+    "examples": [
+      {
+        "input": [
+          0,
+          3,
+          0,
+          7,
+          12,
+          0,
+          5,
+          0,
+          9
+        ],
+        "output": [
+          3,
+          7,
+          12,
+          5,
+          9,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "storyContext": "Move all zeroes to end maintaining relative order."
+  },
+  {
+    "id": 75,
+    "title": "The Sorted Library Shelves",
+    "difficulty": "Easy",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "remove-duplicates",
+      "unique",
+      "story"
+    ],
+    "problemStatement": "A librarian has a shelf of books sorted by their unique ID numbers. Some books have been mistakenly duplicated (same ID appears multiple times consecutively because of a printing error). The librarian wants to keep only one copy of each ID to save space, without moving books to a new shelf (in-place). Remove duplicates so that each ID appears only once, and return the new length of the unique bookshelf.",
+    "examples": [
+      {
+        "input": [
+          101,
+          101,
+          102,
+          103,
+          103,
+          104,
+          105,
+          105,
+          105,
+          106
+        ],
+        "output": [
+          101,
+          102,
+          103,
+          104,
+          105,
+          106
+        ]
+      }
+    ],
+    "storyContext": "Remove duplicates from sorted array in-place."
+  },
+  {
+    "id": 76,
+    "title": "The Magic Potion Factory",
+    "difficulty": "Easy",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "merge",
+      "sorted",
+      "story"
+    ],
+    "problemStatement": "An alchemist has two cauldrons containing magic potions, each sorted by potency from weakest to strongest. He wants to combine them into a single cauldron while keeping the potency sorted. Since he cannot pour potions into a new cauldron (no extra space), he must merge them into the first cauldron which has enough empty space at the end. Merge the two sorted arrays into the first array.",
+    "examples": [
+      {
+        "input": {
+          "cauldron1": [
+            1,
+            3,
+            5,
+            0,
+            0,
+            0
+          ],
+          "m": 3,
+          "cauldron2": [
+            2,
+            4,
+            6
+          ],
+          "n": 3
+        },
+        "output": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    ],
+    "storyContext": "Merge sorted arrays into first array."
+  },
+  {
+    "id": 77,
+    "title": "The Grand Tournament Standings",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "second-max",
+      "runner-up",
+      "story"
+    ],
+    "problemStatement": "A martial arts tournament has 20 fighters. Their scores are recorded in an array. The winner gets the gold medal (highest score). But the organizers also need the silver medalist (second highest score) for the prize ceremony. Find the second largest distinct score in the tournament. If there is no second largest (all scores same), return the largest score itself.",
+    "examples": [
+      {
+        "input": [
+          95,
+          87,
+          92,
+          88,
+          95,
+          90,
+          85,
+          92,
+          89,
+          91
+        ],
+        "output": 92
+      }
+    ],
+    "storyContext": "Find second largest distinct element."
+  },
+  {
+    "id": 78,
+    "title": "The Secret Society Handshake",
+    "difficulty": "Easy",
+    "pattern": "Math",
+    "tags": [
+      "array",
+      "majority-element",
+      "voting",
+      "story"
+    ],
+    "problemStatement": "In a secret society meeting, members vote by raising colored cards. One color is preferred by more than half the members (strict majority). The chairman wants to find that winning color without counting all votes manually (which takes too long). Given an array of colors (represented as integers), find the majority element that appears more than ⌊n/2⌋ times. You can assume such an element always exists.",
+    "examples": [
+      {
+        "input": [
+          3,
+          3,
+          4,
+          2,
+          3,
+          3,
+          3,
+          1,
+          3
+        ],
+        "output": 3
+      }
+    ],
+    "storyContext": "Majority element (Boyer-Moore Voting Algorithm)."
+  },
+  {
+    "id": 79,
+    "title": "The Rainbow Flag Sorting",
+    "difficulty": "Medium",
+    "pattern": "Dutch National Flag",
+    "tags": [
+      "array",
+      "sort-colors",
+      "three-way",
+      "story"
+    ],
+    "problemStatement": "A painter has 100 buckets of paint, each colored red (0), white (1), or blue (2). They are in random order. The painter wants to arrange them in the order of the national flag: all reds first, then all whites, then all blues. He must do this in a single pass (without multiple iterations) to save time. Sort the array containing only 0s, 1s, and 2s in-place.",
+    "examples": [
+      {
+        "input": [
+          2,
+          0,
+          2,
+          1,
+          1,
+          0,
+          1,
+          2,
+          0,
+          0,
+          1
+        ],
+        "output": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          2,
+          2,
+          2
+        ]
+      }
+    ],
+    "storyContext": "Sort colors (Dutch National Flag algorithm)."
+  },
+  {
+    "id": 80,
+    "title": "The King's Water Reservoir",
+    "difficulty": "Medium",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "container-with-most-water",
+      "area",
+      "story"
+    ],
+    "problemStatement": "A king wants to build a water reservoir between two vertical walls of different heights placed at different positions along a river. The walls are represented by an array where index is position and value is height. He wants to choose two walls that, together with the river as base, form a container that holds the maximum amount of water. Find the maximum area of water (distance between walls × minimum height of the two walls) he can trap.",
+    "examples": [
+      {
+        "input": [
+          1,
+          8,
+          6,
+          2,
+          5,
+          4,
+          8,
+          3,
+          7
+        ],
+        "output": 49
+      }
+    ],
+    "storyContext": "Container with most water (two pointers)."
+  },
+  {
+    "id": 81,
+    "title": "The City After the Storm",
+    "difficulty": "Hard",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "trapping-rain-water",
+      "rain",
+      "story"
+    ],
+    "problemStatement": "After a massive storm, water gets trapped between buildings of varying heights in a city. Each building has a width of 1 unit and height given by array. The city planners need to calculate how many units of rainwater will be trapped between buildings so they can design drainage systems. Rainwater can only be trapped if taller buildings are on both sides of a dip. Calculate the total trapped rainwater.",
+    "examples": [
+      {
+        "input": [
+          0,
+          1,
+          0,
+          2,
+          1,
+          0,
+          1,
+          3,
+          2,
+          1,
+          2,
+          1
+        ],
+        "output": 6
+      }
+    ],
+    "storyContext": "Trapping rain water (hard version)."
+  },
+  {
+    "id": 82,
+    "title": "The Farmer's Circular Field",
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming",
+    "tags": [
+      "array",
+      "circular-subarray",
+      "kadane",
+      "story"
+    ],
+    "problemStatement": "A farmer has a circular field divided into 20 plots. Each plot yields a certain profit (positive) or loss (negative) from crops. Because the field is circular (plot 20 is adjacent to plot 1), he can choose any contiguous sequence of plots (wrapping around allowed) to harvest. He wants the maximum total profit possible. Find the maximum sum of a circular subarray.",
+    "examples": [
+      {
+        "input": [
+          5,
+          -3,
+          5,
+          -2,
+          4,
+          -1,
+          3,
+          -4,
+          2,
+          -5
+        ],
+        "output": 14
+      }
+    ],
+    "storyContext": "Maximum circular subarray sum."
+  },
+  {
+    "id": 83,
+    "title": "The Mountain Trail Record",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "sorted-check",
+      "ascending",
+      "story"
+    ],
+    "problemStatement": "You are hiking a mountain trail with checkpoints at different altitudes recorded in an array. You want to know if the trail is consistently going upward (strictly increasing) so you can estimate energy needed. If at any point the altitude does not increase (stays same or decreases), the trail is not properly ascending. Check if the array is sorted in strictly ascending order.",
+    "examples": [
+      {
+        "input": [
+          100,
+          250,
+          400,
+          550,
+          700,
+          850
+        ],
+        "output": true
+      }
+    ],
+    "storyContext": "Check if array is strictly increasing."
+  },
+  {
+    "id": 84,
+    "title": "The Jewelry Store Heist",
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming",
+    "tags": [
+      "array",
+      "house-robber",
+      "dp",
+      "story"
+    ],
+    "problemStatement": "A jewelry store has 15 display cases in a row, each containing a certain value of diamonds. A thief wants to rob the store but cannot rob two adjacent display cases because the alarm will trigger between neighbors. The thief wants to maximize the total value stolen. Help the thief choose which cases to rob to get maximum value without alerting the alarm.",
+    "examples": [
+      {
+        "input": [
+          2,
+          7,
+          9,
+          3,
+          1,
+          5,
+          8,
+          4,
+          6,
+          3,
+          7,
+          2,
+          9,
+          5,
+          4
+        ],
+        "output": 38
+      }
+    ],
+    "storyContext": "House Robber (no adjacent elements)."
+  },
+  {
+    "id": 85,
+    "title": "The Multiplication Alchemy",
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming",
+    "tags": [
+      "array",
+      "max-product-subarray",
+      "product",
+      "story"
+    ],
+    "problemStatement": "An alchemist has a sequence of potion strengths (positive or negative numbers). He wants to find a contiguous subsequence whose product (multiplying all numbers) is maximum possible. This will create the most powerful elixir. However, negative numbers can flip the sign, so he must track both maximum and minimum products. Find the maximum product subarray.",
+    "examples": [
+      {
+        "input": [
+          2,
+          3,
+          -2,
+          4,
+          -1,
+          2,
+          -3
+        ],
+        "output": 96
+      }
+    ],
+    "storyContext": "Maximum product subarray."
+  },
+  {
+    "id": 86,
+    "title": "The Time Traveler's Journal",
+    "difficulty": "Medium",
+    "pattern": "Hashing",
+    "tags": [
+      "array",
+      "longest-consecutive",
+      "sequence",
+      "story"
+    ],
+    "problemStatement": "A time traveler visits different years and records them in a journal. The years are not in order because of random jumps. He wants to find the longest consecutive sequence of years he visited (like 100,101,102,103) to understand his longest continuous time travel streak. The sequence can be in any order in the journal. Find the length of the longest consecutive elements sequence.",
+    "examples": [
+      {
+        "input": [
+          100,
+          4,
+          200,
+          1,
+          3,
+          2,
+          101,
+          102,
+          103,
+          104
+        ],
+        "output": 5
+      }
+    ],
+    "storyContext": "Longest consecutive sequence (using HashSet)."
+  },
+  {
+    "id": 87,
+    "title": "The Scroll of Prefix Magic",
+    "difficulty": "Medium",
+    "pattern": "Prefix Sum",
+    "tags": [
+      "array",
+      "prefix-sum",
+      "subarray-sum",
+      "story"
+    ],
+    "problemStatement": "A wizard has a scroll with magical energy values. He wants to know how many subarrays (contiguous sequences) have a total energy exactly equal to a target value K (his spell requirement). Help the wizard count subarrays with sum equal to K efficiently without checking all subarrays one by one.",
+    "examples": [
+      {
+        "input": {
+          "nums": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            3
+          ],
+          "k": 3
+        },
+        "output": 4
+      }
+    ],
+    "storyContext": "Subarray sum equals K (using prefix sum + HashMap)."
+  },
+  {
+    "id": 88,
+    "title": "The Grand Feast Preparation",
+    "difficulty": "Easy",
+    "pattern": "Sliding Window",
+    "tags": [
+      "array",
+      "sliding-window",
+      "average",
+      "story"
+    ],
+    "problemStatement": "A chef is preparing for a 7-day feast. He has recorded the number of guests each day for the past 30 days. He wants to know the maximum average guests over any consecutive 7-day period (a week) to estimate food preparation. Find the maximum average of any subarray of length exactly K.",
+    "examples": [
+      {
+        "input": {
+          "guests": [
+            120,
+            135,
+            148,
+            160,
+            155,
+            170,
+            165,
+            180,
+            175,
+            190,
+            185,
+            200
+          ],
+          "k": 7
+        },
+        "output": 179.29
+      }
+    ],
+    "storyContext": "Maximum average subarray of size K."
+  },
+  {
+    "id": 89,
+    "title": "The Stock Trader's Multi-Day Strategy",
+    "difficulty": "Medium",
+    "pattern": "Greedy",
+    "tags": [
+      "array",
+      "stocks",
+      "multiple-transactions",
+      "story"
+    ],
+    "problemStatement": "A stock trader watches prices daily. Unlike before, he can now make multiple buy-sell transactions (buy, then sell, then buy again, etc.) as long as he sells before buying again. He wants maximum total profit possible from all transactions. He can hold at most one share at a time. Find maximum profit with unlimited transactions.",
+    "examples": [
+      {
+        "input": [
+          7,
+          1,
+          5,
+          3,
+          6,
+          4,
+          8,
+          2,
+          9,
+          1,
+          4
+        ],
+        "output": 17
+      }
+    ],
+    "storyContext": "Best time to buy and sell stock II (multiple transactions)."
+  },
+  {
+    "id": 90,
+    "title": "The Labyrinth of Lost Souls",
+    "difficulty": "Medium",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "spiral-order",
+      "traversal",
+      "story"
+    ],
+    "problemStatement": "You enter a labyrinth that is a perfect square matrix of rooms, each containing a gem. The ghost that guards the labyrinth can only be defeated if you collect gems in spiral order: start from top-left, go right across the first row, then down the last column, then left across the bottom row, then up the first column, and repeat inward. Return the gems in spiral order.",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            4
+          ],
+          [
+            5,
+            6,
+            7,
+            8
+          ],
+          [
+            9,
+            10,
+            11,
+            12
+          ],
+          [
+            13,
+            14,
+            15,
+            16
+          ]
+        ],
+        "output": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          12,
+          16,
+          15,
+          14,
+          13,
+          9,
+          5,
+          6,
+          7,
+          11,
+          10
+        ]
+      }
+    ],
+    "storyContext": "Spiral matrix traversal."
+  },
+  {
+    "id": 91,
+    "title": "The Portrait Painter's Mistake",
+    "difficulty": "Medium",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "rotate-image",
+      "90-degrees",
+      "story"
+    ],
+    "problemStatement": "A painter accidentally painted a portrait sideways (rotated 90 degrees clockwise from how it should be displayed). He must rotate the portrait back to its correct orientation. The portrait is an N×N matrix of pixels. Rotate the matrix 90 degrees clockwise in-place (without using another matrix).",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            7,
+            8,
+            9
+          ]
+        ],
+        "output": [
+          [
+            7,
+            4,
+            1
+          ],
+          [
+            8,
+            5,
+            2
+          ],
+          [
+            9,
+            6,
+            3
+          ]
+        ]
+      }
+    ],
+    "storyContext": "Rotate image 90 degrees clockwise."
+  },
+  {
+    "id": 92,
+    "title": "The Treasure Grid Search",
+    "difficulty": "Medium",
+    "pattern": "Binary Search",
+    "tags": [
+      "matrix",
+      "search-2d-matrix",
+      "binary-search",
+      "story"
+    ],
+    "problemStatement": "A treasure map is a matrix where each row is sorted in ascending order from left to right, and each column is sorted from top to bottom. The first element of each row is greater than the last element of the previous row (matrix is row-wise and column-wise sorted). You need to efficiently search if a given treasure exists in the grid. Return true if found, false otherwise.",
+    "examples": [
+      {
+        "input": {
+          "matrix": [
+            [
+              1,
+              3,
+              5,
+              7
+            ],
+            [
+              10,
+              11,
+              16,
+              20
+            ],
+            [
+              23,
+              30,
+              34,
+              60
+            ]
+          ],
+          "target": 16
+        },
+        "output": true
+      }
+    ],
+    "storyContext": "Search in 2D matrix (treat as sorted array)."
+  },
+  {
+    "id": 93,
+    "title": "The Army Battalion Sort",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "row-with-max-ones",
+      "search",
+      "story"
+    ],
+    "problemStatement": "A general has a grid representing soldier positions. 1 represents a soldier present, 0 represents empty. Each row is a battalion, sorted in non-decreasing order (all 0s then all 1s). The general wants to know which battalion (row index) has the maximum number of soldiers (1s) to assign the most important mission. If multiple rows have same count, return the smallest row index.",
+    "examples": [
+      {
+        "input": [
+          [
+            0,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "output": 3
+      }
+    ],
+    "storyContext": "Row with maximum ones (using binary search)."
+  },
+  {
+    "id": 94,
+    "title": "The Cathedral's Magic Square",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "diagonal-sum",
+      "sum",
+      "story"
+    ],
+    "problemStatement": "An ancient cathedral has a square mosaic. The high priest believes the mosaic holds magic power equal to the sum of both diagonals (primary and secondary). However, the center tile is counted twice if the matrix has odd size, so it should be counted only once. Calculate the total sum of all diagonal elements (primary diagonal from top-left to bottom-right + secondary diagonal from top-right to bottom-left, without double-counting the center if applicable).",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            4
+          ],
+          [
+            5,
+            6,
+            7,
+            8
+          ],
+          [
+            9,
+            10,
+            11,
+            12
+          ],
+          [
+            13,
+            14,
+            15,
+            16
+          ]
+        ],
+        "output": 68
+      }
+    ],
+    "storyContext": "Diagonal sum of matrix (primary + secondary, center once)."
+  },
+  {
+    "id": 95,
+    "title": "The Spy's Message Decoder",
+    "difficulty": "Medium",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "transpose",
+      "flip",
+      "story"
+    ],
+    "problemStatement": "A spy receives a coded message as a matrix. The decoding algorithm requires transposing the matrix (rows become columns) and then reversing each row. This transforms the message into readable text. Given an N×N matrix, perform the following: first transpose it, then reverse each row (or equivalently, rotate 90 degrees clockwise). Return the decoded matrix.",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            7,
+            8,
+            9
+          ]
+        ],
+        "output": [
+          [
+            7,
+            4,
+            1
+          ],
+          [
+            8,
+            5,
+            2
+          ],
+          [
+            9,
+            6,
+            3
+          ]
+        ]
+      }
+    ],
+    "storyContext": "Transpose then reverse each row (rotate)."
+  },
+  {
+    "id": 96,
+    "title": "The Photo Studio's Negative",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "flip",
+      "invert",
+      "story"
+    ],
+    "problemStatement": "A photographer took a picture of a chessboard where white squares are 1 and black squares are 0. He wants to create a negative image (invert colors: 1 becomes 0, 0 becomes 1) and then mirror the image horizontally (reverse each row). Given a binary matrix, first invert it, then reverse each row. Return the resulting matrix.",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "output": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ]
+      }
+    ],
+    "storyContext": "Flip and invert matrix."
+  },
+  {
+    "id": 97,
+    "title": "The Forest Fire Spread",
+    "difficulty": "Medium",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "game-of-life",
+      "simulation",
+      "story"
+    ],
+    "problemStatement": "A forest is represented as a grid where 1 means tree alive, 0 means empty land. Each day, trees live or die based on neighbors (Conway's Game of Life rules): any live tree with <2 live neighbors dies (underpopulation), any live tree with 2-3 live neighbors lives, any live tree with >3 live neighbors dies (overpopulation), any dead cell with exactly 3 live neighbors becomes alive (reproduction). Compute the next generation of the forest after one day.",
+    "examples": [
+      {
+        "input": [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "output": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ]
+      }
+    ],
+    "storyContext": "Game of Life simulation."
+  },
+  {
+    "id": 98,
+    "title": "The Warehouse Zero Cleanup",
+    "difficulty": "Medium",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "set-zeroes",
+      "zero",
+      "story"
+    ],
+    "problemStatement": "A warehouse manager notices that if any storage rack (cell) contains a zero (empty), the entire row and entire column of that rack must be emptied (set to zero) due to safety regulations. Given a warehouse grid, modify it in-place so that if any cell is 0, its entire row and column becomes 0. Do this efficiently without using O(mn) extra space.",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "output": [
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1
+          ]
+        ]
+      }
+    ],
+    "storyContext": "Set matrix zeroes in-place."
+  },
+  {
+    "id": 99,
+    "title": "The Treasure Island Perimeter",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "island-perimeter",
+      "counting",
+      "story"
+    ],
+    "problemStatement": "A treasure map shows an island as 1 (land) and water as 0. The island is a single connected landmass with no lakes inside. The treasure hunters need to calculate the perimeter of the island (number of edges where land touches water or map boundary) to know how much fencing is needed. Each land cell has 4 sides, but sides adjacent to another land cell are not counted in perimeter. Calculate total perimeter.",
+    "examples": [
+      {
+        "input": [
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            0
+          ]
+        ],
+        "output": 16
+      }
+    ],
+    "storyContext": "Island perimeter calculation."
+  },
+  {
+    "id": 100,
+    "title": "The Painter's Flood Fill",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "flood-fill",
+      "dfs",
+      "story"
+    ],
+    "problemStatement": "A painter is working on a digital canvas (grid) where each cell has a color code. He clicks on a specific cell (sr, sc) and chooses a new color. All cells connected 4-directionally to the starting cell that have the same original color should be flooded with the new color (like the paint bucket tool in an image editor). Perform flood fill starting from the given cell.",
+    "examples": [
+      {
+        "input": {
+          "image": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              1
+            ]
+          ],
+          "sr": 1,
+          "sc": 1,
+          "newColor": 2
+        },
+        "output": [
+          [
+            2,
+            2,
+            2
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            2,
+            0,
+            1
+          ]
+        ]
+      }
+    ],
+    "storyContext": "Flood fill (DFS/BFS)."
+  },
+  {
+    "id": 101,
+    "title": "The Architect's Reshape Plan",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "reshape",
+      "flatten",
+      "story"
+    ],
+    "problemStatement": "An architect has a matrix of building floor plans. He wants to reshape it into a different dimension (r x c) for a new blueprint, but only if the total number of cells remains the same. Reshaping means flattening the original matrix row-wise and then filling the new matrix row-wise. If reshaping is not possible (r*c ≠ original total cells), return the original matrix.",
+    "examples": [
+      {
+        "input": {
+          "mat": [
+            [
+              1,
+              2
+            ],
+            [
+              3,
+              4
+            ]
+          ],
+          "r": 1,
+          "c": 4
+        },
+        "output": [
+          [
+            1,
+            2,
+            3,
+            4
+          ]
+        ]
+      }
+    ],
+    "storyContext": "Reshape matrix (flatten and refill)."
+  },
+  {
+    "id": 102,
+    "title": "The Lucky Number Hunt",
+    "difficulty": "Medium",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "lucky-number",
+      "min-max",
+      "story"
+    ],
+    "problemStatement": "In a magical matrix, a lucky number is an element that is the minimum in its row and the maximum in its column. Find all lucky numbers in the matrix. There can be multiple or none. Return them in any order.",
+    "examples": [
+      {
+        "input": [
+          [
+            3,
+            7,
+            8
+          ],
+          [
+            9,
+            11,
+            13
+          ],
+          [
+            15,
+            16,
+            17
+          ]
+        ],
+        "output": [
+          15
+        ]
+      }
+    ],
+    "storyContext": "Find lucky numbers (row min, column max)."
+  },
+  {
+    "id": 103,
+    "title": "The Negative Energy Detector",
+    "difficulty": "Medium",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "negative-count",
+      "sorted-matrix",
+      "story"
+    ],
+    "problemStatement": "A scientist is studying a matrix where both rows and columns are sorted in non-increasing order (each row sorted left to right, each column sorted top to bottom, all decreasing). The scientist wants to count how many negative numbers are in the matrix (values < 0) without checking every cell. Optimize the counting.",
+    "examples": [
+      {
+        "input": [
+          [
+            4,
+            3,
+            2,
+            -1
+          ],
+          [
+            3,
+            2,
+            1,
+            -1
+          ],
+          [
+            1,
+            1,
+            -1,
+            -2
+          ],
+          [
+            -1,
+            -1,
+            -2,
+            -3
+          ]
+        ],
+        "output": 8
+      }
+    ],
+    "storyContext": "Count negatives in sorted matrix."
+  },
+  {
+    "id": 104,
+    "title": "The Fort Knox Heist",
+    "difficulty": "Hard",
+    "pattern": "Sliding Window",
+    "tags": [
+      "array",
+      "sliding-window-maximum",
+      "deque",
+      "story"
+    ],
+    "problemStatement": "A thief is planning to rob a series of vaults. He can only carry loot from K consecutive vaults at a time due to his bag size. He wants to know, for every possible window of K consecutive vaults, what is the maximum value he can steal from that window. Return an array containing the maximum for each sliding window of size K.",
+    "examples": [
+      {
+        "input": {
+          "vaults": [
+            1,
+            3,
+            -1,
+            -3,
+            5,
+            3,
+            6,
+            7
+          ],
+          "k": 3
+        },
+        "output": [
+          3,
+          3,
+          5,
+          5,
+          6,
+          7
+        ]
+      }
+    ],
+    "storyContext": "Sliding window maximum using deque."
+  },
+  {
+    "id": 105,
+    "title": "The Jeweler's Non-Duplicate Chain",
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": [
+      "array",
+      "distinct-subarray",
+      "max-sum",
+      "story"
+    ],
+    "problemStatement": "A jeweler has a chain of gemstones (each gem has a numeric value). He wants to sell a contiguous segment of the chain where all gems have distinct values (no duplicates) to maximize his profit (sum of values in that segment). Find the maximum sum of a contiguous subarray with all distinct elements.",
+    "examples": [
+      {
+        "input": [
+          4,
+          2,
+          4,
+          5,
+          6,
+          2,
+          1,
+          7,
+          8,
+          2,
+          3,
+          4
+        ],
+        "output": 32
+      }
+    ],
+    "storyContext": "Maximum sum of distinct subarray (sliding window with hashset)."
+  },
+  {
+    "id": 106,
+    "title": "The Fair Chocolate Distribution",
+    "difficulty": "Easy",
+    "pattern": "Sorting",
+    "tags": [
+      "array",
+      "chocolate-distribution",
+      "min-difference",
+      "story"
+    ],
+    "problemStatement": "A teacher has N packets of chocolates, each packet containing a different number of chocolates. She wants to distribute exactly M packets to M students (M ≤ N) such that the difference between the packet with maximum chocolates and the packet with minimum chocolates is minimized (so all students get nearly equal chocolates). Find that minimum possible difference.",
+    "examples": [
+      {
+        "input": {
+          "packets": [
+            7,
+            3,
+            2,
+            4,
+            9,
+            12,
+            56
+          ],
+          "students": 3
+        },
+        "output": 2
+      }
+    ],
+    "storyContext": "Chocolate distribution problem (sort + sliding window)."
+  },
+  {
+    "id": 107,
+    "title": "The Train Station Rush",
+    "difficulty": "Medium",
+    "pattern": "Greedy",
+    "tags": [
+      "array",
+      "minimum-platforms",
+      "intervals",
+      "story"
+    ],
+    "problemStatement": "A train station receives multiple trains with given arrival and departure times. The station master wants to know the minimum number of platforms needed so that no train has to wait. Trains can share a platform if their times don't overlap. Given arrival and departure times (in minutes from 00:00), find the minimum platforms required.",
+    "examples": [
+      {
+        "input": {
+          "arrival": [
+            900,
+            940,
+            950,
+            1100,
+            1500,
+            1800
+          ],
+          "departure": [
+            910,
+            1200,
+            1120,
+            1130,
+            1900,
+            2000
+          ]
+        },
+        "output": 3
+      }
+    ],
+    "storyContext": "Minimum platforms (sorting + greedy)."
+  },
+  {
+    "id": 108,
+    "title": "The Angry Cows Problem",
+    "difficulty": "Hard",
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "aggressive-cows",
+      "binary-search",
+      "story"
+    ],
+    "problemStatement": "A farmer has N stalls in a line at certain positions. He has C cows that are aggressive and will fight if placed too close. He wants to place cows in stalls such that the minimum distance between any two cows is maximized (to keep them peaceful). Find the largest minimum distance possible.",
+    "examples": [
+      {
+        "input": {
+          "stalls": [
+            1,
+            2,
+            4,
+            8,
+            9
+          ],
+          "cows": 3
+        },
+        "output": 3
+      }
+    ],
+    "storyContext": "Aggressive cows (binary search on answer)."
+  },
+  {
+    "id": 109,
+    "title": "The Library Book Allocation",
+    "difficulty": "Hard",
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "allocate-books",
+      "binary-search",
+      "story"
+    ],
+    "problemStatement": "A library has N books, each with a certain number of pages. They need to allocate these books to K students. Each student must get a contiguous sequence of books. Allocation should minimize the maximum number of pages assigned to any student. Find that minimized maximum pages.",
+    "examples": [
+      {
+        "input": {
+          "pages": [
+            12,
+            34,
+            67,
+            90,
+            45,
+            23,
+            78,
+            56
+          ],
+          "students": 3
+        },
+        "output": 135
+      }
+    ],
+    "storyContext": "Allocate minimum pages (binary search)."
+  },
+  {
+    "id": 110,
+    "title": "The Wall Painting Schedule",
+    "difficulty": "Hard",
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "painter-partition",
+      "binary-search",
+      "story"
+    ],
+    "problemStatement": "A painter has N walls, each requiring a certain time to paint. He has K painters available, and each painter can only paint contiguous walls (they cannot skip). The goal is to assign walls to painters to minimize the maximum time any painter spends. Find the minimized maximum painting time.",
+    "examples": [
+      {
+        "input": {
+          "walls": [
+            10,
+            20,
+            30,
+            40,
+            50,
+            60
+          ],
+          "painters": 2
+        },
+        "output": 120
+      }
+    ],
+    "storyContext": "Painter partition problem (binary search)."
+  },
+  {
+    "id": 111,
+    "title": "The Conference Room Scheduler",
+    "difficulty": "Medium",
+    "pattern": "Greedy",
+    "tags": [
+      "array",
+      "maximum-meetings",
+      "intervals",
+      "story"
+    ],
+    "problemStatement": "A conference room can host only one meeting at a time. You have a list of meeting requests with start and end times. You want to schedule the maximum number of non-overlapping meetings. Find the maximum number of meetings that can be accommodated.",
+    "examples": [
+      {
+        "input": {
+          "start": [
+            1,
+            3,
+            0,
+            5,
+            8,
+            5
+          ],
+          "end": [
+            2,
+            4,
+            6,
+            7,
+            9,
+            9
+          ]
+        },
+        "output": 4
+      }
+    ],
+    "storyContext": "Maximum meetings (activity selection - greedy)."
+  },
+  {
+    "id": 112,
+    "title": "The Galaxy Data Merger",
+    "difficulty": "Hard",
+    "pattern": "Gap Method",
+    "tags": [
+      "array",
+      "merge-without-extra-space",
+      "gap-method",
+      "story"
+    ],
+    "problemStatement": "Two space stations have sorted data arrays, but there's no extra memory to merge them into a third array due to limited storage. They must merge the two sorted arrays into the first array (which has enough empty space at the end) without using extra space. Merge them in sorted order.",
+    "examples": [
+      {
+        "input": {
+          "arr1": [
+            1,
+            3,
+            5,
+            7,
+            0,
+            0,
+            0,
+            0
+          ],
+          "m": 4,
+          "arr2": [
+            2,
+            4,
+            6,
+            8
+          ],
+          "n": 4
+        },
+        "output": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    ],
+    "storyContext": "Merge sorted arrays without extra space."
+  },
+  {
+    "id": 113,
+    "title": "The Central Tendency Quest",
+    "difficulty": "Hard",
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "median-of-two-sorted",
+      "binary-search",
+      "story"
+    ],
+    "problemStatement": "Two astronomers have sorted lists of star distances from two different galaxies. They want to find the median of all star distances combined (the middle value if all distances were merged into one sorted list). If the total number of stars is even, return the average of the two middle values. Find the median efficiently without merging arrays.",
+    "examples": [
+      {
+        "input": {
+          "galaxy1": [
+            1,
+            3,
+            5,
+            7,
+            9
+          ],
+          "galaxy2": [
+            2,
+            4,
+            6,
+            8,
+            10
+          ]
+        },
+        "output": 5.5
+      }
+    ],
+    "storyContext": "Median of two sorted arrays (binary search)."
+  },
+  {
+    "id": 114,
+    "title": "The Subarray Sum Divisible Mystery",
+    "difficulty": "Medium",
+    "pattern": "Prefix Sum",
+    "tags": [
+      "array",
+      "subarray-divisible",
+      "modulo",
+      "story"
+    ],
+    "problemStatement": "A mathematician records a sequence of numbers. He wants to find if there exists a contiguous subarray of size at least 2 whose sum is divisible by K. If such a subarray exists, return true. Otherwise, return false.",
+    "examples": [
+      {
+        "input": {
+          "nums": [
+            23,
+            2,
+            4,
+            6,
+            7
+          ],
+          "k": 6
+        },
+        "output": true
+      }
+    ],
+    "storyContext": "Continuous subarray sum divisible by K."
+  },
+  {
+    "id": 115,
+    "title": "The Safe Combination",
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": [
+      "array",
+      "subarray-product-less-than-k",
+      "product",
+      "story"
+    ],
+    "problemStatement": "A safe has a combination lock that requires a contiguous sequence of numbers whose product is less than a given K. The thief wants to know how many such subarrays exist (each subarray of length at least 1). Count all subarrays where the product of all elements is less than K.",
+    "examples": [
+      {
+        "input": {
+          "nums": [
+            10,
+            5,
+            2,
+            6
+          ],
+          "k": 100
+        },
+        "output": 8
+      }
+    ],
+    "storyContext": "Subarray product less than K (sliding window)."
+  },
+  {
+    "id": 116,
+    "title": "The Temperature Warning System",
+    "difficulty": "Medium",
+    "pattern": "Stack",
+    "tags": [
+      "array",
+      "next-greater-element",
+      "monotonic-stack",
+      "story"
+    ],
+    "problemStatement": "A weather station records daily temperatures. For each day, scientists want to know how many days until a warmer day (next higher temperature). If there is no future warmer day, output 0. Return an array of these waiting days.",
+    "examples": [
+      {
+        "input": [
+          73,
+          74,
+          75,
+          71,
+          69,
+          72,
+          76,
+          73
+        ],
+        "output": [
+          1,
+          1,
+          4,
+          2,
+          1,
+          1,
+          0,
+          0
+        ]
+      }
+    ],
+    "storyContext": "Daily temperatures (next greater element)."
+  },
+  {
+    "id": 117,
+    "title": "The Circular Race Track",
+    "difficulty": "Medium",
+    "pattern": "Stack",
+    "tags": [
+      "array",
+      "next-greater-element-ii",
+      "circular",
+      "story"
+    ],
+    "problemStatement": "Racers are on a circular track. Each racer has a speed. For each racer, find the next racer ahead (going clockwise) with strictly greater speed. Since the track is circular, you can wrap around to the beginning. Return the speed of that greater racer for each racer, or -1 if none exists.",
+    "examples": [
+      {
+        "input": [
+          1,
+          2,
+          3,
+          4,
+          3,
+          2,
+          1
+        ],
+        "output": [
+          2,
+          3,
+          4,
+          -1,
+          4,
+          3,
+          2
+        ]
+      }
+    ],
+    "storyContext": "Next greater element in circular array."
+  },
+  {
+    "id": 118,
+    "title": "The Mountain Climber's Validation",
+    "difficulty": "Easy",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "valid-mountain",
+      "peak",
+      "story"
+    ],
+    "problemStatement": "A mountain climber records elevations during a hike. A valid mountain array must strictly increase to a peak, then strictly decrease afterward (no plateaus, no multiple peaks). Help the climber determine if his elevation record forms a valid mountain array.",
+    "examples": [
+      {
+        "input": [
+          0,
+          3,
+          5,
+          7,
+          9,
+          8,
+          6,
+          4,
+          2
+        ],
+        "output": true
+      }
+    ],
+    "storyContext": "Valid mountain array (strict increase then strict decrease)."
+  },
+  {
+    "id": 119,
+    "title": "The Even-Odd Parade",
+    "difficulty": "Easy",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "sort-by-parity",
+      "even-odd",
+      "story"
+    ],
+    "problemStatement": "A parade organizer wants all even-numbered floats to come first, followed by odd-numbered floats, regardless of order within each group. He doesn't care about relative order among evens or among odds, just evens first. Rearrange the array in-place with all evens before all odds.",
+    "examples": [
+      {
+        "input": [
+          3,
+          1,
+          2,
+          4,
+          7,
+          6,
+          5,
+          8
+        ],
+        "output": [
+          2,
+          4,
+          6,
+          8,
+          3,
+          1,
+          7,
+          5
+        ]
+      }
+    ],
+    "storyContext": "Sort array by parity (evens first, odds later)."
+  },
+  {
+    "id": 120,
+    "title": "The Giant's Threshold",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "dominant-index",
+      "max",
+      "story"
+    ],
+    "problemStatement": "In a land of giants, one giant is twice as tall as every other giant. The king wants to know if the tallest giant is at least twice as tall as every other giant. If true, return the index of the tallest giant. If false, return -1.",
+    "examples": [
+      {
+        "input": [
+          3,
+          6,
+          1,
+          0,
+          2,
+          5,
+          12
+        ],
+        "output": 6
+      }
+    ],
+    "storyContext": "Dominant index (largest element >= 2× all others)."
+  },
+  {
+    "id": 121,
+    "title": "The Keyboard Typist Challenge",
+    "difficulty": "Easy",
+    "pattern": "HashSet",
+    "tags": [
+      "array",
+      "keyboard-row",
+      "string",
+      "story"
+    ],
+    "problemStatement": "A typist has a broken keyboard where only letters from one row of the QWERTY keyboard work at a time. He receives a list of words. Find which words can be typed using only letters from a single row of the keyboard (first row: qwertyuiop, second: asdfghjkl, third: zxcvbnm). Return the list of such words.",
+    "examples": [
+      {
+        "input": [
+          "Hello",
+          "Alaska",
+          "Dad",
+          "Peace",
+          "Assess"
+        ],
+        "output": [
+          "Alaska",
+          "Dad",
+          "Assess"
+        ]
+      }
+    ],
+    "storyContext": "Keyboard row words using HashSet."
+  },
+  {
+    "id": 122,
+    "title": "The Magic Self-Dividing Numbers",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "self-dividing-numbers",
+      "digits",
+      "story"
+    ],
+    "problemStatement": "A wizard discovers that self-dividing numbers (numbers divisible by each of their digits) have magical properties. He wants to find all such numbers between left and right (inclusive). A number is self-dividing if it contains no digit 0 and is divisible by every digit it contains. Find all self-dividing numbers in the given range.",
+    "examples": [
+      {
+        "input": {
+          "left": 1,
+          "right": 22
+        },
+        "output": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          11,
+          12,
+          15,
+          22
+        ]
+      }
+    ],
+    "storyContext": "Find self-dividing numbers."
+  },
+  {
+    "id": 123,
+    "title": "The Happy Number Meditation",
+    "difficulty": "Easy",
+    "pattern": "HashSet",
+    "tags": [
+      "array",
+      "happy-number",
+      "cycle-detection",
+      "story"
+    ],
+    "problemStatement": "A number is called 'happy' if repeatedly replacing it with the sum of the squares of its digits eventually reaches 1. If it enters a cycle that does not include 1, it's unhappy. Given a positive integer, determine if it is a happy number.",
+    "examples": [
+      {
+        "input": 19,
+        "output": true
+      }
+    ],
+    "storyContext": "Happy number detection (cycle detection with HashSet)."
+  },
+  {
+    "id": 124,
+    "title": "The Island Fencing Cost",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "island-perimeter",
+      "boundary",
+      "story"
+    ],
+    "problemStatement": "A real estate developer wants to fence an island represented on a grid (1 = land, 0 = water). The island is a single connected landmass with no holes. Calculate the perimeter of the island to estimate fencing cost. Each land cell contributes 4 sides, but sides shared with adjacent land cells are not counted.",
+    "examples": [
+      {
+        "input": [
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            0
+          ]
+        ],
+        "output": 16
+      }
+    ],
+    "storyContext": "Island perimeter calculation."
+  },
+  {
+    "id": 125,
+    "title": "The Painter's Digital Canvas",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "flood-fill",
+      "dfs-bfs",
+      "story"
+    ],
+    "problemStatement": "A digital artist uses a paint bucket tool that fills a connected area with a new color. When clicking on a pixel, all pixels connected 4-directionally (up, down, left, right) with the same original color change to the new color. Perform flood fill starting from given coordinates.",
+    "examples": [
+      {
+        "input": {
+          "image": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              1
+            ]
+          ],
+          "sr": 1,
+          "sc": 1,
+          "newColor": 2
+        },
+        "output": [
+          [
+            2,
+            2,
+            2
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            2,
+            0,
+            1
+          ]
+        ]
+      }
+    ],
+    "storyContext": "Flood fill (paint bucket tool)."
+  },
+  {
+    "id": 126,
+    "title": "The Architect's Grid Transformation",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "reshape",
+      "dimensionality",
+      "story"
+    ],
+    "problemStatement": "An architect designs buildings in a matrix layout but needs to reshape the grid into different dimensions for a presentation. If the new dimensions (r × c) have the same total cells as the original matrix, reshape it by flattening row-wise and refilling row-wise. Otherwise, return the original matrix unchanged.",
+    "examples": [
+      {
+        "input": {
+          "mat": [
+            [
+              1,
+              2
+            ],
+            [
+              3,
+              4
+            ]
+          ],
+          "r": 1,
+          "c": 4
+        },
+        "output": [
+          [
+            1,
+            2,
+            3,
+            4
+          ]
+        ]
+      }
+    ],
+    "storyContext": "Reshape matrix."
+  },
+  {
+    "id": 127,
+    "title": "The Magical Lucky Grid",
+    "difficulty": "Medium",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "lucky-number",
+      "row-min-column-max",
+      "story"
+    ],
+    "problemStatement": "In a magical grid, a lucky number is an element that is both the minimum in its row and the maximum in its column. Find all such lucky numbers in the matrix. A matrix may have zero, one, or multiple lucky numbers.",
+    "examples": [
+      {
+        "input": [
+          [
+            3,
+            7,
+            8
+          ],
+          [
+            9,
+            11,
+            13
+          ],
+          [
+            15,
+            16,
+            17
+          ]
+        ],
+        "output": [
+          15
+        ]
+      }
+    ],
+    "storyContext": "Find lucky numbers (row minimum = column maximum)."
+  },
+  {
+    "id": 128,
+    "title": "The Iceberg Detector",
+    "difficulty": "Medium",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "negative-count",
+      "sorted-matrix",
+      "story"
+    ],
+    "problemStatement": "A scientist maps iceberg heights in a matrix where both rows and columns are sorted in decreasing order. Negative values represent underwater iceberg parts. Count how many negative values exist in the matrix without checking every cell for optimization.",
+    "examples": [
+      {
+        "input": [
+          [
+            4,
+            3,
+            2,
+            -1
+          ],
+          [
+            3,
+            2,
+            1,
+            -1
+          ],
+          [
+            1,
+            1,
+            -1,
+            -2
+          ],
+          [
+            -1,
+            -1,
+            -2,
+            -3
+          ]
+        ],
+        "output": 8
+      }
+    ],
+    "storyContext": "Count negatives in sorted matrix."
+  },
+  {
+    "id": 129,
+    "title": "The Casino's Sliding Window",
+    "difficulty": "Hard",
+    "pattern": "Deque",
+    "tags": [
+      "array",
+      "sliding-window-maximum",
+      "deque",
+      "story"
+    ],
+    "problemStatement": "A casino displays last K bets in a window. For each window position, the casino wants to know the maximum bet amount visible. Given an array of bets and window size K, return an array of maximums for each sliding window of size K.",
+    "examples": [
+      {
+        "input": {
+          "bets": [
+            1,
+            3,
+            -1,
+            -3,
+            5,
+            3,
+            6,
+            7
+          ],
+          "k": 3
+        },
+        "output": [
+          3,
+          3,
+          5,
+          5,
+          6,
+          7
+        ]
+      }
+    ],
+    "storyContext": "Sliding window maximum using deque."
+  },
+  {
+    "id": 130,
+    "title": "The Gemstone Collector",
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": [
+      "array",
+      "maximum-sum-distinct-subarray",
+      "hashset",
+      "story"
+    ],
+    "problemStatement": "A gem collector wants a contiguous segment of gemstones with all distinct values to maximize total value. Find the maximum sum of any contiguous subarray where all elements are unique (no duplicates).",
+    "examples": [
+      {
+        "input": [
+          4,
+          2,
+          4,
+          5,
+          6,
+          2,
+          1,
+          7,
+          8,
+          2,
+          3,
+          4
+        ],
+        "output": 32
+      }
+    ],
+    "storyContext": "Maximum sum of distinct subarray (sliding window)."
+  },
+  {
+    "id": 131,
+    "title": "The Farmer's Equity Distribution",
+    "difficulty": "Easy",
+    "pattern": "Sorting",
+    "tags": [
+      "array",
+      "minimum-difference",
+      "chocolate",
+      "story"
+    ],
+    "problemStatement": "A farmer gives chocolate packets to M children. He wants the difference between the maximum and minimum chocolates given to be as small as possible. Given N packets (N ≥ M) with different chocolate counts, choose any M packets to minimize the difference between max and min.",
+    "examples": [
+      {
+        "input": {
+          "packets": [
+            7,
+            3,
+            2,
+            4,
+            9,
+            12,
+            56
+          ],
+          "students": 3
+        },
+        "output": 2
+      }
+    ],
+    "storyContext": "Chocolate distribution (sort + sliding window)."
+  },
+  {
+    "id": 132,
+    "title": "The Railway Station Overcrowding",
+    "difficulty": "Medium",
+    "pattern": "Greedy",
+    "tags": [
+      "array",
+      "minimum-platforms",
+      "intervals",
+      "story"
+    ],
+    "problemStatement": "A railway station gets trains at given arrival and departure times. Find the minimum number of platforms needed so no train has to wait. Trains can share platforms if their time intervals don't overlap.",
+    "examples": [
+      {
+        "input": {
+          "arrival": [
+            900,
+            940,
+            950,
+            1100,
+            1500,
+            1800
+          ],
+          "departure": [
+            910,
+            1200,
+            1120,
+            1130,
+            1900,
+            2000
+          ]
+        },
+        "output": 3
+      }
+    ],
+    "storyContext": "Minimum platforms required."
+  },
+  {
+    "id": 133,
+    "title": "The Cow Herder's Dilemma",
+    "difficulty": "Hard",
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "aggressive-cows",
+      "max-min-distance",
+      "story"
+    ],
+    "problemStatement": "A herder has N stalls at certain positions and C aggressive cows. He wants to place cows in stalls so that the minimum distance between any two cows is maximized (to prevent fighting). Find the largest possible minimum distance.",
+    "examples": [
+      {
+        "input": {
+          "stalls": [
+            1,
+            2,
+            4,
+            8,
+            9
+          ],
+          "cows": 3
+        },
+        "output": 3
+      }
+    ],
+    "storyContext": "Aggressive cows (binary search on answer)."
+  },
+  {
+    "id": 134,
+    "title": "The Academic Book Distribution",
+    "difficulty": "Hard",
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "allocate-books",
+      "minimize-maximum",
+      "story"
+    ],
+    "problemStatement": "A college has N books with page counts. They need to allocate these books to K students. Allocation must be contiguous. Minimize the maximum pages assigned to any student. Find that minimized maximum.",
+    "examples": [
+      {
+        "input": {
+          "pages": [
+            12,
+            34,
+            67,
+            90,
+            45,
+            23,
+            78,
+            56
+          ],
+          "students": 3
+        },
+        "output": 135
+      }
+    ],
+    "storyContext": "Allocate minimum pages (binary search)."
+  },
+  {
+    "id": 135,
+    "title": "The House Painting Crew",
+    "difficulty": "Hard",
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "painter-partition",
+      "binary-search",
+      "story"
+    ],
+    "problemStatement": "A painting crew has to paint N houses, each requiring a certain time. They have K painters. Each painter paints a contiguous block of houses. Minimize the maximum time any painter spends. Find that minimized maximum time.",
+    "examples": [
+      {
+        "input": {
+          "houses": [
+            10,
+            20,
+            30,
+            40,
+            50,
+            60
+          ],
+          "painters": 2
+        },
+        "output": 120
+      }
+    ],
+    "storyContext": "Painter partition problem."
+  },
+  {
+    "id": 136,
+    "title": "The Conference Hall Maximizer",
+    "difficulty": "Medium",
+    "pattern": "Greedy",
+    "tags": [
+      "array",
+      "maximum-meetings",
+      "interval-scheduling",
+      "story"
+    ],
+    "problemStatement": "You have a conference hall and multiple meeting requests with start and end times. Schedule the maximum number of non-overlapping meetings. Return the maximum count of meetings you can accommodate.",
+    "examples": [
+      {
+        "input": {
+          "start": [
+            1,
+            3,
+            0,
+            5,
+            8,
+            5
+          ],
+          "end": [
+            2,
+            4,
+            6,
+            7,
+            9,
+            9
+          ]
+        },
+        "output": 4
+      }
+    ],
+    "storyContext": "Maximum meetings (activity selection)."
+  },
+  {
+    "id": 137,
+    "title": "The Space Station Memory Saver",
+    "difficulty": "Hard",
+    "pattern": "Gap Method",
+    "tags": [
+      "array",
+      "merge-without-extra-space",
+      "gap-method",
+      "story"
+    ],
+    "problemStatement": "Two space stations have sorted data arrays. Due to limited memory, they cannot create a third array. Merge both sorted arrays into the first array (which has extra space at the end) without using extra space.",
+    "examples": [
+      {
+        "input": {
+          "arr1": [
+            1,
+            3,
+            5,
+            7,
+            0,
+            0,
+            0,
+            0
+          ],
+          "m": 4,
+          "arr2": [
+            2,
+            4,
+            6,
+            8
+          ],
+          "n": 4
+        },
+        "output": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    ],
+    "storyContext": "Merge sorted arrays without extra space."
+  },
+  {
+    "id": 138,
+    "title": "The Astronomer's Median Search",
+    "difficulty": "Hard",
+    "pattern": "Binary Search",
+    "tags": [
+      "array",
+      "median-of-two-sorted",
+      "binary-search",
+      "story"
+    ],
+    "problemStatement": "Two astronomers have sorted lists of star distances from two galaxies. Find the median of the combined dataset efficiently without merging the arrays. If total count is even, return the average of middle two values.",
+    "examples": [
+      {
+        "input": {
+          "galaxy1": [
+            1,
+            3,
+            5,
+            7,
+            9
+          ],
+          "galaxy2": [
+            2,
+            4,
+            6,
+            8,
+            10
+          ]
+        },
+        "output": 5.5
+      }
+    ],
+    "storyContext": "Median of two sorted arrays."
+  },
+  {
+    "id": 139,
+    "title": "The Mathematician's Divisibility Puzzle",
+    "difficulty": "Medium",
+    "pattern": "Prefix Sum",
+    "tags": [
+      "array",
+      "subarray-sum-divisible",
+      "modulo",
+      "story"
+    ],
+    "problemStatement": "A mathematician has a sequence of integers. He wants to know if there exists a contiguous subarray of length at least 2 whose sum is divisible by K. Return true if such subarray exists, else false.",
+    "examples": [
+      {
+        "input": {
+          "nums": [
+            23,
+            2,
+            4,
+            6,
+            7
+          ],
+          "k": 6
+        },
+        "output": true
+      }
+    ],
+    "storyContext": "Continuous subarray sum divisible by K."
+  },
+  {
+    "id": 140,
+    "title": "The Safe Cracker's Product Rule",
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": [
+      "array",
+      "subarray-product-less-than-k",
+      "sliding-window",
+      "story"
+    ],
+    "problemStatement": "A safe opens only if the product of numbers in a contiguous subsequence is less than K. Count how many such contiguous subarrays exist (including single elements). The thief must know all possible valid combinations.",
+    "examples": [
+      {
+        "input": {
+          "nums": [
+            10,
+            5,
+            2,
+            6
+          ],
+          "k": 100
+        },
+        "output": 8
+      }
+    ],
+    "storyContext": "Subarray product less than K."
+  },
+  {
+    "id": 141,
+    "title": "The Weather Forecaster's Warning",
+    "difficulty": "Medium",
+    "pattern": "Stack",
+    "tags": [
+      "array",
+      "daily-temperatures",
+      "next-warmer",
+      "story"
+    ],
+    "problemStatement": "A weather forecaster records daily temperatures. For each day, determine how many days until a warmer day. If no warmer day exists, output 0. This helps predict heat waves.",
+    "examples": [
+      {
+        "input": [
+          73,
+          74,
+          75,
+          71,
+          69,
+          72,
+          76,
+          73
+        ],
+        "output": [
+          1,
+          1,
+          4,
+          2,
+          1,
+          1,
+          0,
+          0
+        ]
+      }
+    ],
+    "storyContext": "Daily temperatures (next greater element)."
+  },
+  {
+    "id": 142,
+    "title": "The Circular Race Announcer",
+    "difficulty": "Medium",
+    "pattern": "Stack",
+    "tags": [
+      "array",
+      "next-greater-element-ii",
+      "circular",
+      "story"
+    ],
+    "problemStatement": "Racers on a circular track have speeds. For each racer, find the speed of the next racer clockwise with strictly greater speed. If none exists, return -1. The track is circular, so wrap around.",
+    "examples": [
+      {
+        "input": [
+          1,
+          2,
+          3,
+          4,
+          3,
+          2,
+          1
+        ],
+        "output": [
+          2,
+          3,
+          4,
+          -1,
+          4,
+          3,
+          2
+        ]
+      }
+    ],
+    "storyContext": "Next greater element in circular array."
+  },
+  {
+    "id": 143,
+    "title": "The Mountaineer's Verification",
+    "difficulty": "Easy",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "valid-mountain",
+      "peak-validation",
+      "story"
+    ],
+    "problemStatement": "A mountaineer records altitude at each step. A valid mountain array must strictly increase to a peak and then strictly decrease. No plateaus or multiple peaks allowed. Verify if the recorded array is a valid mountain array.",
+    "examples": [
+      {
+        "input": [
+          0,
+          3,
+          5,
+          7,
+          9,
+          8,
+          6,
+          4,
+          2
+        ],
+        "output": true
+      }
+    ],
+    "storyContext": "Valid mountain array."
+  },
+  {
+    "id": 144,
+    "title": "The Parade Organizer's Request",
+    "difficulty": "Easy",
+    "pattern": "Two Pointers",
+    "tags": [
+      "array",
+      "sort-by-parity",
+      "even-odd",
+      "story"
+    ],
+    "problemStatement": "A parade organizer wants all even-numbered floats first, then odd-numbered floats. Rearrange the array in-place so all even numbers come before all odd numbers (order within even/odd doesn't matter).",
+    "examples": [
+      {
+        "input": [
+          3,
+          1,
+          2,
+          4,
+          7,
+          6,
+          5,
+          8
+        ],
+        "output": [
+          2,
+          4,
+          6,
+          8,
+          3,
+          1,
+          7,
+          5
+        ]
+      }
+    ],
+    "storyContext": "Sort array by parity."
+  },
+  {
+    "id": 145,
+    "title": "The Giant Slayer's Rule",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "dominant-index",
+      "maximum-check",
+      "story"
+    ],
+    "problemStatement": "In giant society, the tallest giant is considered ruler only if he is at least twice as tall as every other giant. Find the index of the tallest giant if he qualifies; otherwise return -1.",
+    "examples": [
+      {
+        "input": [
+          3,
+          6,
+          1,
+          0,
+          2,
+          5,
+          12
+        ],
+        "output": 6
+      }
+    ],
+    "storyContext": "Dominant index (largest >= 2× all others)."
+  },
+  {
+    "id": 146,
+    "title": "The Broken Keyboard Typist",
+    "difficulty": "Easy",
+    "pattern": "HashSet",
+    "tags": [
+      "array",
+      "keyboard-row",
+      "string-matching",
+      "story"
+    ],
+    "problemStatement": "A typist's keyboard has only one working row at a time (Qwerty row1, row2, or row3). Given a list of words, return those that can be typed using letters from only one row of the keyboard.",
+    "examples": [
+      {
+        "input": [
+          "Hello",
+          "Alaska",
+          "Dad",
+          "Peace",
+          "Assess"
+        ],
+        "output": [
+          "Alaska",
+          "Dad",
+          "Assess"
+        ]
+      }
+    ],
+    "storyContext": "Keyboard row words."
+  },
+  {
+    "id": 147,
+    "title": "The Wizard's Self-Dividing Spell",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": [
+      "array",
+      "self-dividing-numbers",
+      "digit-divisible",
+      "story"
+    ],
+    "problemStatement": "A wizard casts spells using numbers that are divisible by each of their digits (self-dividing numbers). Find all such numbers between left and right inclusive. Numbers containing digit 0 are automatically invalid.",
+    "examples": [
+      {
+        "input": {
+          "left": 1,
+          "right": 22
+        },
+        "output": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          11,
+          12,
+          15,
+          22
+        ]
+      }
+    ],
+    "storyContext": "Find self-dividing numbers in range."
+  },
+  {
+    "id": 148,
+    "title": "The Monk's Happy Number Quest",
+    "difficulty": "Easy",
+    "pattern": "HashSet",
+    "tags": [
+      "array",
+      "happy-number",
+      "cycle-detection",
+      "story"
+    ],
+    "problemStatement": "A monk meditates on numbers. A 'happy number' eventually reaches 1 when repeatedly replacing it with sum of squares of its digits. Numbers that enter a cycle without reaching 1 are unhappy. Determine if a number is happy.",
+    "examples": [
+      {
+        "input": 19,
+        "output": true
+      }
+    ],
+    "storyContext": "Happy number detection."
+  },
+  {
+    "id": 149,
+    "title": "The Beach Resort Fencing",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "island-perimeter",
+      "boundary-calculation",
+      "story"
+    ],
+    "problemStatement": "A resort owner wants to fence an island on a grid (1=land, 0=water). Calculate perimeter of the island: each land cell contributes 4 sides minus adjacent land neighbors. Island is single connected landmass with no holes.",
+    "examples": [
+      {
+        "input": [
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            0
+          ]
+        ],
+        "output": 16
+      }
+    ],
+    "storyContext": "Island perimeter calculation."
+  },
+  {
+    "id": 150,
+    "title": "The Digital Artist's Bucket Tool",
+    "difficulty": "Easy",
+    "pattern": "Matrix",
+    "tags": [
+      "matrix",
+      "flood-fill",
+      "paint-bucket",
+      "story"
+    ],
+    "problemStatement": "A digital artist uses paint bucket tool: clicking a pixel fills all connected 4-directionally same-colored pixels with new color. Perform flood fill starting from given pixel (sr, sc) with newColor.",
+    "examples": [
+      {
+        "input": {
+          "image": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              1
+            ]
+          ],
+          "sr": 1,
+          "sc": 1,
+          "newColor": 2
+        },
+        "output": [
+          [
+            2,
+            2,
+            2
+          ],
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            2,
+            0,
+            1
+          ]
+        ]
+      }
+    ],
+    "storyContext": "Flood fill (DFS/BFS)."
+  }
+]

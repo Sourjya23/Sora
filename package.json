@@ -1,0 +1,12 @@
+{
+  "name": "interview-platform-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx -y concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\"",
+    "start": "npx -y concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\"",
+    "install:client": "npm install --prefix client",
+    "install:server": "npm install --prefix server",
+    "install-all": "npm run install:client && npm run install:server"
+  }
+}

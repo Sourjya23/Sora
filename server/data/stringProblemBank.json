@@ -1,0 +1,712 @@
+[
+  {
+    "id": "str_1",
+    "title": "The Alien Message Decoder",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "reverse", "story"],
+    "problemStatement": "While exploring the wreckage of an extraterrestrial scout ship that crashed in the Siberian tundra, you activate a flickering holographic console. The aliens seem to have written their final distress message in a peculiar way — they reversed the entire text as a security measure. Your task is to reverse the given string completely to decode the original message. Pay attention to spaces and punctuation as they must also be reversed in position. For example, the encoded message 'olleh dlrow' should reveal the clear plea 'world hello'. Think about how you can efficiently traverse the string from both ends or use built-in reversal techniques.",
+    "examples": [{ "input": "olleh dlrow", "output": "world hello" }],
+    "storyContext": "Reverse the entire string."
+  },
+  {
+    "id": "str_2",
+    "title": "The Palindrome Temple Inscription",
+    "difficulty": "Easy",
+    "pattern": "Two Pointers",
+    "tags": ["string", "palindrome", "story"],
+    "problemStatement": "Deep within the ruins of an ancient sun temple, you find glowing inscriptions carved into obsidian walls. The high priest's spirit whispers that only true palindromes hold the temple's magic. A string is considered magical if it reads exactly the same forwards and backwards, but the ancient scribes ignored case, spaces, and punctuation. Your mission is to clean the string by considering only alphanumeric characters and check if it forms a palindrome in a case-insensitive manner. Use two pointers moving from both ends toward the center to efficiently validate this sacred property.",
+    "examples": [{ "input": "A man, a plan, a canal: Panama", "output": true }],
+    "storyContext": "Valid palindrome (alphanumeric only, case-insensitive)."
+  },
+  {
+    "id": "str_3",
+    "title": "The Cursed Name Duplicate",
+    "difficulty": "Easy",
+    "pattern": "Hashing",
+    "tags": ["string", "duplicate", "story"],
+    "problemStatement": "In the forbidden library of Eldritch Academy, a powerful curse has duplicated exactly one creature's name in the Grand Bestiary. All other names appear exactly once. As the chosen curse-breaker, you are given an array of strings representing the corrupted list. Your goal is to identify and return the single name that appears twice. Think about using a frequency map or a set to track seen names efficiently and catch the duplicate without sorting the entire list.",
+    "examples": [{ "input": ["dragon", "phoenix", "griffin", "dragon", "unicorn"], "output": "dragon" }],
+    "storyContext": "Find duplicate string in array."
+  },
+  {
+    "id": "str_4",
+    "title": "The Anagram Potion Mix",
+    "difficulty": "Easy",
+    "pattern": "Sorting",
+    "tags": ["string", "anagram", "story"],
+    "problemStatement": "In the bubbling laboratory of Master Alchemist Elara, two potion ingredients can only create the legendary Elixir of Eternity if they are perfect anagrams of each other. You are given two strings. First, you must normalize them by removing all spaces and converting to lowercase, then determine if they contain exactly the same characters with identical frequencies. Sorting both strings after normalization is one reliable way to compare them, or you can use character frequency counters for a more optimized solution.",
+    "examples": [{ "input": { "s1": "listen", "s2": "silent" }, "output": true }],
+    "storyContext": "Valid anagram check."
+  },
+  {
+    "id": "str_5",
+    "title": "The First Unique Spell",
+    "difficulty": "Easy",
+    "pattern": "HashMap",
+    "tags": ["string", "first-unique", "frequency", "story"],
+    "problemStatement": "During the Grand Arcane Ceremony, the archmage chants a long incantation. The most potent syllable is the one that appears only once in the entire chant — the first unique character. Given a string, find the index of the first character that does not repeat anywhere else in the string. If every character repeats at least once, return -1. Use a frequency map to count occurrences first, then traverse the string once more to find the earliest unique character.",
+    "examples": [{ "input": "loveleetcode", "output": 2 }],
+    "storyContext": "First unique character in string."
+  },
+  {
+    "id": "str_6",
+    "title": "The Run-Length Cipher",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "run-length-encoding", "compression", "story"],
+    "problemStatement": "A legendary spy known as the Shadow Fox encodes urgent battlefield messages using run-length encoding to save precious parchment. Consecutive identical characters are replaced by the character followed by its count. For example, 'aaabbccccdde' becomes 'a3b2c4d2e1'. Given a string, implement this compression technique. Traverse the string once, keeping track of the current character and its streak count. Append the character and count only when the streak breaks.",
+    "examples": [{ "input": "aaabbccccdde", "output": "a3b2c4d2e1" }],
+    "storyContext": "Run-length encoding compression."
+  },
+  {
+    "id": "str_7",
+    "title": "The Vowel Counter Spell",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "vowels", "counting", "story"],
+    "problemStatement": "The power of a wizard's incantation is measured by how many vowels it contains. The ancient order defines vowels as 'a', 'e', 'i', 'o', 'u' regardless of case. Given a magical string, traverse through each character and count the total number of vowels present. This count determines whether the spell is strong enough to summon elemental forces. Implement an efficient single-pass solution.",
+    "examples": [{ "input": "Hello World", "output": 3 }],
+    "storyContext": "Count vowels in string."
+  },
+  {
+    "id": "str_8",
+    "title": "The Capitalization Charm",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "capitalize", "transformation", "story"],
+    "problemStatement": "Young apprentice wizards must master the Capitalization Charm before writing official spell scrolls. The charm requires that the first letter of every word becomes uppercase while the remaining letters in each word become lowercase. Words are separated by single spaces. Given a string, apply this transformation carefully. Split the string into words, process each word individually, and then join them back with spaces.",
+    "examples": [{ "input": "hello world from the wizard", "output": "Hello World From The Wizard" }],
+    "storyContext": "Capitalize each word in string."
+  },
+  {
+    "id": "str_9",
+    "title": "The Valid Parentheses Portal",
+    "difficulty": "Medium",
+    "pattern": "Stack",
+    "tags": ["string", "parentheses", "stack", "story"],
+    "problemStatement": "A shimmering portal guarded by ancient runes only activates when the sequence of brackets is perfectly balanced. The portal string contains '(', ')', '{', '}', '[', ']'. Every opening bracket must have a corresponding closing bracket of the same type in the correct order. Use a stack to push opening brackets and pop them when their matching closing bracket appears. If the stack is empty at the end and no mismatch occurred, the portal opens.",
+    "examples": [{ "input": "()[]{}", "output": true }],
+    "storyContext": "Valid parentheses using stack."
+  },
+  {
+    "id": "str_10",
+    "title": "The Longest Common Prefix Riddle",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "longest-common-prefix", "prefix", "story"],
+    "problemStatement": "The Oracle of Whispers presents you with multiple ancient scrolls. All scrolls begin with the same sacred prefix. Your task is to find the longest common prefix string shared by all given strings in the array. If there is no common prefix at all, return an empty string. Compare characters vertically across all strings until a mismatch is found.",
+    "examples": [{ "input": ["flower", "flow", "flight"], "output": "fl" }],
+    "storyContext": "Longest common prefix."
+  },
+  {
+    "id": "str_11",
+    "title": "The Substring Search Detective",
+    "difficulty": "Easy",
+    "pattern": "String Matching",
+    "tags": ["string", "substring", "needle", "story"],
+    "problemStatement": "As a seasoned detective in the city of Lumora, you must find where a criminal's calling card (the needle) first appears within a long witness statement (the haystack). Return the starting index of the first occurrence. If the needle is empty, return 0. If it doesn't appear, return -1. Think about efficient string matching techniques.",
+    "examples": [{ "input": { "haystack": "sadbutsad", "needle": "sad" }, "output": 0 }],
+    "storyContext": "Find first occurrence of substring (strStr)."
+  },
+  {
+    "id": "str_12",
+    "title": "The Robot's String Cleanup",
+    "difficulty": "Easy",
+    "pattern": "Stack",
+    "tags": ["string", "remove-adjacent", "stack", "story"],
+    "problemStatement": "A diligent cleaning robot moves through a contaminated string and removes any two adjacent identical characters repeatedly until no more removals are possible. For example, in 'abbaca', it first removes 'bb' becoming 'aaca', then removes 'aa' resulting in 'ca'. Use a stack to simulate this process efficiently — push characters and pop when the top matches the current one.",
+    "examples": [{ "input": "abbaca", "output": "ca" }],
+    "storyContext": "Remove all adjacent duplicates in string."
+  },
+  {
+    "id": "str_13",
+    "title": "The Jewels and Stones Collector",
+    "difficulty": "Easy",
+    "pattern": "Hashing",
+    "tags": ["string", "jewels", "stones", "story"],
+    "problemStatement": "You are a royal gem collector. You own a list of jewel types (jewels string) and a large bag of random stones. Count how many stones in your bag are actually precious jewels. Each character in the jewels string represents a type you treasure. Create a fast lookup for jewel types and count matches from the stones string.",
+    "examples": [{ "input": { "jewels": "aA", "stones": "aAAbbbb" }, "output": 3 }],
+    "storyContext": "Jewels and stones (count matching characters)."
+  },
+  {
+    "id": "str_14",
+    "title": "The Caesar Cipher Decoder",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "caesar-cipher", "shift", "story"],
+    "problemStatement": "A intercepted enemy message is encrypted using the ancient Caesar cipher. Each letter is shifted forward by K positions in the alphabet (with wrap-around). Your mission is to decrypt it by shifting each letter backward by K positions. Preserve the case of letters and leave non-letter characters unchanged. Traverse each character and apply modular arithmetic for shifting.",
+    "examples": [{ "input": { "cipher": "khoor", "k": 3 }, "output": "hello" }],
+    "storyContext": "Caesar cipher decryption."
+  },
+  {
+    "id": "str_15",
+    "title": "The Robot Vacuum Path",
+    "difficulty": "Easy",
+    "pattern": "Counting",
+    "tags": ["string", "robot-return", "movement", "story"],
+    "problemStatement": "A smart robot vacuum follows a sequence of moves: 'U' for up, 'D' for down, 'L' for left, and 'R' for right. After completing all movements, determine whether it has returned to its original starting position. Count the net movement in both horizontal and vertical directions. If both nets are zero, the robot is back home.",
+    "examples": [{ "input": "UD", "output": true }],
+    "storyContext": "Robot return to origin."
+  },
+  {
+    "id": "str_16",
+    "title": "The String Permutation Seeker",
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": ["string", "permutation", "sliding-window", "story"],
+    "problemStatement": "A cunning thief knows the safe's password is some rearrangement (permutation) of a known string s1. He has a longer string s2 which is a continuous log of keystrokes. Check if s2 contains any contiguous substring that is a permutation of s1. Use a sliding window of size equal to s1 and maintain character frequency maps to detect matches efficiently.",
+    "examples": [{ "input": { "s1": "ab", "s2": "eidbaooo" }, "output": true }],
+    "storyContext": "Permutation in string (sliding window)."
+  },
+  {
+    "id": "str_17",
+    "title": "The Repeated Substring Pattern",
+    "difficulty": "Easy",
+    "pattern": "String Manipulation",
+    "tags": ["string", "repeated-substring", "pattern", "story"],
+    "problemStatement": "Some magical artifacts are created by endlessly repeating a smaller pattern. Given a string s, determine if it can be constructed by repeating a substring multiple times. For example, 'abcabcabc' is made by repeating 'abc' three times. Think creatively — one clever way is to check if s appears in (s + s) after removing the first and last characters.",
+    "examples": [{ "input": "abab", "output": true }],
+    "storyContext": "Repeated substring pattern."
+  },
+  {
+    "id": "str_18",
+    "title": "The Student's Attendance Record",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "attendance", "pattern-matching", "story"],
+    "problemStatement": "At the prestigious Academy of Arcane Studies, a student is eligible for the final exam only if they have fewer than 2 absences ('A') and no more than 2 consecutive late days ('L'). The attendance record is a string of 'P' (Present), 'A' (Absent), and 'L' (Late). Traverse the record once and validate both conditions simultaneously.",
+    "examples": [{ "input": "PPALLP", "output": true }],
+    "storyContext": "Student attendance record I."
+  },
+  {
+    "id": "str_19",
+    "title": "The Backspace String Compare",
+    "difficulty": "Easy",
+    "pattern": "Stack",
+    "tags": ["string", "backspace", "stack", "story"],
+    "problemStatement": "Two editors typed messages but used '#' as a backspace key to correct mistakes. Given two strings s and t containing lowercase letters and '#', determine if both strings become identical after processing all backspaces. Simulate the typing process using stacks or two pointers from the end for optimal space usage.",
+    "examples": [{ "input": { "s": "ab#c", "t": "ad#c" }, "output": true }],
+    "storyContext": "Backspace string compare."
+  },
+  {
+    "id": "str_20",
+    "title": "The Word Pattern Matcher",
+    "difficulty": "Medium",
+    "pattern": "HashMap",
+    "tags": ["string", "word-pattern", "bijection", "story"],
+    "problemStatement": "A cryptic prophecy follows a strict word pattern. For example, pattern 'abba' means the first and fourth words must be the same, and the second and third words must be the same, but different from the first group. Given a pattern string and a space-separated string s, check if there is a perfect bijection (one-to-one mapping) between pattern letters and words.",
+    "examples": [{ "input": { "pattern": "abba", "s": "dog cat cat dog" }, "output": true }],
+    "storyContext": "Word pattern (bijection mapping)."
+  },
+  {
+    "id": "str_21",
+    "title": "The Ransom Note Writer",
+    "difficulty": "Easy",
+    "pattern": "HashMap",
+    "tags": ["string", "ransom-note", "frequency", "story"],
+    "problemStatement": "A desperate kidnapper is writing a ransom note using letters cut from a magazine. Given the ransom note string and the magazine string, determine if the magazine contains enough letters (with correct frequencies) to construct the entire ransom note. Each letter in the magazine can be used only once.",
+    "examples": [{ "input": { "ransomNote": "aa", "magazine": "aab" }, "output": true }],
+    "storyContext": "Ransom note (can construct from magazine)."
+  },
+  {
+    "id": "str_22",
+    "title": "The Longest Palindrome Builder",
+    "difficulty": "Easy",
+    "pattern": "Greedy",
+    "tags": ["string", "longest-palindrome", "frequency", "story"],
+    "problemStatement": "A master jeweler has a collection of letter-shaped gems and wants to create the longest possible palindromic necklace. You can rearrange the gems in any order. Count the frequency of each character and construct the longest palindrome possible. Remember that at most one character with an odd count can be placed in the center.",
+    "examples": [{ "input": "abccccdd", "output": 7 }],
+    "storyContext": "Longest palindrome from character frequencies."
+  },
+  {
+    "id": "str_23",
+    "title": "The License Key Formatter",
+    "difficulty": "Easy",
+    "pattern": "String Manipulation",
+    "tags": ["string", "license-key", "formatting", "story"],
+    "problemStatement": "The Department of Transportation requires license keys to be reformatted. Given a string with dashes and mixed case letters, remove all dashes, convert everything to uppercase, and then group the characters into chunks of exactly K characters from the right, separated by dashes. The first group from the left can be shorter than K.",
+    "examples": [{ "input": { "s": "2-5g-3-J", "k": 2 }, "output": "25-G3-J" }],
+    "storyContext": "License key formatting."
+  },
+  {
+    "id": "str_24",
+    "title": "The Baseball Game Scorekeeper",
+    "difficulty": "Easy",
+    "pattern": "Stack",
+    "tags": ["string", "baseball-game", "stack", "story"],
+    "problemStatement": "You are the official scorekeeper for an exciting baseball tournament. Operations are recorded as strings: a number means add that score, '+' means add the sum of the last two scores, 'D' means double the last score, and 'C' means remove the last score. Process all operations using a stack and return the total sum of all valid scores at the end.",
+    "examples": [{ "input": ["5", "2", "C", "D", "+"], "output": 30 }],
+    "storyContext": "Baseball game (stack operations)."
+  },
+  {
+    "id": "str_25",
+    "title": "The Goat Latin Translator",
+    "difficulty": "Easy",
+    "pattern": "String Manipulation",
+    "tags": ["string", "goat-latin", "transformation", "story"],
+    "problemStatement": "A quirky farmer speaks only in Goat Latin. For each word in a sentence: if it starts with a vowel, append 'ma'; if it starts with a consonant, move the first letter to the end and then append 'ma'. Finally, append 'a' repeated by the word's position in the sentence (1-based index). Translate the entire sentence following these whimsical rules.",
+    "examples": [{ "input": "I speak Goat Latin", "output": "Imaa peaksmaaa oatGmaaaa atinLmaaaaa" }],
+    "storyContext": "Goat Latin transformation."
+  },
+  {
+    "id": "str_26",
+    "title": "The Unique Morse Code Words",
+    "difficulty": "Easy",
+    "pattern": "HashSet",
+    "tags": ["string", "morse-code", "unique", "story"],
+    "problemStatement": "International Morse code assigns each letter a unique sequence of dots and dashes. Given a list of words, convert each word into its Morse code representation by concatenating the codes of its letters. Count how many unique Morse code strings exist among all the words. Use a set to track uniqueness.",
+    "examples": [{ "input": ["gin", "zen", "gig", "msg"], "output": 2 }],
+    "storyContext": "Unique Morse code representations."
+  },
+  {
+    "id": "str_27",
+    "title": "The Keyboard Row Typist",
+    "difficulty": "Easy",
+    "pattern": "HashSet",
+    "tags": ["string", "keyboard-row", "story"],
+    "problemStatement": "On a standard QWERTY keyboard, letters are arranged in three distinct rows. Find all words from a given list that can be typed using letters from only one single row of the keyboard. Return the matching words in any order. Predefine the three keyboard rows and check each word against them.",
+    "examples": [{ "input": ["Hello", "Alaska", "Dad", "Peace"], "output": ["Alaska", "Dad"] }],
+    "storyContext": "Keyboard row words."
+  },
+  {
+    "id": "str_28",
+    "title": "The String Shifter",
+    "difficulty": "Easy",
+    "pattern": "String Manipulation",
+    "tags": ["string", "shift", "grouping", "story"],
+    "problemStatement": "Two strings are considered shift-related if one can be obtained by shifting every letter of the other by the same amount (with wrap-around in the alphabet). Given an array of strings, group all strings that belong to the same shifting family. Normalize each string by shifting it so the first character becomes 'a' and use this normalized form as a key for grouping.",
+    "examples": [{ "input": ["abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"], "output": [["abc","bcd"], ["acef"], ["xyz"], ["az","ba"], ["a","z"]] }],
+    "storyContext": "Group shifted strings."
+  },
+  {
+    "id": "str_29",
+    "title": "The Reorganizing String Chef",
+    "difficulty": "Medium",
+    "pattern": "Heap",
+    "tags": ["string", "reorganize-string", "greedy", "story"],
+    "problemStatement": "A master chef is preparing a special dish where no two identical ingredients can be placed next to each other in the recipe string. Given a string, rearrange its characters so that no two same characters are adjacent. If it's impossible, return an empty string. Use a max-heap (priority queue) based on character frequencies to always pick the most frequent available character.",
+    "examples": [{ "input": "aab", "output": "aba" }],
+    "storyContext": "Reorganize string (no adjacent same)."
+  },
+  {
+    "id": "str_30",
+    "title": "The Longest Substring Without Repeating",
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": ["string", "longest-substring", "sliding-window", "story"],
+    "problemStatement": "A historian is studying the longest stretch of ancient text where no character repeats. Given a string, find the length of the longest substring without any repeating characters. Use a sliding window with a set or map to track the last seen index of each character and move the left pointer when duplicates are found.",
+    "examples": [{ "input": "abcabcbb", "output": 3 }],
+    "storyContext": "Longest substring without repeating characters."
+  },
+  {
+    "id": "str_31",
+    "title": "The Minimum Window Substring",
+    "difficulty": "Hard",
+    "pattern": "Sliding Window",
+    "tags": ["string", "minimum-window", "sliding-window", "story"],
+    "problemStatement": "A detective needs to find the smallest contiguous section of a large document (string s) that contains all the required clues (all characters from string t, including duplicates). Find the shortest such substring. Use two pointers and a frequency counter to maintain a valid window and shrink it as much as possible when valid.",
+    "examples": [{ "input": { "s": "ADOBECODEBANC", "t": "ABC" }, "output": "BANC" }],
+    "storyContext": "Minimum window substring containing all characters of t."
+  },
+  {
+    "id": "str_32",
+    "title": "The Longest Palindromic Substring",
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming",
+    "tags": ["string", "longest-palindrome", "substring", "story"],
+    "problemStatement": "An ancient scroll holds a hidden prophecy within its longest palindromic substring. Given a string, find the longest contiguous substring that reads the same forwards and backwards. You can expand around centers (for both odd and even length palindromes) or use dynamic programming to track valid palindrome ranges.",
+    "examples": [{ "input": "babad", "output": "bab" }],
+    "storyContext": "Longest palindromic substring."
+  },
+  {
+    "id": "str_33",
+    "title": "The Zigzag Conversion",
+    "difficulty": "Medium",
+    "pattern": "String Manipulation",
+    "tags": ["string", "zigzag", "conversion", "story"],
+    "problemStatement": "A secret message was written in a zigzag pattern across multiple rows for secure transport. Given a string and the number of rows, convert the string into this zigzag pattern and then read it line by line to produce the final encoded string. Simulate the movement going down and then up diagonally across rows.",
+    "examples": [{ "input": { "s": "PAYPALISHIRING", "numRows": 3 }, "output": "PAHNAPLSIIGYIR" }],
+    "storyContext": "Zigzag conversion."
+  },
+  {
+    "id": "str_34",
+    "title": "The String to Integer Converter",
+    "difficulty": "Medium",
+    "pattern": "Traversal",
+    "tags": ["string", "atoi", "conversion", "story"],
+    "problemStatement": "You are building a parser for an old machine that reads strings and converts them into integers following strict rules: ignore leading whitespace, handle optional '+' or '-' sign, read digits until a non-digit appears, and clamp the result within 32-bit signed integer limits if it overflows. Carefully implement all edge cases as per atoi specifications.",
+    "examples": [{ "input": " -42", "output": -42 }],
+    "storyContext": "String to integer (atoi)."
+  },
+  {
+    "id": "str_35",
+    "title": "The Integer to Roman Numeral",
+    "difficulty": "Medium",
+    "pattern": "Greedy",
+    "tags": ["string", "roman-numerals", "conversion", "story"],
+    "problemStatement": "The Roman Emperor wants his reign years engraved in traditional Roman numerals. Given an integer, convert it into a Roman numeral string using the standard symbols and subtractive notation. Always choose the largest possible Roman value that does not exceed the remaining number in a greedy manner.",
+    "examples": [{ "input": 1994, "output": "MCMXCIV" }],
+    "storyContext": "Integer to Roman numeral."
+  },
+  {
+    "id": "str_36",
+    "title": "The Roman Numeral to Integer",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "roman-numerals", "parsing", "story"],
+    "problemStatement": "An archaeologist discovered a weathered stone tablet with a Roman numeral inscription. Convert this Roman numeral string back into its integer value. Remember that when a smaller value precedes a larger one, it means subtraction (e.g., IV = 4, IX = 9). Traverse the string and compare current and next values.",
+    "examples": [{ "input": "MCMXCIV", "output": 1994 }],
+    "storyContext": "Roman numeral to integer."
+  },
+  {
+    "id": "str_37",
+    "title": "The Valid Number Validator",
+    "difficulty": "Hard",
+    "pattern": "State Machine",
+    "tags": ["string", "valid-number", "parsing", "story"],
+    "problemStatement": "A highly precise scientific instrument only accepts valid numeric inputs including integers, decimals, and scientific notation (e.g., '2e10', '-0.1', '+3.14e-7'). Given a string, determine whether it represents a valid number according to strict rules. Implement a state machine or use careful parsing to handle all possible valid and invalid cases.",
+    "examples": [{ "input": "0.1", "output": true }],
+    "storyContext": "Valid number validation."
+  },
+  {
+    "id": "str_38",
+    "title": "The Wildcard Matcher",
+    "difficulty": "Hard",
+    "pattern": "Dynamic Programming",
+    "tags": ["string", "wildcard-matching", "dp", "story"],
+    "problemStatement": "A advanced file system uses wildcard patterns where '?' matches any single character and '*' matches any sequence of characters (including empty). Given a string s and a pattern p, determine if the pattern matches the entire string exactly. This requires careful DP handling of the '*' wildcard.",
+    "examples": [{ "input": { "s": "aa", "p": "*" }, "output": true }],
+    "storyContext": "Wildcard pattern matching."
+  },
+  {
+    "id": "str_39",
+    "title": "The Regular Expression Matcher",
+    "difficulty": "Hard",
+    "pattern": "Dynamic Programming",
+    "tags": ["string", "regex-matching", "dp", "story"],
+    "problemStatement": "You are implementing a simplified regex engine that supports '.' (matches any single character) and '*' (matches zero or more of the preceding element). Given a string s and pattern p, check if the pattern matches the entire input string. Use dynamic programming to build a table tracking matching states.",
+    "examples": [{ "input": { "s": "aa", "p": "a*" }, "output": true }],
+    "storyContext": "Regular expression matching ('.' and '*')."
+  },
+  {
+    "id": "str_40",
+    "title": "The Encode and Decode Strings",
+    "difficulty": "Medium",
+    "pattern": "String Manipulation",
+    "tags": ["string", "encode-decode", "delimiter", "story"],
+    "problemStatement": "A messenger must transmit a list of strings across a network channel that accepts only a single string. Design an encoding scheme that combines all strings into one encoded string, and a decoding function that can perfectly restore the original list. One robust approach is to prefix each string with its length followed by a delimiter (e.g., '5#hello').",
+    "examples": [{ "input": ["hello", "world", "how", "are", "you"], "output": "5#hello5#world3#how3#are3#you" }],
+    "storyContext": "Encode and decode strings (length + delimiter)."
+  },
+  {
+    "id": "str_41",
+    "title": "The Enchanted Mirror Reflection",
+    "difficulty": "Medium",
+    "pattern": "Two Pointers",
+    "tags": ["string", "palindrome", "reflection"],
+    "problemStatement": "In the Hall of Eternal Mirrors inside an ancient elven palace, every word spoken is reflected perfectly by the enchanted glass. However, the mirror only accepts strings that remain unchanged when read both forwards and backwards after removing all special characters and ignoring case. You are given a long magical inscription. Your task is to determine whether this inscription is a true mirror reflection — meaning it forms a valid palindrome when considering only alphanumeric characters in a case-insensitive way. Walk through the string from both ends simultaneously, skipping non-alphanumeric symbols, to verify this mystical property.",
+    "examples": [{ "input": "Was it a car or a cat I saw?", "output": true }],
+    "storyContext": "Validate palindrome ignoring special characters and case."
+  },
+  {
+    "id": "str_42",
+    "title": "The Forgotten Kingdom Scroll Decoder",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "reverse-words"],
+    "problemStatement": "A royal scribe in the Forgotten Kingdom wrote an important decree but accidentally reversed the order of every word while keeping the letters inside each word intact. You discover the corrupted scroll. Your mission is to restore the original decree by reversing the order of the words without changing the characters within each word. Words are separated by one or more spaces. Return the fully restored message with exactly one space between words and no leading or trailing spaces.",
+    "examples": [{ "input": "the  sky  is   blue", "output": "blue is sky the" }],
+    "storyContext": "Reverse words in a string."
+  },
+  {
+    "id": "str_43",
+    "title": "The Whispering Forest Echo",
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": ["string", "longest-substring", "distinct"],
+    "problemStatement": "Deep in the Whispering Forest, ancient trees communicate through echoes. The longest echo is the longest sequence of unique sounds (characters) that never repeats. Given a string representing the forest's song, find the length of the longest substring where all characters are distinct. Use a dynamic sliding window that expands right and contracts left whenever a duplicate sound is heard, keeping track of the maximum length discovered.",
+    "examples": [{ "input": "pwwkew", "output": 3 }],
+    "storyContext": "Longest substring with unique characters."
+  },
+  {
+    "id": "str_44",
+    "title": "The Royal Cipher Ring",
+    "difficulty": "Hard",
+    "pattern": "Dynamic Programming",
+    "tags": ["string", "palindromic-substring", "dp"],
+    "problemStatement": "The royal family passes down a magical cipher ring that reveals hidden messages. The most powerful secret lies within the longest palindromic substring of the royal inscription. Given a string, find and return the longest contiguous substring that reads the same forwards and backwards. You may expand around every possible center (both odd and even lengths) or build a DP table to track which substrings are palindromes, carefully expanding the boundaries of discovered palindromes.",
+    "examples": [{ "input": "cbbd", "output": "bb" }],
+    "storyContext": "Longest palindromic substring."
+  },
+  {
+    "id": "str_45",
+    "title": "The Alchemist's Ingredient Mixer",
+    "difficulty": "Easy",
+    "pattern": "Hashing",
+    "tags": ["string", "anagram", "grouping"],
+    "problemStatement": "In the Alchemist Guild, potions are created by mixing ingredients that are anagrams of each other. You are given a list of ingredient names. Group all ingredients that are anagrams together. Two strings are anagrams if they contain the same characters with identical frequencies after sorting or counting. Return the groups in any order. Use a frequency signature or sorted string as a key in a map to cluster related ingredients efficiently.",
+    "examples": [{ "input": ["eat","tea","tan","ate","nat","bat"], "output": [["eat","tea","ate"],["tan","nat"],["bat"]] }],
+    "storyContext": "Group anagrams."
+  },
+  {
+    "id": "str_46",
+    "title": "The Time Traveler's Diary",
+    "difficulty": "Medium",
+    "pattern": "String Manipulation",
+    "tags": ["string", "rearrange", "frequency"],
+    "problemStatement": "A time traveler's diary has become jumbled. No two identical events (characters) can appear consecutively in the final readable version. Given a string, rearrange its characters so that no two same characters are adjacent. If it is impossible to rearrange under this rule, return an empty string. Prioritize placing the most frequent characters first using a max-heap or sorting by frequency.",
+    "examples": [{ "input": "aabb", "output": "abab" }],
+    "storyContext": "Rearrange string with no adjacent duplicates."
+  },
+  {
+    "id": "str_47",
+    "title": "The Sacred Word Ladder",
+    "difficulty": "Hard",
+    "pattern": "BFS",
+    "tags": ["string", "word-ladder", "transformation"],
+    "problemStatement": "In the Temple of Eternal Words, priests climb a sacred ladder by changing one letter at a time, transforming the starting word into the ending word. Each intermediate step must be a valid word from the given dictionary. Given a beginWord, endWord, and a wordList, return the length of the shortest transformation sequence. If no such transformation exists, return 0. This requires exploring all possible one-letter changes using BFS.",
+    "examples": [{ "input": { "beginWord": "hit", "endWord": "cog", "wordList": ["hot","dot","dog","lot","log","cog"] }, "output": 5 }],
+    "storyContext": "Word ladder transformation length."
+  },
+  {
+    "id": "str_48",
+    "title": "The Shadow Clone Technique",
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": ["string", "minimum-window", "coverage"],
+    "problemStatement": "A ninja master needs the smallest scroll segment that contains all the secret techniques listed in a required pattern string. Given a large document string s and a pattern string t, find the shortest contiguous substring in s that includes all characters from t with their required frequencies. Use two pointers to maintain a valid window and shrink it whenever all required characters are covered.",
+    "examples": [{ "input": { "s": "ADOBECODEBANC", "t": "ABC" }, "output": "BANC" }],
+    "storyContext": "Minimum window substring."
+  },
+  {
+    "id": "str_49",
+    "title": "The Spellbook Concatenation",
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming",
+    "tags": ["string", "word-break", "dp"],
+    "problemStatement": "A young sorcerer has a long magical incantation written without spaces. He possesses a dictionary of valid spell words. Determine whether the entire incantation can be segmented into a space-separated sequence of one or more dictionary words. Use dynamic programming where dp[i] represents whether the substring from start to i can be formed using the dictionary.",
+    "examples": [{ "input": { "s": "leetcode", "wordDict": ["leet","code"] }, "output": true }],
+    "storyContext": "Word break possibility."
+  },
+  {
+    "id": "str_50",
+    "title": "The Cosmic Message Alignment",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "common-prefix"],
+    "problemStatement": "Astronomers received signals from multiple distant galaxies. All signals begin with the same cosmic prefix. Given an array of message strings, find the longest common prefix shared by all of them. If no common prefix exists, return an empty string. Compare characters column-wise across all strings until a mismatch occurs.",
+    "examples": [{ "input": ["flower","flow","flight"], "output": "fl" }],
+    "storyContext": "Longest common prefix."
+  },
+  {
+    "id": "str_51",
+    "title": "The Pirate's Treasure Map Decoder",
+    "difficulty": "Medium",
+    "pattern": "String Matching",
+    "tags": ["string", "repeated-pattern"],
+    "problemStatement": "An old pirate's treasure map is suspected to be made by repeating a secret smaller pattern many times. Given the full map string, determine if it can be completely constructed by repeating one of its substrings at least twice. Think cleverly — check if the string appears inside a cleverly constructed doubled version of itself.",
+    "examples": [{ "input": "abab", "output": true }],
+    "storyContext": "Repeated substring pattern check."
+  },
+  {
+    "id": "str_52",
+    "title": "The Ancient Rune Simplifier",
+    "difficulty": "Easy",
+    "pattern": "Stack",
+    "tags": ["string", "remove-duplicates"],
+    "problemStatement": "Ancient runes lose power when two identical symbols appear next to each other. Repeatedly remove any pair of adjacent duplicate characters until no more removals are possible. Given the rune string, return the final simplified version after all possible removals. A stack is perfect for simulating this collapsing process.",
+    "examples": [{ "input": "abbaca", "output": "ca" }],
+    "storyContext": "Remove all adjacent duplicates."
+  },
+  {
+    "id": "str_53",
+    "title": "The Multilingual Ambassador",
+    "difficulty": "Medium",
+    "pattern": "HashMap",
+    "tags": ["string", "word-pattern"],
+    "problemStatement": "A royal ambassador uses a secret pattern to encode messages across kingdoms. Given a pattern string like 'abba' and a message with space-separated words, check if the words follow the exact same mapping pattern — where each letter maps to exactly one unique word and each word maps to exactly one letter (bijection).",
+    "examples": [{ "input": { "pattern": "abba", "s": "dog cat cat dog" }, "output": true }],
+    "storyContext": "Word pattern matching."
+  },
+  {
+    "id": "str_54",
+    "title": "The Emperor's Roman Chronicle",
+    "difficulty": "Medium",
+    "pattern": "Greedy",
+    "tags": ["string", "integer-to-roman"],
+    "problemStatement": "The great Emperor wants his victories recorded in majestic Roman numerals. Given a positive integer, convert it into its Roman numeral representation using the standard seven symbols and subtractive notation. Always choose the largest possible Roman value that does not exceed the remaining number in a greedy manner.",
+    "examples": [{ "input": 1994, "output": "MCMXCIV" }],
+    "storyContext": "Integer to Roman conversion."
+  },
+  {
+    "id": "str_55",
+    "title": "The Archaeologist's Discovery",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "roman-to-integer"],
+    "problemStatement": "You unearthed a stone tablet bearing Roman numerals. Convert this Roman numeral string back into its decimal value. Remember that when a smaller numeral appears before a larger one, it means subtraction. Traverse the string and compare each symbol with the next to decide whether to add or subtract its value.",
+    "examples": [{ "input": "MCMXCIV", "output": 1994 }],
+    "storyContext": "Roman numeral to integer."
+  },
+  {
+    "id": "str_56",
+    "title": "The Cursed Backspace Manuscript",
+    "difficulty": "Easy",
+    "pattern": "Stack",
+    "tags": ["string", "backspace-compare"],
+    "problemStatement": "Two ancient manuscripts were written using '#' as a magical backspace that erases the previous character. Given two strings containing letters and '#', determine if both manuscripts represent the same final text after processing all backspaces. You can simulate using stacks or use two pointers starting from the end.",
+    "examples": [{ "input": { "s": "ab#c", "t": "ad#c" }, "output": true }],
+    "storyContext": "Compare strings with backspaces."
+  },
+  {
+    "id": "str_57",
+    "title": "The Ransom Letter Forger",
+    "difficulty": "Easy",
+    "pattern": "HashMap",
+    "tags": ["string", "ransom-note"],
+    "problemStatement": "A cunning forger is creating a ransom letter using characters cut from old magazines. Given the ransom note and magazine strings, check if the magazine contains enough of each character (with frequencies) to construct the entire ransom note. Each character in the magazine can be used only once.",
+    "examples": [{ "input": { "ransomNote": "aa", "magazine": "aab" }, "output": true }],
+    "storyContext": "Can construct ransom note from magazine."
+  },
+  {
+    "id": "str_58",
+    "title": "The Zigzag Prophecy Scroll",
+    "difficulty": "Medium",
+    "pattern": "String Manipulation",
+    "tags": ["string", "zigzag-conversion"],
+    "problemStatement": "The high prophet wrote his vision in a zigzag pattern across multiple rows on a long scroll for protection. Given the original message and number of rows, reconstruct how the text would look when written in zigzag and then read row by row. Simulate going down and diagonally up across the rows.",
+    "examples": [{ "input": { "s": "PAYPALISHIRING", "numRows": 3 }, "output": "PAHNAPLSIIGYIR" }],
+    "storyContext": "Zigzag string conversion."
+  },
+  {
+    "id": "str_59",
+    "title": "The Number Validator Oracle",
+    "difficulty": "Hard",
+    "pattern": "State Machine",
+    "tags": ["string", "valid-number"],
+    "problemStatement": "The Great Oracle only answers if given a valid number in any format — integer, decimal, or scientific notation. Given a string, determine whether it represents a valid number according to strict scientific rules, including signs, decimals, exponents, and edge cases like '-.9' or '3e+7'. Implement a finite state machine to validate all possible cases.",
+    "examples": [{ "input": "2e10", "output": true }],
+    "storyContext": "Validate numeric string."
+  },
+  {
+    "id": "str_60",
+    "title": "The Wildcard File Hunter",
+    "difficulty": "Hard",
+    "pattern": "Dynamic Programming",
+    "tags": ["string", "wildcard-matching"],
+    "problemStatement": "A master hacker is searching files using wildcards where '?' matches any single character and '*' matches any sequence of characters. Given a filename string and a wildcard pattern, determine if the pattern matches the entire filename exactly. This requires careful DP handling of the '*' wildcard.",
+    "examples": [{ "input": { "s": "adceb", "p": "*a*b" }, "output": true }],
+    "storyContext": "Wildcard pattern matching."
+  },
+  {
+    "id": "str_61",
+    "title": "The Regex Guardian",
+    "difficulty": "Hard",
+    "pattern": "Dynamic Programming",
+    "tags": ["string", "regex-matching"],
+    "problemStatement": "You are building the guardian of the sacred archive that supports simplified regular expressions with '.' matching any character and '*' matching zero or more of the preceding element. Given an input string and pattern, check if the pattern matches the entire string. Use dynamic programming to track matching states.",
+    "examples": [{ "input": { "s": "aab", "p": "c*a*b" }, "output": true }],
+    "storyContext": "Regular expression matching."
+  },
+  {
+    "id": "str_62",
+    "title": "The Secure Message Encoder",
+    "difficulty": "Medium",
+    "pattern": "String Manipulation",
+    "tags": ["string", "encode-decode"],
+    "problemStatement": "A resistance fighter must send multiple secret messages through enemy lines that only allow one string transmission. Design an encoding method that combines all messages into one string using length prefixing and a delimiter, then implement the decoder to perfectly recover the original list of strings.",
+    "examples": [{ "input": ["hello","world"], "output": "5#hello5#world" }],
+    "storyContext": "Encode and decode list of strings."
+  },
+  {
+    "id": "str_63",
+    "title": "The Vowel Spell Strength",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "vowel-count"],
+    "problemStatement": "The strength of an ancient spell is determined by the number of mystical vowels it contains. Given a string, count how many vowels (a, e, i, o, u, both cases) appear in the incantation. This count decides if the spell is powerful enough to break the dark curse.",
+    "examples": [{ "input": "The quick brown fox", "output": 5 }],
+    "storyContext": "Count vowels in string."
+  },
+  {
+    "id": "str_64",
+    "title": "The Title Capitalizer",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "capitalize"],
+    "problemStatement": "Every official spellbook title must follow strict capitalization rules. Given a sentence, capitalize the first letter of each word and convert the remaining letters to lowercase. Words are separated by spaces. Return the properly formatted magical title.",
+    "examples": [{ "input": "the lord of the rings", "output": "The Lord Of The Rings" }],
+    "storyContext": "Title case conversion."
+  },
+  {
+    "id": "str_65",
+    "title": "The Caesar's Secret Dispatch",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "caesar-cipher"],
+    "problemStatement": "Caesar's generals send encrypted dispatches where each letter is shifted by a secret number. Given the cipher text and shift value, decrypt the message by shifting letters backward. Preserve case and leave non-letter characters unchanged.",
+    "examples": [{ "input": { "s": "Khoor", "k": 3 }, "output": "Hello" }],
+    "storyContext": "Caesar cipher decryption."
+  },
+  {
+    "id": "str_66",
+    "title": "The Run Length Battlefield Report",
+    "difficulty": "Easy",
+    "pattern": "Traversal",
+    "tags": ["string", "run-length"],
+    "problemStatement": "The army scout compresses battlefield reports using run-length encoding. Given a string of consecutive repeating units, compress it by replacing each group with the character followed by its count. Return the compressed report string.",
+    "examples": [{ "input": "aaabbbcccaa", "output": "a3b3c3a2" }],
+    "storyContext": "Run length encoding."
+  },
+  {
+    "id": "str_67",
+    "title": "The Goat Language Translator",
+    "difficulty": "Easy",
+    "pattern": "String Manipulation",
+    "tags": ["string", "goat-latin"],
+    "problemStatement": "The village elder speaks only in Goat Latin. For each word: if it starts with a vowel add 'ma', if consonant move first letter to end then add 'ma', and finally append 'a' equal to the word's position. Translate the full sentence into Goat Latin.",
+    "examples": [{ "input": "I love coding", "output": "Imaa ovelmaaa odingcmaaaa" }],
+    "storyContext": "Goat Latin transformation."
+  },
+  {
+    "id": "str_68",
+    "title": "The License Key Formatter",
+    "difficulty": "Easy",
+    "pattern": "String Manipulation",
+    "tags": ["string", "license-key"],
+    "problemStatement": "Government regulations require license keys to be reformatted. Remove all dashes, convert to uppercase, and group into chunks of K characters from the right, separated by dashes. The first group may be shorter.",
+    "examples": [{ "input": { "s": "2-5g-3-J", "k": 4 }, "output": "25G3-J" }],
+    "storyContext": "Reformat license key."
+  },
+  {
+    "id": "str_69",
+    "title": "The Morse Code Translator",
+    "difficulty": "Easy",
+    "pattern": "HashSet",
+    "tags": ["string", "morse-code"],
+    "problemStatement": "International spies use Morse code. Given a list of words, convert each to its Morse representation and count how many unique Morse sequences exist. Use a set to track distinct transformations.",
+    "examples": [{ "input": ["gin","zen","gig","msg"], "output": 2 }],
+    "storyContext": "Unique Morse code count."
+  },
+  {
+    "id": "str_70",
+    "title": "The Keyboard Row Words",
+    "difficulty": "Easy",
+    "pattern": "HashSet",
+    "tags": ["string", "keyboard"],
+    "problemStatement": "A typing competition only allows words typed from a single keyboard row. Given a list of words, return all words that can be typed using letters from only one row of the QWERTY keyboard.",
+    "examples": [{ "input": ["Hello","Alaska","Dad","Peace"], "output": ["Alaska","Dad"] }],
+    "storyContext": "Words from one keyboard row."
+  },
+  {
+    "id": "str_71",
+    "title": "The Shifted String Clan",
+    "difficulty": "Medium",
+    "pattern": "HashMap",
+    "tags": ["string", "group-shifted"],
+    "problemStatement": "Strings belong to the same clan if one can be obtained by shifting all letters of another by the same amount. Given an array of strings, group them into their respective shift clans. Normalize each string by shifting so first character becomes 'a'.",
+    "examples": [{ "input": ["abc","bcd","acef"], "output": [["abc","bcd"],["acef"]] }],
+    "storyContext": "Group shifted strings."
+  }
+]
