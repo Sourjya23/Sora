@@ -13,7 +13,20 @@ import AdaptivePractice from "./pages/AdaptivePractice";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <div className="min-h-screen relative text-white bg-transparent">
+        {/* Global Grid bg */}
+        <div
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+            backgroundSize: "52px 52px",
+            maskImage: "radial-gradient(ellipse at center, black 20%, transparent 70%)",
+            WebkitMaskImage: "radial-gradient(ellipse at center, black 20%, transparent 70%)",
+          }}
+        />
+        <div className="relative z-10 flex flex-col min-h-screen w-full">
+          <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
@@ -61,7 +74,9 @@ function App() {
             </ProtectedRoute>
           }
         />
-      </Routes>
+        </Routes>
+        </div>
+      </div>
     </BrowserRouter>
   );
 }

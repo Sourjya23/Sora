@@ -174,17 +174,7 @@ function Hero() {
 
   return (
     <section className="min-h-screen bg-transparent flex items-center justify-center px-8 pt-32 pb-16 relative overflow-hidden">
-      {/* Grid bg */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)",
-          backgroundSize: "52px 52px",
-          maskImage: "radial-gradient(ellipse at center, black 20%, transparent 70%)",
-          WebkitMaskImage: "radial-gradient(ellipse at center, black 20%, transparent 70%)",
-        }}
-      />
+
 
       {/* Content */}
       <div className="relative z-10 text-center max-w-[760px] animate-[fadeUp_0.8s_ease_both]">

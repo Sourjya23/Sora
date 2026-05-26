@@ -437,7 +437,7 @@ const handleSubmitCode = async () => {
           </div>
 
           {/* Chat/Command Input fixed at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white/90 to-transparent pt-12">
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#09090b] via-[#09090b]/90 to-transparent pt-12">
             <form onSubmit={handleGenerateProblem} className="relative shadow-2xl">
               <input
                 type="text"
