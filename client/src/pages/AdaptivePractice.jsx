@@ -17,6 +17,14 @@ const LANGUAGES = {
   swift: { name: "Swift", monaco: "swift", jdoodle: "swift", versionIndex: "4" },
 };
 
+const BOILERPLATES = {
+  javascript: "function solve() {\n  // Write your code here\n}\n\nconsole.log(solve());",
+  python: "def solve():\n    # Write your code here\n    pass\n\nif __name__ == '__main__':\n    solve()",
+  java: "public class Main {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
+  cpp: "#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write your code here\n    return 0;\n}",
+  csharp: "using System;\n\nclass Program {\n    static void Main() {\n        // Write your code here\n    }\n}"
+};
+
 const QUICK_FILTERS = [
   { label: "Easy Arrays", query: "easy array" },
   { label: "Two Pointers", query: "two pointers" },
@@ -154,7 +162,17 @@ export default function AdaptivePractice() {
     }
   };
 
-  const handleSubmitCode = async () => {
+  
+  const handleLanguageChange = (e) => {
+    const newLang = e.target.value;
+    setLanguage(newLang);
+    const isStarter = !code || code === "// Your code here" || code === "// Start coding here..." || Object.values(BOILERPLATES).includes(code);
+    if (isStarter) {
+      setCode(BOILERPLATES[newLang] || "// Your code here");
+    }
+  };
+
+const handleSubmitCode = async () => {
     if (!problem || isEvaluating) return;
     setIsEvaluating(true);
     setEvaluationResult(null);
@@ -200,14 +218,14 @@ export default function AdaptivePractice() {
     if (!text) return null;
     return text.split("\n").map((line, i) => {
       if (line.startsWith("## ")) return <h2 key={i} className="text-xl font-black text-white mb-3">{line.replace("## ", "")}</h2>;
-      if (line.startsWith("### ")) return <h3 key={i} className="text-sm font-bold text-violet-400 mt-4 mb-2 uppercase tracking-wider">{line.replace("### ", "")}</h3>;
+      if (line.startsWith("### ")) return <h3 key={i} className="text-sm font-bold text-white mt-4 mb-2 uppercase tracking-wider">{line.replace("### ", "")}</h3>;
       if (line.startsWith("**") && line.endsWith("**")) return <p key={i} className="text-sm font-bold text-white mt-2">{line.replace(/\*\*/g, "")}</p>;
-      if (line.startsWith("- ")) return <li key={i} className="text-sm text-slate-300 ml-4 list-disc">{line.replace("- ", "")}</li>;
+      if (line.startsWith("- ")) return <li key={i} className="text-sm text-zinc-300 ml-4 list-disc">{line.replace("- ", "")}</li>;
       if (line.trim() === "") return <br key={i} />;
       // Bold inline
       const parts = line.split(/(\*\*.*?\*\*)/g);
       return (
-        <p key={i} className="text-sm text-slate-300 leading-relaxed">
+        <p key={i} className="text-sm text-zinc-300 leading-relaxed">
           {parts.map((part, j) =>
             part.startsWith("**") && part.endsWith("**") ? (
               <strong key={j} className="text-white font-semibold">{part.replace(/\*\*/g, "")}</strong>
@@ -221,26 +239,26 @@ export default function AdaptivePractice() {
   };
 
   return (
-    <div className="h-screen bg-[#0a0a0a] text-slate-200 flex flex-col font-sans">
+    <div className="h-screen bg-transparent text-zinc-200 flex flex-col font-sans">
       {/* Top Navbar */}
-      <div className="h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4 shrink-0 z-10">
+      <div className="h-14 bg-white/5 backdrop-blur-lg border-b border-white/10 flex items-center justify-between px-4 shrink-0 z-10">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/candidate-dashboard")} className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
-            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+          <button onClick={() => navigate("/candidate-dashboard")} className="p-2 hover:bg-white/20/10 rounded-lg transition-colors">
+            <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
           </button>
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="flex items-center gap-2 p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white" title="Toggle History">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="flex items-center gap-2 p-2 hover:bg-white/20/10 rounded-lg transition-colors text-zinc-400 hover:text-white" title="Toggle History">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
             <span className="text-xs font-bold uppercase tracking-wider">History</span>
           </button>
-          <h1 className="text-sm font-bold text-slate-200 tracking-wide ml-2">
-            Adaptive Problem Solver <span className="text-[10px] bg-emerald-600/20 text-emerald-400 px-2 py-0.5 rounded-full ml-2 border border-emerald-500/20">INSTANT</span>
-            <span className="text-[10px] text-slate-500 ml-2">65 curated problems</span>
+          <h1 className="text-sm font-bold text-zinc-200 tracking-wide ml-2">
+            Adaptive Problem Solver <span className="text-[10px] bg-emerald-600/20 text-emerald-700 px-2 py-0.5 rounded-full ml-2 border border-emerald-500/20">INSTANT</span>
+            <span className="text-[10px] text-zinc-400 ml-2">65 curated problems</span>
           </h1>
         </div>
         <div>
           <button 
             onClick={() => { setProblem(null); setEvaluationResult(null); setSearchMeta(null); setCode("// Your code here"); setQuery(""); }}
-            className="text-xs bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg transition-colors"
+            className="text-xs bg-white/10 hover:bg-white/20/20 text-white px-3 py-1.5 rounded-lg transition-colors"
           >
             + New Problem
           </button>
@@ -250,24 +268,24 @@ export default function AdaptivePractice() {
       <div className="flex-1 flex overflow-hidden">
         {/* SIDEBAR: History */}
         {sidebarOpen && (
-          <div className="w-64 bg-[#0a0a0a] border-r border-slate-800 flex flex-col shrink-0 overflow-hidden">
-            <div className="p-4 border-b border-slate-800">
-              <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Problem History</h2>
+          <div className="w-64 bg-white/5 backdrop-blur-lg/5 border-r border-white/10 flex flex-col shrink-0 overflow-hidden">
+            <div className="p-4 border-b border-white/10">
+              <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Problem History</h2>
             </div>
             <div className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-hide">
               {history.length === 0 ? (
-                <p className="text-xs text-slate-600 text-center mt-4">No history yet.</p>
+                <p className="text-xs text-zinc-400 text-center mt-4">No history yet.</p>
               ) : (
                 history.map((hItem) => (
                   <button
                     key={hItem._id}
                     onClick={() => loadHistoryProblem(hItem._id)}
-                    className={`w-full text-left p-3 rounded-lg transition-colors ${problem?._id === hItem._id ? 'bg-slate-800/80 border border-slate-700' : 'hover:bg-slate-800/50 border border-transparent'}`}
+                    className={`w-full text-left p-3 rounded-lg transition-colors ${problem?._id === hItem._id ? 'bg-white/10/80 border border-white/20' : 'hover:bg-white/20/10/50 border border-transparent'}`}
                   >
                     <p className="text-xs text-white font-medium truncate">{hItem.title}</p>
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-[10px] text-violet-400 font-bold">{hItem.topic}</span>
-                      <span className="text-[10px] text-emerald-400">ELO: {hItem.difficultyScore}</span>
+                      <span className="text-[10px] text-white font-bold">{hItem.topic}</span>
+                      <span className="text-[10px] text-emerald-700">ELO: {hItem.difficultyScore}</span>
                     </div>
                   </button>
                 ))
@@ -279,17 +297,17 @@ export default function AdaptivePractice() {
         <Group orientation="horizontal" className="flex-1">
           {/* LEFT PANE: Problem Context & Chat Input */}
           <Panel defaultSize={35} minSize={20}>
-            <div className={`h-full flex flex-col border-r border-slate-800 bg-slate-900/50 relative shrink-0 transition-all`}>
+            <div className={`h-full flex flex-col border-r border-white/10 bg-white/5 relative shrink-0 transition-all`}>
               
               {/* Main Problem Display Area */}
           <div className="flex-1 overflow-y-auto p-6 scrollbar-hide pb-32">
             {!problem && !loadingProblem && (
               <div className="flex flex-col items-center justify-center h-full text-center max-w-sm mx-auto">
                 <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
-                  <svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                  <svg className="w-8 h-8 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
                 <h2 className="text-xl font-bold text-white mb-2">Search DSA Problems</h2>
-                <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+                <p className="text-sm text-zinc-400 mb-6 leading-relaxed">
                   Instantly search from 65 curated, verified problems. No waiting, no hallucinations.
                 </p>
                 
@@ -299,7 +317,7 @@ export default function AdaptivePractice() {
                     <button
                       key={filter.label}
                       onClick={() => handleQuickFilter(filter.query)}
-                      className="text-xs bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-slate-700 hover:text-white transition-all border border-slate-700/50 hover:border-slate-600"
+                      className="text-xs bg-white/10 text-zinc-300 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-white/20/20 hover:text-white transition-all border border-white/20/50 hover:border-white/30"
                     >
                       {filter.label}
                     </button>
@@ -310,8 +328,8 @@ export default function AdaptivePractice() {
 
             {loadingProblem && (
               <div className="flex flex-col items-center justify-center h-full">
-                <div className="w-8 h-8 border-3 border-slate-800 border-t-emerald-500 rounded-full animate-spin"></div>
-                <p className="mt-4 text-sm font-bold text-emerald-400">Searching problem bank...</p>
+                <div className="w-8 h-8 border-3 border-white/10 border-t-emerald-500 rounded-full animate-spin"></div>
+                <p className="mt-4 text-sm font-bold text-emerald-700">Searching problem bank...</p>
               </div>
             )}
 
@@ -320,7 +338,7 @@ export default function AdaptivePractice() {
                 {/* Search Meta Badge */}
                 {searchMeta && (
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 px-2 py-1 rounded border border-emerald-500/20">
                       {searchMeta.pattern}
                     </span>
                     <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${
@@ -330,11 +348,11 @@ export default function AdaptivePractice() {
                     }`}>
                       {searchMeta.difficulty}
                     </span>
-                    <span className="text-[10px] text-slate-500 font-bold">
+                    <span className="text-[10px] text-zinc-400 font-bold">
                       ELO: {problem.difficultyScore}
                     </span>
                     {searchMeta.tags?.map((tag) => (
-                      <span key={tag} className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">
+                      <span key={tag} className="text-[10px] bg-white/10 text-zinc-400 px-2 py-0.5 rounded">
                         {tag}
                       </span>
                     ))}
@@ -343,10 +361,10 @@ export default function AdaptivePractice() {
 
                 {!searchMeta && (
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-violet-500/10 text-violet-400 px-2 py-1 rounded border border-violet-500/20">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-violet-500/10 text-white px-2 py-1 rounded border border-zinc-900/20">
                       {problem.topic}
                     </span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 px-2 py-1 rounded border border-emerald-500/20">
                       ELO: {problem.difficultyScore}
                     </span>
                   </div>
@@ -358,28 +376,28 @@ export default function AdaptivePractice() {
                 </div>
 
                 {/* Test Cases */}
-                <div className="space-y-3 pt-4 border-t border-slate-800">
+                <div className="space-y-3 pt-4 border-t border-white/10">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Target Test Case</h3>
-                    <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30 font-bold">
+                    <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Target Test Case</h3>
+                    <span className="text-[10px] bg-emerald-500/20 text-emerald-700 px-2 py-0.5 rounded border border-emerald-500/30 font-bold">
                       GUARANTEES 100% SUCCESS
                     </span>
                   </div>
                   
                   {problem.testCases && problem.testCases.length > 0 ? (
-                    <div className="bg-slate-950 p-4 rounded-xl border border-emerald-500/30 relative overflow-hidden">
+                    <div className="bg-white/5 p-4 rounded-xl border border-emerald-500/30 relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 blur-xl rounded-full"></div>
-                      <p className="text-xs font-mono text-slate-300 mb-3 relative z-10">
-                        <span className="text-slate-500 font-sans font-bold uppercase tracking-wider text-[10px] block mb-1">Input (STDIN)</span>
+                      <p className="text-xs font-mono text-zinc-300 mb-3 relative z-10">
+                        <span className="text-zinc-400 font-sans font-bold uppercase tracking-wider text-[10px] block mb-1">Input (STDIN)</span>
                         {problem.testCases[0].input}
                       </p>
-                      <p className="text-xs font-mono text-emerald-400 relative z-10">
-                        <span className="text-slate-500 font-sans font-bold uppercase tracking-wider text-[10px] block mb-1">Expected Output (STDOUT)</span>
+                      <p className="text-xs font-mono text-emerald-700 relative z-10">
+                        <span className="text-zinc-400 font-sans font-bold uppercase tracking-wider text-[10px] block mb-1">Expected Output (STDOUT)</span>
                         {problem.testCases[0].expectedOutput}
                       </p>
                     </div>
                   ) : (
-                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center text-xs text-slate-500">
+                    <div className="bg-white/5 p-4 rounded-xl border border-white/10 text-center text-xs text-zinc-400">
                       No test cases available.
                     </div>
                   )}
@@ -391,24 +409,24 @@ export default function AdaptivePractice() {
 
                 {/* Other Suggestions */}
                 {searchMeta?.otherMatches?.length > 0 && (
-                  <div className="pt-4 border-t border-slate-800">
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Related Problems</h3>
+                  <div className="pt-4 border-t border-white/10">
+                    <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Related Problems</h3>
                     <div className="space-y-2">
                       {searchMeta.otherMatches.map((match) => (
                         <button
                           key={match.id}
                           onClick={() => handleLoadSuggested(match.title)}
-                          className="w-full text-left p-3 bg-slate-950/50 rounded-lg border border-slate-800/50 hover:border-slate-700 hover:bg-slate-800/50 transition-all group"
+                          className="w-full text-left p-3 bg-white/5/50 rounded-lg border border-white/10/50 hover:border-white/20 hover:bg-white/20/10/50 transition-all group"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-xs text-slate-300 font-medium group-hover:text-white transition-colors">{match.title}</span>
+                            <span className="text-xs text-zinc-300 font-medium group-hover:text-white transition-colors">{match.title}</span>
                             <span className={`text-[10px] font-bold ${
                               match.difficulty === 'Easy' ? 'text-green-400' :
                               match.difficulty === 'Medium' ? 'text-yellow-400' :
                               'text-red-400'
                             }`}>{match.difficulty}</span>
                           </div>
-                          <span className="text-[10px] text-slate-500">{match.pattern}</span>
+                          <span className="text-[10px] text-zinc-400">{match.pattern}</span>
                         </button>
                       ))}
                     </div>
@@ -419,7 +437,7 @@ export default function AdaptivePractice() {
           </div>
 
           {/* Chat/Command Input fixed at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent">
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white/90 to-transparent pt-12">
             <form onSubmit={handleGenerateProblem} className="relative shadow-2xl">
               <input
                 type="text"
@@ -427,7 +445,7 @@ export default function AdaptivePractice() {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={problem ? "Search for another problem..." : "Search: 'easy array', 'medium sliding window', 'hard binary search'..."}
                 disabled={loadingProblem}
-                className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-5 py-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 disabled:opacity-50 transition-all pr-14 shadow-inner"
+                className="w-full bg-black/20 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 disabled:opacity-50 transition-all pr-14 shadow-inner"
               />
               <button 
                 type="submit" 
@@ -442,8 +460,8 @@ export default function AdaptivePractice() {
           </Panel>
 
           {/* DRAG HANDLE BETWEEN LEFT AND RIGHT PANES */}
-          <Separator className="w-1.5 bg-slate-800 hover:bg-emerald-500/50 active:bg-emerald-500 transition-colors cursor-col-resize z-50 flex flex-col justify-center items-center">
-             <div className="h-8 w-0.5 bg-slate-600 rounded-full" />
+          <Separator className="w-1.5 bg-white/10 hover:bg-emerald-500/50 active:bg-emerald-500 transition-colors cursor-col-resize z-50 flex flex-col justify-center items-center">
+             <div className="h-8 w-0.5 bg-zinc-300 rounded-full" />
           </Separator>
 
           {/* RIGHT PANE: Code Editor & Evaluation */}
@@ -451,12 +469,12 @@ export default function AdaptivePractice() {
             <Group orientation="vertical">
               {/* TOP: Code Editor */}
               <Panel defaultSize={70} minSize={20}>
-                <div className="h-full flex flex-col bg-[#1e1e1e] overflow-hidden">
-                  <div className="h-12 bg-[#181818] border-b border-[#2d2d2d] flex items-center justify-between px-4 shrink-0">
+                <div className="h-full flex flex-col bg-white/5 backdrop-blur-lg overflow-hidden">
+                  <div className="h-12 bg-white/5 backdrop-blur-lg/5 border-b border-white/10 flex items-center justify-between px-4 shrink-0">
             <select
               value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="bg-[#2d2d2d] text-slate-300 text-xs rounded px-2 py-1 outline-none border-none cursor-pointer hover:bg-[#3d3d3d] transition-colors"
+              onChange={handleLanguageChange}
+              className="bg-white/5 backdrop-blur-lg text-zinc-300 text-xs rounded px-2 py-1 outline-none border-none cursor-pointer hover:bg-white/20/10 transition-colors"
             >
               {Object.keys(LANGUAGES).map((key) => (
                 <option key={key} value={key}>{LANGUAGES[key].name}</option>
@@ -465,7 +483,7 @@ export default function AdaptivePractice() {
             <button
               onClick={handleSubmitCode}
               disabled={isEvaluating || !problem}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-6 py-1.5 rounded disabled:opacity-50 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(5,150,105,0.4)]"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-6 py-1.5 rounded disabled:opacity-50 transition-colors flex items-center gap-2 shadow-sm"
             >
               {isEvaluating ? "Evaluating..." : "Submit Code"}
             </button>
@@ -483,8 +501,8 @@ export default function AdaptivePractice() {
             
             {/* Overlay if no problem */}
             {!problem && (
-              <div className="absolute inset-0 bg-[#1e1e1e]/80 backdrop-blur-sm flex items-center justify-center z-10">
-                <p className="text-slate-500 font-medium">Search a problem to start coding</p>
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-md backdrop-blur-sm flex items-center justify-center z-10">
+                <p className="text-zinc-400 font-medium">Search a problem to start coding</p>
               </div>
             )}
                   </div>
@@ -492,16 +510,16 @@ export default function AdaptivePractice() {
               </Panel>
 
               {/* DRAG HANDLE BETWEEN EDITOR AND COMPILER */}
-              <Separator className="h-1.5 bg-[#2d2d2d] hover:bg-emerald-500/50 active:bg-emerald-500 transition-colors cursor-row-resize z-50 flex justify-center items-center">
-                 <div className="w-8 h-0.5 bg-slate-600 rounded-full" />
+              <Separator className="h-1.5 bg-white/5 backdrop-blur-lg hover:bg-emerald-500/50 active:bg-emerald-500 transition-colors cursor-row-resize z-50 flex justify-center items-center">
+                 <div className="w-8 h-0.5 bg-zinc-300 rounded-full" />
               </Separator>
 
               {/* BOTTOM: Evaluation Output Panel */}
               <Panel defaultSize={30} minSize={10}>
-                <div className="h-full bg-[#111111] border-t border-[#2d2d2d] p-4 overflow-y-auto">
+                <div className="h-full bg-white/5 backdrop-blur-lg/5 border-t border-white/10 p-4 overflow-y-auto">
                   {isEvaluating && (
-              <div className="flex items-center gap-3 text-slate-400">
-                <div className="w-4 h-4 border-2 border-slate-600 border-t-emerald-500 rounded-full animate-spin"></div>
+              <div className="flex items-center gap-3 text-zinc-400">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-emerald-500 rounded-full animate-spin"></div>
                 <span className="text-xs font-medium uppercase tracking-wider">DeepSeek Senior Engineer is reviewing your code...</span>
               </div>
             )}
@@ -510,25 +528,25 @@ export default function AdaptivePractice() {
               <div className="space-y-5">
                 <div className="flex items-center gap-6">
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Test Cases</p>
+                    <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold mb-1">Test Cases</p>
                     <div className="flex items-center gap-2">
                       <span className="text-2xl font-black text-white">{evaluationResult.submission.executionResult.passed}</span>
-                      <span className="text-slate-500">/ {evaluationResult.submission.executionResult.total}</span>
+                      <span className="text-zinc-400">/ {evaluationResult.submission.executionResult.total}</span>
                     </div>
                   </div>
-                  <div className="h-8 w-px bg-[#2d2d2d]"></div>
+                  <div className="h-8 w-px bg-white/5 backdrop-blur-lg"></div>
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">ELO Change</p>
-                    <span className={`text-xl font-bold ${evaluationResult.eloChange >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                    <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold mb-1">ELO Change</p>
+                    <span className={`text-xl font-bold ${evaluationResult.eloChange >= 0 ? "text-emerald-700" : "text-rose-600"}`}>
                       {evaluationResult.eloChange > 0 ? "+" : ""}{evaluationResult.eloChange}
                     </span>
-                    <span className="text-xs text-slate-500 ml-2">({evaluationResult.newElo})</span>
+                    <span className="text-xs text-zinc-400 ml-2">({evaluationResult.newElo})</span>
                   </div>
                 </div>
 
                 {/* Visual Test Cases Status */}
                 <div>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-2">Test Cases Breakdown</p>
+                  <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold mb-2">Test Cases Breakdown</p>
                   <div className="flex gap-1.5 flex-wrap">
                     {Array.from({ length: evaluationResult.submission.executionResult.total }).map((_, i) => (
                       <div 
@@ -543,27 +561,27 @@ export default function AdaptivePractice() {
                 {/* Compiler Output */}
                 {evaluationResult.compilerOutput && (
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Compiler Output</p>
-                    <div className="bg-black text-slate-300 font-mono text-[10px] p-3 rounded-lg border border-[#2d2d2d] overflow-x-auto whitespace-pre">
+                    <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold mb-1">Compiler Output</p>
+                    <div className="bg-black text-zinc-300 font-mono text-[10px] p-3 rounded-lg border border-white/10 overflow-x-auto whitespace-pre">
                       {evaluationResult.compilerOutput}
                     </div>
                   </div>
                 )}
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-[#1a1a1a] p-3 rounded-lg border border-[#2d2d2d]">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold block mb-1">Time Complexity</span>
+                  <div className="bg-white/10 p-3 rounded-lg border border-white/10">
+                    <span className="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Time Complexity</span>
                     <span className="text-sm font-mono text-fuchsia-400">{evaluationResult.submission.aiFeedback.timeComplexity}</span>
                   </div>
-                  <div className="bg-[#1a1a1a] p-3 rounded-lg border border-[#2d2d2d]">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold block mb-1">Space Complexity</span>
+                  <div className="bg-white/10 p-3 rounded-lg border border-white/10">
+                    <span className="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Space Complexity</span>
                     <span className="text-sm font-mono text-fuchsia-400">{evaluationResult.submission.aiFeedback.spaceComplexity}</span>
                   </div>
                 </div>
 
                 {evaluationResult.submission.aiFeedback.weaknessesIdentified?.length > 0 && (
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-2">Identified Weaknesses</p>
+                    <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold mb-2">Identified Weaknesses</p>
                     <ul className="list-disc list-inside text-xs text-rose-300 space-y-1">
                       {evaluationResult.submission.aiFeedback.weaknessesIdentified.map((w, i) => <li key={i}>{w}</li>)}
                     </ul>
@@ -571,18 +589,18 @@ export default function AdaptivePractice() {
                 )}
                 
                 <div>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">AI Suggestion</p>
-                  <p className="text-xs text-emerald-300 italic">"{evaluationResult.submission.aiFeedback.suggestions}"</p>
+                  <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold mb-1">AI Suggestion</p>
+                  <p className="text-xs text-emerald-600 italic">"{evaluationResult.submission.aiFeedback.suggestions}"</p>
                 </div>
               </div>
             )}
 
             {evaluationResult?.error && (
-              <p className="text-xs text-rose-400 font-mono">{evaluationResult.error}</p>
+              <p className="text-xs text-rose-600 font-mono">{evaluationResult.error}</p>
             )}
 
             {!evaluationResult && !isEvaluating && (
-              <div className="h-full flex items-center justify-center text-slate-600 text-xs italic">
+              <div className="h-full flex items-center justify-center text-zinc-400 text-xs italic">
                 Evaluation results will appear here...
               </div>
             )}

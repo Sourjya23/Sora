@@ -53,35 +53,29 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center relative overflow-hidden">
-      {/* Decorative Glow Elements */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-
-      <div className="w-full max-w-md px-6 z-10">
+    <div 
+      className="min-h-screen bg-transparent text-white flex items-center justify-center relative overflow-hidden"
+      style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
+    >
+      <div className="w-full max-w-[420px] px-6 z-10">
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 border border-violet-500/30 mb-4 shadow-inner">
-            <svg className="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-            </svg>
-          </div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
-            interview.io
+          <h1 className="text-[2rem] font-extrabold tracking-[-0.02em] text-white">
+            Sora
           </h1>
-          <p className="text-slate-400 text-sm mt-2 font-light">
-            Elevate your tech hiring with collaborative interviews
+          <p className="text-zinc-400 text-[14px] mt-2">
+            Sign in to your account
           </p>
         </div>
 
         {/* Card Container */}
-        <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800/80 p-8 rounded-3xl shadow-2xl">
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-[16px] shadow-sm">
           {/* Error Alert */}
           {error && (
-            <div className="mb-5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-medium flex flex-col gap-2">
+            <div className="mb-5 p-3 rounded-[10px] bg-red-50 border border-red-200 text-red-600 text-[13px] font-medium flex flex-col gap-2">
               <span>{error}</span>
               {error.toLowerCase().includes("verify email") && (
-                <Link to="/verify-otp" className="text-violet-400 hover:text-violet-300 underline font-semibold mt-1">
+                <Link to="/verify-otp" className="text-red-700 hover:text-red-800 underline font-semibold mt-1">
                   Go to OTP Verification Page →
                 </Link>
               )}
@@ -90,7 +84,7 @@ function Login() {
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+              <label className="block text-[11px] font-semibold text-zinc-400 mb-1.5 uppercase tracking-[0.05em]">
                 Email Address
               </label>
               <input
@@ -99,12 +93,12 @@ function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full bg-slate-950/80 border border-slate-800 focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 rounded-xl py-3 px-4 text-sm text-slate-100 outline-none transition-all placeholder:text-slate-600"
+                className="w-full bg-white/5 border border-white/10 focus:border-white focus:ring-1 focus:ring-white rounded-[10px] py-[10px] px-4 text-[14px] text-white outline-none transition-all placeholder:text-zinc-400"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+              <label className="block text-[11px] font-semibold text-zinc-400 mb-1.5 uppercase tracking-[0.05em]">
                 Password
               </label>
               <input
@@ -113,21 +107,21 @@ function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-slate-950/80 border border-slate-800 focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 rounded-xl py-3 px-4 text-sm text-slate-100 outline-none transition-all placeholder:text-slate-600"
+                className="w-full bg-white/5 border border-white/10 focus:border-white focus:ring-1 focus:ring-white rounded-[10px] py-[10px] px-4 text-[14px] text-white outline-none transition-all placeholder:text-zinc-400"
               />
             </div>
 
-            <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
+            <div className="flex items-center justify-between text-[13px] text-zinc-400 pt-1">
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-slate-800 bg-slate-950 text-violet-600 focus:ring-0 focus:ring-offset-0"
+                  className="rounded border-white/20 bg-white/5 backdrop-blur-lg text-white focus:ring-white"
                 />
                 <span>Remember me</span>
               </label>
-              <a href="#" className="text-violet-400 hover:underline">
+              <a href="#" className="text-zinc-400 hover:text-white font-medium hover:underline underline-offset-2">
                 Forgot password?
               </a>
             </div>
@@ -135,15 +129,15 @@ function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-violet-500/10 hover:shadow-violet-500/20 active:scale-[0.98] disabled:opacity-50"
+              className="w-full bg-white text-zinc-900 font-bold hover:scale-105 font-bold py-[12px] px-4 rounded-[10px] text-[14px] hover:bg-zinc-800 transition-all duration-200 cursor-pointer shadow-sm active:scale-[0.98] disabled:opacity-50"
             >
               {loading ? "Signing In..." : "Sign In"}
             </button>
           </form>
 
-          <div className="mt-6 text-center text-xs text-slate-500">
+          <div className="mt-6 text-center text-[13px] text-zinc-400">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-slate-300 hover:text-white font-medium hover:underline">
+            <Link to="/signup" className="text-white font-semibold hover:underline underline-offset-2">
               Create an account
             </Link>
           </div>

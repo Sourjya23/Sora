@@ -178,28 +178,26 @@ function InterviewerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      <header className="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-30">
+    <div className="min-h-screen bg-transparent text-white flex flex-col font-sans" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+      <header className="border-b border-white/10 bg-black/40 backdrop-blur-xl border-b border-white/10 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 border border-violet-500/20">
-              <svg className="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-              </svg>
+            <div className="w-[30px] h-[30px] rounded-[8px] bg-white flex items-center justify-center overflow-hidden">
+              <img src="/Sora_Favicon.jpg" alt="Sora Logo" className="w-full h-full object-cover" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-              interview.io
+            <span style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }} className="text-[20px] font-extrabold text-white tracking-[-0.01em]">
+              Sora
             </span>
           </div>
 
           <div className="flex items-center space-x-4">
-            <span className="text-xs bg-slate-900 border border-slate-800 text-slate-400 px-3 py-1 rounded-full flex items-center gap-1.5">
+            <span className="text-xs bg-white/5 backdrop-blur-lg border border-white/10 text-zinc-400 px-3 py-1 rounded-full flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               Interviewer Mode
             </span>
             <button
               onClick={handleSignOut}
-              className="text-xs bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white px-4 py-2 rounded-xl transition-all duration-200"
+              className="text-xs bg-white/5 backdrop-blur-lg hover:bg-white/20/10 border border-white/10 text-zinc-300 hover:text-white px-4 py-2 rounded-xl transition-all duration-200"
             >
               Sign Out
             </button>
@@ -210,7 +208,7 @@ function InterviewerDashboard() {
       {joinNotification && (
         <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-4 flex items-center justify-between shadow-lg animate-pulse shrink-0">
           <div className="flex items-center space-x-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-white/5 backdrop-blur-lg animate-ping"></span>
             <p className="text-sm font-semibold">
               Candidate <strong className="underline">{joinNotification.candidateName}</strong> has entered the meeting room!
             </p>
@@ -222,7 +220,7 @@ function InterviewerDashboard() {
                 setJoinNotification(null);
                 navigate(`/meeting/${id}`);
               }}
-              className="bg-white text-emerald-700 hover:bg-emerald-50 font-bold px-4 py-2 rounded-xl text-xs transition-all shadow-md"
+              className="bg-white/5 backdrop-blur-lg text-emerald-700 hover:bg-emerald-50 font-bold px-4 py-2 rounded-xl text-xs transition-all shadow-md"
             >
               Join Meet Room
             </button>
@@ -240,62 +238,62 @@ function InterviewerDashboard() {
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h2 className="text-3xl font-extrabold tracking-tight">Welcome back, {userName}!</h2>
-            <p className="text-slate-400 text-sm mt-1">
+            <p className="text-zinc-400 text-sm mt-1">
               Manage candidate pipelines, schedule slots, and run live coding evaluations.
             </p>
           </div>
         </div>
 
-        <div className="flex space-x-4 mb-6 border-b border-slate-800 pb-1">
+        <div className="flex space-x-4 mb-6 border-b border-white/10 pb-1">
           <button
             onClick={() => setActiveTab("tickets")}
-            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "tickets" ? "border-violet-500 text-white" : "border-transparent text-slate-400 hover:text-slate-200"}`}
+            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "tickets" ? "border-zinc-900 text-white" : "border-transparent text-zinc-400 hover:text-zinc-200"}`}
           >
             Assigned Tickets ({tickets.filter(t => t.status !== "dismissed").length})
           </button>
           <button
             onClick={() => setActiveTab("profiles")}
-            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "profiles" ? "border-violet-500 text-white" : "border-transparent text-slate-400 hover:text-slate-200"}`}
+            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "profiles" ? "border-zinc-900 text-white" : "border-transparent text-zinc-400 hover:text-zinc-200"}`}
           >
             Pending Verifications ({pendingProfiles.length})
           </button>
           <button
             onClick={() => setActiveTab("completed")}
-            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "completed" ? "border-violet-500 text-white" : "border-transparent text-slate-400 hover:text-slate-200"}`}
+            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "completed" ? "border-zinc-900 text-white" : "border-transparent text-zinc-400 hover:text-zinc-200"}`}
           >
             Completed Interviews ({completedMeetings.length})
           </button>
         </div>
 
         {activeTab === "tickets" && (
-          <div className="bg-slate-900/20 border border-slate-900 rounded-3xl overflow-hidden backdrop-blur-md">
-            <div className="p-6 border-b border-slate-900 flex items-center justify-between">
+          <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden backdrop-blur-md">
+            <div className="p-6 border-b border-white/10 flex items-center justify-between">
               <h3 className="font-semibold text-lg">Assigned Evaluation Slots (Tickets)</h3>
             </div>
 
             <div className="divide-y divide-slate-900">
               {loading ? (
-                <div className="p-8 text-center text-slate-400">Loading tickets...</div>
+                <div className="p-8 text-center text-zinc-400">Loading tickets...</div>
               ) : tickets.filter(t => t.status !== "dismissed").length === 0 ? (
-                <div className="p-8 text-center text-slate-400">
+                <div className="p-8 text-center text-zinc-400">
                   <p>No evaluation slots assigned yet.</p>
                 </div>
               ) : (
                 tickets.filter(t => t.status !== "dismissed").map((ticket) => (
-                  <div key={ticket._id} className="p-6 flex flex-col hover:bg-slate-900/10 transition-colors gap-4">
+                  <div key={ticket._id} className="p-6 flex flex-col hover:bg-white/20/5 transition-colors gap-4">
                     <div className="flex items-start justify-between flex-wrap gap-4">
                       <div className="flex items-start gap-4">
-                        <div className="w-16 h-16 rounded-2xl bg-slate-900 flex items-center justify-center border border-slate-800 text-xs font-bold text-slate-400 text-center uppercase p-1">
+                        <div className="w-16 h-16 rounded-2xl bg-white/5 backdrop-blur-lg flex items-center justify-center border border-white/10 text-xs font-bold text-zinc-400 text-center uppercase p-1">
                           {ticket.status}
                         </div>
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
                             <h4 className="font-semibold text-base">{ticket.title}</h4>
-                            <span className="text-xs bg-violet-500/15 text-violet-400 font-bold border border-violet-500/20 px-2 py-0.5 rounded">
+                            <span className="text-xs bg-violet-500/15 text-white font-bold border border-zinc-900/20 px-2 py-0.5 rounded">
                               {ticket.jobId || "N/A"}
                             </span>
                           </div>
-                          <p className="text-slate-400 text-xs mt-0.5">
+                          <p className="text-zinc-400 text-xs mt-0.5">
                             Candidate: <strong>{ticket.candidateId?.name}</strong> • {ticket.candidateId?.email}
                           </p>
                         </div>
@@ -309,13 +307,13 @@ function InterviewerDashboard() {
                             </span>
                             <button
                               onClick={() => navigate(`/meeting/${ticket.meetingId}`)}
-                              className="bg-violet-600 hover:bg-violet-500 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all"
+                              className="bg-white/10 hover:bg-zinc-800 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all"
                             >
                               Join Meet Room
                             </button>
                             <button
                               onClick={() => handleDismissTicket(ticket._id)}
-                              className="bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition-all"
+                              className="bg-white/10 hover:bg-rose-500/20 text-zinc-300 hover:text-rose-400 border border-white/20 hover:border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition-all"
                               title="Dismiss Meeting"
                             >
                               ✕
@@ -325,13 +323,13 @@ function InterviewerDashboard() {
                           <>
                             <button 
                               onClick={() => handleOpenScheduleModal(ticket)}
-                              className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-semibold px-4 py-2.5 rounded-xl text-xs shadow-md shadow-violet-600/10 transition-all"
+                              className="bg-white/10 hover:bg-zinc-800 text-white font-semibold px-4 py-2.5 rounded-xl text-xs shadow-md shadow-black/5 transition-all"
                             >
                               Schedule Interview
                             </button>
                             <button
                               onClick={() => handleDismissTicket(ticket._id)}
-                              className="bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30 px-3 py-2.5 rounded-xl text-xs font-bold transition-all"
+                              className="bg-white/10 hover:bg-rose-500/20 text-zinc-300 hover:text-rose-400 border border-white/20 hover:border-rose-500/30 px-3 py-2.5 rounded-xl text-xs font-bold transition-all"
                               title="Dismiss Meeting"
                             >
                               Dismiss
@@ -342,18 +340,18 @@ function InterviewerDashboard() {
                     </div>
                     
                     {/* Ticket Details Panel */}
-                    <div className="mt-2 space-y-3 bg-slate-950/40 border border-slate-900 p-4 rounded-2xl text-sm text-slate-300">
+                    <div className="mt-2 space-y-3 bg-white/5/40 border border-white/10 p-4 rounded-2xl text-sm text-zinc-300">
                       <div>
                         <strong>Job Description (JD):</strong>
-                        <p className="text-xs text-slate-400 mt-1 line-clamp-3 bg-slate-950 p-2.5 rounded border border-slate-900/60 overflow-y-auto whitespace-pre-wrap max-h-[80px]">
+                        <p className="text-xs text-zinc-400 mt-1 line-clamp-3 bg-white/5 p-2.5 rounded border border-white/10 overflow-y-auto whitespace-pre-wrap max-h-[80px]">
                           {ticket.jobDescription}
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 text-xs text-slate-400">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 text-xs text-zinc-400">
                         <div>
                           <strong>Candidate Preferred Slot:</strong>
-                          <div className="text-violet-400 font-semibold mt-1">
+                          <div className="text-white font-semibold mt-1">
                             Start: {ticket.preferredSlotStart ? new Date(ticket.preferredSlotStart).toLocaleString() : "N/A"}<br/>
                             End: {ticket.preferredSlotEnd ? new Date(ticket.preferredSlotEnd).toLocaleString() : "N/A"}
                           </div>
@@ -367,7 +365,7 @@ function InterviewerDashboard() {
                                 href={ticket.resumeUrl} 
                                 target="_blank" 
                                 rel="noreferrer" 
-                                className="text-violet-400 hover:underline font-semibold"
+                                className="text-white hover:underline font-semibold"
                               >
                                 View PDF Resume &rarr;
                               </a>
@@ -384,31 +382,31 @@ function InterviewerDashboard() {
         )}
 
         {activeTab === "profiles" && (
-          <div className="bg-slate-900/20 border border-slate-900 rounded-3xl overflow-hidden backdrop-blur-md">
-            <div className="p-6 border-b border-slate-900">
+          <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden backdrop-blur-md">
+            <div className="p-6 border-b border-white/10">
               <h3 className="font-semibold text-lg">Pending Candidate Verifications</h3>
             </div>
 
             <div className="divide-y divide-slate-900">
               {loading ? (
-                <div className="p-8 text-center text-slate-400">Loading profiles...</div>
+                <div className="p-8 text-center text-zinc-400">Loading profiles...</div>
               ) : pendingProfiles.length === 0 ? (
-                <div className="p-8 text-center text-slate-400">
+                <div className="p-8 text-center text-zinc-400">
                   <p>No pending profiles to verify.</p>
                 </div>
               ) : (
                 pendingProfiles.map((profile) => (
-                  <div key={profile._id} className="p-6 flex flex-col gap-4 bg-slate-950/30">
+                  <div key={profile._id} className="p-6 flex flex-col gap-4 bg-white/5/30">
                     <div>
                       <h4 className="font-bold text-xl text-white mb-1">{profile.name}</h4>
-                      <p className="text-slate-400 text-sm mb-4">{profile.email} • {profile.experienceLevel} • National ID: {profile.nationalId}</p>
+                      <p className="text-zinc-400 text-sm mb-4">{profile.email} • {profile.experienceLevel} • National ID: {profile.nationalId}</p>
                       
-                      <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-sm mb-4">
+                      <div className="bg-white/5 backdrop-blur-lg p-4 rounded-xl border border-white/10 text-sm mb-4">
                         <p className="mb-2"><strong>Intro:</strong> {profile.intro}</p>
                         <p className="mb-2"><strong>Skills:</strong> {profile.skills?.join(", ")}</p>
                         {profile.resumeUrl && (
                           <p className="mb-2">
-                            <strong>Resume:</strong> <a href={profile.resumeUrl} target="_blank" rel="noreferrer" className="text-violet-400 hover:underline">View PDF</a>
+                            <strong>Resume:</strong> <a href={profile.resumeUrl} target="_blank" rel="noreferrer" className="text-white hover:underline">View PDF</a>
                           </p>
                         )}
                         {profile.projects?.length > 0 && (
@@ -416,7 +414,7 @@ function InterviewerDashboard() {
                             <strong>Projects:</strong>
                             <ul className="list-disc pl-4 mt-1 space-y-1">
                               {profile.projects.map((proj, i) => (
-                                <li key={i}><a href={proj.link} target="_blank" rel="noreferrer" className="text-violet-400 hover:underline">{proj.title}</a> - {proj.description}</li>
+                                <li key={i}><a href={proj.link} target="_blank" rel="noreferrer" className="text-white hover:underline">{proj.title}</a> - {proj.description}</li>
                               ))}
                             </ul>
                           </div>
@@ -425,12 +423,12 @@ function InterviewerDashboard() {
 
                       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
                         <div className="flex-1 w-full">
-                          <label className="block text-xs font-medium text-slate-400 mb-1 uppercase">Review Notes (Sent to Candidate)</label>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1 uppercase">Review Notes (Sent to Candidate)</label>
                           <textarea
                             value={reviewNotes}
                             onChange={(e) => setReviewNotes(e.target.value)}
                             placeholder="Add feedback for approval or rejection..."
-                            className="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-sm text-slate-200 outline-none focus:border-violet-500 min-h-[60px]"
+                            className="w-full bg-white/5 backdrop-blur-lg border border-white/20 rounded-lg py-2 px-3 text-sm text-zinc-200 outline-none focus:border-white min-h-[60px]"
                           />
                         </div>
                         <div className="flex space-x-3 w-full sm:w-auto">
@@ -459,28 +457,28 @@ function InterviewerDashboard() {
         )}
 
         {activeTab === "completed" && (
-          <div className="bg-slate-900/20 border border-slate-900 rounded-3xl overflow-hidden backdrop-blur-md">
-            <div className="p-6 border-b border-slate-900">
+          <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden backdrop-blur-md">
+            <div className="p-6 border-b border-white/10">
               <h3 className="font-semibold text-lg">Completed Interviews</h3>
             </div>
 
             <div className="divide-y divide-slate-900">
               {loading ? (
-                <div className="p-8 text-center text-slate-400">Loading completed meetings...</div>
+                <div className="p-8 text-center text-zinc-400">Loading completed meetings...</div>
               ) : completedMeetings.length === 0 ? (
-                <div className="p-8 text-center text-slate-400">
+                <div className="p-8 text-center text-zinc-400">
                   <p>No completed interviews found.</p>
                 </div>
               ) : (
                 completedMeetings.map((meeting) => (
-                  <div key={meeting._id} className="p-6 flex flex-col hover:bg-slate-900/10 transition-colors gap-4">
+                  <div key={meeting._id} className="p-6 flex flex-col hover:bg-white/20/5 transition-colors gap-4">
                     <div className="flex items-start justify-between flex-wrap gap-4">
                       <div>
                         <h4 className="font-semibold text-base mb-1">
                           Assessment with {meeting.candidateId?.name || "Unknown Candidate"}
                         </h4>
-                        <div className="flex items-center gap-2 text-xs text-slate-400">
-                          <span className="bg-slate-800 px-2 py-0.5 rounded text-slate-300">
+                        <div className="flex items-center gap-2 text-xs text-zinc-400">
+                          <span className="bg-white/10 px-2 py-0.5 rounded text-zinc-300">
                             Job ID: {meeting.jobId || "N/A"}
                           </span>
                           <span>•</span>
@@ -492,7 +490,7 @@ function InterviewerDashboard() {
                           href={meeting.recordingUrl} 
                           target="_blank" 
                           rel="noreferrer"
-                          className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border border-slate-700"
+                          className="bg-white/10 hover:bg-white/20/20 text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border border-white/20"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                           Download / View Full
@@ -501,7 +499,7 @@ function InterviewerDashboard() {
                     </div>
                     
                     {meeting.recordingUrl ? (
-                      <div className="mt-2 w-full max-w-2xl bg-black rounded-xl overflow-hidden border border-slate-800 aspect-video shadow-lg">
+                      <div className="mt-2 w-full max-w-2xl bg-black rounded-xl overflow-hidden border border-white/10 aspect-video shadow-lg">
                         <video 
                           src={meeting.recordingUrl} 
                           controls 
@@ -517,7 +515,7 @@ function InterviewerDashboard() {
                     )}
                     
                     {meeting.status === "completed" && (
-                      <div className="mt-4 pt-4 border-t border-slate-800 flex gap-3">
+                      <div className="mt-4 pt-4 border-t border-white/10 flex gap-3">
                         <button 
                           onClick={() => handleReviewCandidate(meeting.meetingId, "approved")}
                           className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
@@ -555,63 +553,63 @@ function InterviewerDashboard() {
       {/* Schedule & Lock Modal */}
       {showScheduleModal && selectedTicket && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
+          <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
             <button 
               onClick={() => setShowScheduleModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+              className="absolute top-4 right-4 text-zinc-400 hover:text-white"
             >
               ✕
             </button>
             <h3 className="text-xl font-bold text-white mb-1">Confirm Schedule</h3>
-            <p className="text-xs text-slate-400 mb-6">Confirm date/time and entry key password. Once locked, this meeting cannot be rescheduled.</p>
+            <p className="text-xs text-zinc-400 mb-6">Confirm date/time and entry key password. Once locked, this meeting cannot be rescheduled.</p>
 
             <form onSubmit={handleScheduleSubmit} className="space-y-5">
-              <div className="bg-slate-950 p-4 border border-slate-850 rounded-2xl text-xs space-y-1.5 mb-4">
+              <div className="bg-white/5 p-4 border border-white/10 rounded-2xl text-xs space-y-1.5 mb-4">
                 <p><strong>Candidate:</strong> {selectedTicket.candidateId?.name}</p>
                 <p><strong>Job ID:</strong> {selectedTicket.jobId}</p>
                 <p><strong>Candidate Preferred Window:</strong></p>
-                <p className="text-violet-400 pl-2">
+                <p className="text-white pl-2">
                   Start: {new Date(selectedTicket.preferredSlotStart).toLocaleString()}<br/>
                   End: {new Date(selectedTicket.preferredSlotEnd).toLocaleString()}
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Confirmed Start Time</label>
+                <label className="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase">Confirmed Start Time</label>
                 <input
                   type="datetime-local"
                   required
                   value={scheduledTime}
                   onChange={(e) => setScheduledTime(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-sm text-slate-100 outline-none focus:border-violet-500"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-white"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Key Password (Alphanumeric)</label>
+                <label className="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase">Key Password (Alphanumeric)</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     required
                     value={keyPassword}
                     onChange={(e) => setKeyPassword(e.target.value.toUpperCase())}
-                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-sm text-slate-100 outline-none focus:border-violet-500 font-mono tracking-widest font-bold"
+                    className="flex-1 bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-white font-mono tracking-widest font-bold"
                     placeholder="PASS-XXXX"
                   />
                   <button
                     type="button"
                     onClick={() => setKeyPassword(generatePassword())}
-                    className="bg-slate-800 hover:bg-slate-700 text-xs px-3 rounded-xl border border-slate-750 font-bold"
+                    className="bg-white/10 hover:bg-white/20/20 text-xs px-3 rounded-xl border border-slate-750 font-bold"
                   >
                     Regen
                   </button>
                 </div>
-                <p className="text-[10px] text-slate-500 mt-1">This key is required by the candidate and you to enter the meet</p>
+                <p className="text-[10px] text-zinc-400 mt-1">This key is required by the candidate and you to enter the meet</p>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-lg"
+                className="w-full bg-white/10 hover:bg-zinc-800 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-lg"
               >
                 🔒 Confirm & Lock Interview
               </button>

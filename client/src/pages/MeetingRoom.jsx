@@ -583,7 +583,7 @@ function MeetingRoom() {
   // STEP 1: Enter Key Password
   if (!passwordVerified) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white p-4 font-sans">
+      <div className="min-h-screen bg-transparent flex flex-col items-center justify-center text-white p-4 font-sans">
         <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl max-w-md w-full shadow-2xl">
           <div className="w-16 h-16 bg-violet-600/10 border border-violet-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <svg className="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -630,7 +630,7 @@ function MeetingRoom() {
   // STEP 2: Pre-join Lobby
   if (!isJoined) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 font-sans text-white">
+      <div className="min-h-screen bg-transparent flex items-center justify-center p-6 font-sans text-white">
         <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div className="flex flex-col items-center">
             <h2 className="text-xl font-bold mb-4 self-start">Camera & Mic Check</h2>
@@ -658,10 +658,10 @@ function MeetingRoom() {
 
               {hasGrantedPermissions && (
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10">
-                  <button onClick={toggleMic} className={`p-2.5 rounded-lg border transition-all ${micActive ? "bg-white/10 border-white/20 text-white" : "bg-rose-500/20 border-rose-500/30 text-rose-400"}`}>
+                  <button onClick={toggleMic} className={`p-2.5 rounded-lg border transition-all ${micActive ? "bg-white/5 backdrop-blur-lg/10 border-white/20 text-white" : "bg-rose-500/20 border-rose-500/30 text-rose-400"}`}>
                     {micActive ? "Mute" : "Unmute"}
                   </button>
-                  <button onClick={toggleCamera} className={`p-2.5 rounded-lg border transition-all ${cameraActive ? "bg-white/10 border-white/20 text-white" : "bg-rose-500/20 border-rose-500/30 text-rose-400"}`}>
+                  <button onClick={toggleCamera} className={`p-2.5 rounded-lg border transition-all ${cameraActive ? "bg-white/5 backdrop-blur-lg/10 border-white/20 text-white" : "bg-rose-500/20 border-rose-500/30 text-rose-400"}`}>
                     {cameraActive ? "Cam Off" : "Cam On"}
                   </button>
                 </div>
