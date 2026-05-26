@@ -84,11 +84,11 @@ export default function Feedback() {
                   >
                     <Star
                       size={32}
-                      className={\`transition-colors \${
+                      className={`transition-colors ${
                         star <= (hoverRating || rating)
                           ? "fill-[#d2dbbd] text-[#d2dbbd]"
                           : "fill-transparent text-zinc-600"
-                      }\`}
+                      }`}
                     />
                   </button>
                 ))}
