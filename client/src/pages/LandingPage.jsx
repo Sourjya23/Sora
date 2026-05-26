@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../api/axios";
 
 // ── Utility ────────────────────────────────────────────────────────────────
 const cn = (...c) => c.filter(Boolean).join(" ");
@@ -581,26 +582,56 @@ function Upcoming() {
 
 // ── Testimonials ───────────────────────────────────────────────────────────
 function Testimonials() {
-  const reviews = [
+  const [reviews, setReviews] = useState([
     {
       initials: "AK",
       name: "Aarav Krishnan",
       role: "SDE @ Google — Bangalore",
       text: "My Sora interviewer was a current Google L5. She grilled me exactly like a real loop — I walked into my actual interview already knowing what to expect.",
+      rating: 5,
     },
     {
       initials: "PM",
       name: "Pooja Mehra",
       role: "SDE-2 @ Amazon — Hyderabad",
       text: "The story-based DP track finally broke through. I'd failed DP interviews 3 times before. The Dragon's Vault arc made it genuinely intuitive.",
+      rating: 5,
     },
     {
       initials: "RS",
       name: "Rohan Sehgal",
       role: "Engineer @ Meta — Remote",
       text: "Coding inside the same window as my interviewer felt like the real thing. No tab switching, no context loss. That alone changed my interview performance.",
+      rating: 5,
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const { data } = await API.get("/testimonials");
+        if (data && data.length > 0) {
+          // Format API data to match the UI shape
+          const formatted = data.map((t) => ({
+            initials: t.username.substring(0, 2).toUpperCase(),
+            name: t.username,
+            role: "Sora User",
+            text: t.content,
+            rating: t.rating,
+          }));
+          
+          // Combine DB reviews with hardcoded ones up to 9 total
+          setReviews((prev) => {
+            const all = [...formatted, ...prev];
+            return all.slice(0, 9); // Only show top 9
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load community testimonials", err);
+      }
+    };
+    fetchTestimonials();
+  }, []);
 
   return (
     <section className="py-22 px-8 bg-transparent" id="success">
@@ -617,10 +648,12 @@ function Testimonials() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {reviews.map((r) => (
             <div
-              key={r.name}
+              key={r.name + r.text}
               className="p-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-[12px] hover:border-white/20 transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-md"
             >
-              <div className="text-amber-400 text-[13px] mb-3">★★★★★</div>
+              <div className="text-[#d2dbbd] text-[13px] mb-3">
+                {"★".repeat(r.rating || 5)}{"☆".repeat(5 - (r.rating || 5))}
+              </div>
               <p className="text-[13.5px] text-zinc-300 mb-5 leading-[1.7] italic">
                 "{r.text}"
               </p>

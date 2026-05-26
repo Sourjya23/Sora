@@ -14,6 +14,7 @@ const meetingRoutes = require("./routes/meetingRoutes");
 const codeRoutes = require("./routes/codeRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const adaptiveRoutes = require("./routes/adaptiveRoutes");
+const testimonialRoutes = require("./routes/testimonialRoutes");
 
 // Initialize cron jobs
 const { startCronJobs } = require('./jobs');
@@ -33,6 +34,7 @@ app.use("/api/meeting", meetingRoutes);
 app.use("/api/code", codeRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/adaptive", adaptiveRoutes);
+app.use("/api/testimonials", testimonialRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running");

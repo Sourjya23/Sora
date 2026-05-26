@@ -9,6 +9,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import MeetingRoom from "./pages/MeetingRoom";
 import PracticePage from "./pages/PracticePage";
 import AdaptivePractice from "./pages/AdaptivePractice";
+import Feedback from "./pages/Feedback";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
+        <Route path="/feedback" element={<Feedback />} />
 
         {/* Protected Dashboards */}
         <Route
