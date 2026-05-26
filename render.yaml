@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: sora-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    rootDir: server
+    plan: free
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: MONGO_URI
+        sync: false # User must set this in the Render dashboard manually
+      - key: JWT_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false

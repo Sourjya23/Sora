@@ -16,8 +16,8 @@ const aiRoutes = require("./routes/aiRoutes");
 const adaptiveRoutes = require("./routes/adaptiveRoutes");
 
 // Initialize cron jobs
-require("./cron/deleteExpiredMeetings");
-
+const { startCronJobs } = require('./jobs');
+startCronJobs();
 const app = express();
 
 connectDB();
