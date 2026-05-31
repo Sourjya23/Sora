@@ -33,7 +33,7 @@ exports.scheduleMeeting = async (req, res) => {
     const candidateId = ticket.candidateId._id;
     const meetingId = uuidv4();
     const secureToken = uuidv4();
-    const meetingUrl = `http://localhost:5173/meeting/${meetingId}`;
+    const meetingUrl = `https://sorabuild.netlify.app/meeting/${meetingId}`;
 
     // Create the meeting with all details locked
     const meeting = await Meeting.create({

@@ -74,7 +74,7 @@ const sendDemoEmail = async () => {
           </p>
           
           <div style="text-align: center; margin-bottom: 20px;">
-            <a href="http://localhost:5173/login" style="background-color: #ffffff; color: #000000; padding: 14px 32px; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 15px; display: inline-block; border: none; box-shadow: 0 0 20px rgba(255,255,255,0.2);">Enter Dashboard &rarr;</a>
+            <a href="https://sorabuild.netlify.app/login" style="background-color: #ffffff; color: #000000; padding: 14px 32px; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 15px; display: inline-block; border: none; box-shadow: 0 0 20px rgba(255,255,255,0.2);">Enter Dashboard &rarr;</a>
           </div>
 
           <hr style="border: 0; border-top: 1px solid #27272a; margin: 40px 0 20px 0;" />
