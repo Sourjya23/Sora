@@ -10,7 +10,7 @@ class OllamaService {
   static async generate(modelName, prompt, expectJson = false, options = {}) {
     try {
       const model = genAI.getGenerativeModel({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash",
         generationConfig: expectJson ? { responseMimeType: "application/json" } : {},
       });
 
@@ -31,7 +31,7 @@ class OllamaService {
       const systemInstruction = messages.find(m => m.role === "system")?.content;
       
       const model = genAI.getGenerativeModel({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash",
         systemInstruction: systemInstruction || undefined,
         generationConfig: expectJson ? { responseMimeType: "application/json" } : {},
       });
