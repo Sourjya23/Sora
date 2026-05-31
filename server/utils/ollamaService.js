@@ -1,67 +1,59 @@
-const axios = require("axios");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const OLLAMA_BASE_URL = "http://127.0.0.1:11434/api";
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 class OllamaService {
   /**
-   * Generates a completion from an Ollama model.
-   * @param {string} model - The model name (e.g., 'llama3', 'deepseek-coder')
-   * @param {string} prompt - The prompt text
-   * @param {boolean} expectJson - Whether to force JSON output format
-   * @returns {Promise<string>} The generated response text
+   * Drop-in replacement for Ollama generate using Gemini.
    */
-  static async generate(model, prompt, expectJson = false, options = {}) {
+  static async generate(modelName, prompt, expectJson = false, options = {}) {
     try {
-      const payload = {
-        model,
-        prompt,
-        stream: false,
-      };
+      const model = genAI.getGenerativeModel({
+        model: "gemini-3.5-flash",
+        generationConfig: expectJson ? { responseMimeType: "application/json" } : {},
+      });
 
-      if (expectJson) {
-        payload.format = "json";
-      }
-
-      if (Object.keys(options).length > 0) {
-        payload.options = options;
-      }
-
-      const response = await axios.post(`${OLLAMA_BASE_URL}/generate`, payload);
-      return response.data.response;
+      const result = await model.generateContent(prompt);
+      return result.response.text();
     } catch (error) {
-      console.error(`Ollama Generate Error (${model}):`, error.message);
-      throw new Error(`Failed to generate response from local AI (${model})`);
+      console.error(`Gemini Generate Error:`, error.message);
+      throw new Error(`Failed to generate response from AI`);
     }
   }
 
   /**
-   * Generates a chat response from an Ollama model.
-   * @param {string} model - The model name
-   * @param {Array<{role: string, content: string}>} messages - Chat history
-   * @param {boolean} expectJson - Whether to force JSON output format
-   * @returns {Promise<string>} The assistant's reply
+   * Drop-in replacement for Ollama chat using Gemini.
    */
-  static async chat(model, messages, expectJson = false, options = {}) {
+  static async chat(modelName, messages, expectJson = false, options = {}) {
     try {
-      const payload = {
-        model,
-        messages,
-        stream: false,
-      };
+      // Extract system instructions for Gemini
+      const systemInstruction = messages.find(m => m.role === "system")?.content;
+      
+      const model = genAI.getGenerativeModel({
+        model: "gemini-3.5-flash",
+        systemInstruction: systemInstruction || undefined,
+        generationConfig: expectJson ? { responseMimeType: "application/json" } : {},
+      });
 
-      if (expectJson) {
-        payload.format = "json";
-      }
+      // Filter out system messages and map to Gemini format
+      const history = messages
+        .filter(m => m.role !== "system")
+        .slice(0, -1) // All except the last message
+        .map(m => ({
+          role: m.role === "assistant" ? "model" : "user",
+          parts: [{ text: m.content }]
+        }));
 
-      if (Object.keys(options).length > 0) {
-        payload.options = options;
-      }
+      const lastMessage = messages[messages.length - 1].content;
 
-      const response = await axios.post(`${OLLAMA_BASE_URL}/chat`, payload);
-      return response.data.message.content;
+      const chatSession = model.startChat({ history });
+      const result = await chatSession.sendMessage(lastMessage);
+      
+      return result.response.text();
     } catch (error) {
-      console.error(`Ollama Chat Error (${model}):`, error.message);
-      throw new Error(`Failed to chat with local AI (${model})`);
+      console.error(`Gemini Chat Error:`, error.message);
+      throw new Error(`Failed to chat with AI`);
     }
   }
 }
