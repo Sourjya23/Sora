@@ -108,7 +108,6 @@ exports.chatWithAI = async (req, res) => {
 
     const conversation = [
       { role: "system", content: systemContext },
-      { role: "assistant", content: "Understood! I'm ready to help with " + topic + ". What would you like to know?" },
       ...messages.map(msg => ({
         role: msg.role === "user" ? "user" : "assistant",
         content: msg.content

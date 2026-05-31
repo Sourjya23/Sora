@@ -37,13 +37,29 @@ class OllamaService {
       });
 
       // Filter out system messages and map to Gemini format
-      const history = messages
+      const rawHistory = messages
         .filter(m => m.role !== "system")
         .slice(0, -1) // All except the last message
         .map(m => ({
           role: m.role === "assistant" ? "model" : "user",
           parts: [{ text: m.content }]
         }));
+
+      // Gemini strictly requires history to start with 'user' and alternate 'user', 'model', 'user', 'model'
+      const history = [];
+      for (const msg of rawHistory) {
+        if (history.length === 0 && msg.role === 'model') {
+          // If the first message is model, prepend a dummy user message to satisfy Gemini
+          history.push({ role: 'user', parts: [{ text: 'Hello' }] });
+        }
+        
+        if (history.length > 0 && history[history.length - 1].role === msg.role) {
+          // Merge consecutive messages of the same role
+          history[history.length - 1].parts[0].text += '\\n\\n' + msg.parts[0].text;
+        } else {
+          history.push(msg);
+        }
+      }
 
       const lastMessage = messages[messages.length - 1].content;
 
