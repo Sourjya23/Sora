@@ -52,9 +52,22 @@ export default function PracticePage() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionOutput, setExecutionOutput] = useState(null);
   const [frontendHtml, setFrontendHtml] = useState(null);
+  const [frontendError, setFrontendError] = useState(null);
 
   // Left panel tab
   const [leftTab, setLeftTab] = useState("lesson"); // "lesson" | "chat"
+
+  useEffect(() => {
+    const handleIframeMessage = (event) => {
+      if (event.data?.type === 'EXECUTION_ERROR') {
+        setFrontendError(event.data.error);
+      } else if (event.data?.type === 'EXECUTION_SUCCESS') {
+        setFrontendError(null);
+      }
+    };
+    window.addEventListener('message', handleIframeMessage);
+    return () => window.removeEventListener('message', handleIframeMessage);
+  }, []);
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -237,6 +250,11 @@ const handleRunCode = async () => {
             <body>
               <div id="root"></div>
               <script type="text/babel">
+                window.onerror = function(message, source, lineno, colno, error) {
+                  window.parent.postMessage({ type: 'EXECUTION_ERROR', error: message + ' at line ' + lineno }, '*');
+                  document.getElementById('root').innerHTML = '<div style="color:#e11d48; font-family:monospace; white-space:pre-wrap;">Runtime Error:\\n' + message + '\\nLine: ' + lineno + '</div>';
+                  return true;
+                };
                 try {
                   // Destructure common React hooks so they are available globally
                   const { useState, useEffect, useRef, useMemo, useCallback, useReducer, useContext } = React;
@@ -248,18 +266,39 @@ const handleRunCode = async () => {
                     const root = ReactDOM.createRoot(document.getElementById('root'));
                     root.render(<App />);
                   }
+                  window.parent.postMessage({ type: 'EXECUTION_SUCCESS' }, '*');
                 } catch(err) {
-                  document.getElementById('root').innerHTML = '<div style="color:#e11d48; font-family:monospace;">' + err.message + '</div>';
+                  window.parent.postMessage({ type: 'EXECUTION_ERROR', error: err.message }, '*');
+                  document.getElementById('root').innerHTML = '<div style="color:#e11d48; font-family:monospace; white-space:pre-wrap;">Compilation Error:\\n' + err.message + '</div>';
                 }
               </script>
             </body>
             </html>
           `;
         } else {
-          // Wrap basic HTML in a styled body if just pure JS/HTML
-          html = `<!DOCTYPE html><html><head><style>body{color:#18181b;background:#ffffff;}</style></head><body>${editorCode}</body></html>`;
+          // HTML execution - catch syntax errors
+          html = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <style>body{color:#18181b;background:#ffffff;}</style>
+              <script>
+                window.onerror = function(message, source, lineno, colno, error) {
+                  window.parent.postMessage({ type: 'EXECUTION_ERROR', error: message + ' at line ' + (lineno - 13) }, '*');
+                  document.body.innerHTML = '<div style="color:#e11d48; font-family:monospace; white-space:pre-wrap; padding: 1rem;">Runtime Error:\\n' + message + '\\nLine: ' + (lineno - 13) + '</div>';
+                  return true;
+                };
+                window.onload = function() {
+                  window.parent.postMessage({ type: 'EXECUTION_SUCCESS' }, '*');
+                };
+              </script>
+            </head>
+            <body>${editorCode}</body>
+            </html>
+          `;
         }
         
+        setFrontendError(null);
         setFrontendHtml(html);
         setExecutionOutput({ statusCode: 200, isFrontend: true });
         setIsExecuting(false);
@@ -633,29 +672,51 @@ const handleRunCode = async () => {
           {/* Output Panel */}
           <div className="h-[200px] min-h-[150px] bg-white/5 border-t border-white/10 flex flex-col shrink-0">
             <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider p-3 border-b border-white/10 bg-white/5 backdrop-blur-lg flex items-center justify-between">
-              <span>Output</span>
+              <span>Compiler Output</span>
               {executionOutput && (
-                <span className={`text-[9px] px-2 py-0.5 rounded-full ${executionOutput.statusCode === 200 ? "bg-emerald-500/10 text-emerald-700 border border-emerald-500/20" : "bg-rose-500/10 text-rose-600 border border-rose-500/20"}`}>
-                  {executionOutput.statusCode === 200 ? "Success" : "Error"}
+                <span className={`text-[9px] px-2 py-0.5 rounded-full ${
+                  (executionOutput.isFrontend ? !frontendError : (executionOutput.statusCode === 200 && !executionOutput.output?.match(/(Error:|Exception|SyntaxError|ReferenceError)/i)))
+                  ? "bg-emerald-500/10 text-emerald-700 border border-emerald-500/20" 
+                  : "bg-rose-500/10 text-rose-600 border border-rose-500/20"
+                }`}>
+                  {(executionOutput.isFrontend ? !frontendError : (executionOutput.statusCode === 200 && !executionOutput.output?.match(/(Error:|Exception|SyntaxError|ReferenceError)/i))) 
+                    ? "Compilation Successful ✓" 
+                    : "Compilation Error ✕"}
                 </span>
               )}
             </div>
             <div className="flex-1 p-0 overflow-hidden relative">
               {frontendHtml ? (
-                <iframe 
-                  srcDoc={frontendHtml} 
-                  title="Frontend Execution"
-                  className="w-full h-full border-none bg-white/5 backdrop-blur-lg"
-                  sandbox="allow-scripts"
-                />
+                <div className="w-full h-full relative">
+                  {!frontendError && (
+                    <div className="absolute top-2 right-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs px-2 py-1 rounded-md z-10 font-mono">
+                      Output preview generated successfully.
+                    </div>
+                  )}
+                  <iframe 
+                    srcDoc={frontendHtml} 
+                    title="Frontend Execution"
+                    className="w-full h-full border-none bg-white/5 backdrop-blur-lg"
+                    sandbox="allow-scripts"
+                  />
+                </div>
               ) : executionOutput ? (
                 <div className="p-3 h-full overflow-y-auto">
-                  <pre className={`text-sm font-mono whitespace-pre-wrap ${executionOutput.statusCode !== 200 ? "text-rose-600" : "text-zinc-300"}`}>
+                  {!executionOutput.output?.match(/(Error:|Exception|SyntaxError|ReferenceError)/i) ? (
+                    <div className="mb-2 text-emerald-400 text-xs font-mono font-bold border-b border-emerald-500/20 pb-2">
+                      Code compiled and ran successfully!
+                    </div>
+                  ) : (
+                    <div className="mb-2 text-rose-500 text-xs font-mono font-bold border-b border-rose-500/20 pb-2">
+                      The compiler encountered an error:
+                    </div>
+                  )}
+                  <pre className={`text-sm font-mono whitespace-pre-wrap ${executionOutput.statusCode !== 200 || executionOutput.output?.match(/(Error:|Exception|SyntaxError|ReferenceError)/i) ? "text-rose-400" : "text-zinc-300"}`}>
                     {executionOutput.output || "No output"}
                   </pre>
                 </div>
               ) : (
-                <div className="p-3 text-zinc-400 text-xs italic">Run your code to see output here...</div>
+                <div className="p-3 text-zinc-400 text-xs italic">Run your code to see compiler output here...</div>
               )}
             </div>
           </div>
