@@ -53,6 +53,10 @@ function Login() {
 
       const { token, user } = response.data;
 
+      // Clear any stale tokens from previous sessions to prevent data merging
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+
       if (rememberMe) {
         localStorage.setItem("token", token);
       } else {

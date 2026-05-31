@@ -64,6 +64,10 @@ function VerifyOTP() {
       
       const { token, user } = response.data;
       
+      // Clear any stale tokens from previous sessions to prevent data merging
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+      
       // Save token by default in sessionStorage on OTP verification
       sessionStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
