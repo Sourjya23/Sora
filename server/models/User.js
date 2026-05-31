@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema(
       default: "pending",
     },
     adminNotes: String,
+    hasSeenTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

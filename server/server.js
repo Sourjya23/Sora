@@ -99,10 +99,16 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("end-meeting", (data) => {
+  socket.on("end-meeting", async (data) => {
     const room = data.meetingId || socket.meetingId;
     if (room) {
       io.to(room).emit("meeting-ended", data);
+      try {
+        const Meeting = require("./models/Meeting");
+        await Meeting.updateOne({ meetingId: room }, { status: "completed" });
+      } catch (err) {
+        console.error("Failed to mark meeting as completed via socket:", err);
+      }
     }
   });
 

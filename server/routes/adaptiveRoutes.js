@@ -10,6 +10,7 @@ router.post("/generate-problem", adaptiveController.generateProblem);
 router.post("/evaluate", adaptiveController.evaluateSubmission);
 router.get("/recommendations", adaptiveController.getRecommendations);
 router.get("/history", adaptiveController.getHistory);
+router.delete("/history", adaptiveController.clearHistory);
 router.get("/problem/:id", adaptiveController.getProblem);
 
 module.exports = router;

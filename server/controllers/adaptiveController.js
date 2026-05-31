@@ -38,20 +38,33 @@ function calculateEloChange(userElo, problemElo, passed, total, optimalTimeCompl
  */
 exports.generateProblem = async (req, res) => {
   try {
-    const { query, previousProblemId } = req.body;
+    const { query, previousProblemId, exactMatch } = req.body;
     const userId = req.user.id;
 
     if (!query) return res.status(400).json({ message: "Query is required" });
 
-    console.log(`[Problem Retrieval] Query: "${query}"`);
+    console.log(`[Problem Retrieval] Query: "${query}", ExactMatch: ${!!exactMatch}`);
 
-    // 1. Search the curated problem bank
-    const searchResult = searchProblems(query, 5);
+    // 1. Search the curated problem bank (fetch more if we might need to extract options)
+    const searchResult = searchProblems(query, exactMatch ? 5 : 20);
 
     if (searchResult.matchedProblems.length === 0) {
       return res.status(404).json({ 
         message: "No matching problems found in the bank. Try different keywords like 'easy array', 'medium sliding window', or 'hard binary search'." 
       });
+    }
+
+    // NEW: Interactive Disambiguation
+    if (!exactMatch && searchResult.matchedProblems.length > 1) {
+      const uniquePatterns = [...new Set(searchResult.matchedProblems.map(p => p.pattern))].filter(Boolean);
+      
+      // If the query yields multiple distinct topic patterns, let the user choose one
+      if (uniquePatterns.length > 1) {
+        return res.status(200).json({
+          requiresClarification: true,
+          options: uniquePatterns.slice(0, 6)
+        });
+      }
     }
 
     // 2. Pick the best match (or a random one from top matches to add variety)
@@ -101,27 +114,33 @@ exports.generateProblem = async (req, res) => {
       });
     }
 
-    // 4. Return the problem with search metadata
-    res.status(200).json({ 
+    // 4. Find similar problems
+    const similarSearch = searchProblems(selectedProblem.pattern + " " + (selectedProblem.tags || []).join(" "), 6);
+    const similarProblems = similarSearch.matchedProblems
+      .filter(p => p.title !== selectedProblem.title)
+      .slice(0, 3)
+      .map(p => ({ 
+        title: p.title, 
+        difficultyScore: p.difficultyScore || (p.difficulty === 'Easy' ? 1000 : p.difficulty === 'Medium' ? 1500 : 2000), 
+        topic: p.pattern 
+      }));
+
+    // 5. Return the problem with search metadata
+    res.status(200).json({
       problem: existingProblem,
+      similarProblems: similarProblems,
       searchMeta: {
         query: searchResult.query,
         totalMatches: searchResult.matchedProblems.length,
         totalInBank: searchResult.totalInBank,
-        difficulty: selectedProblem.difficulty,
-        pattern: selectedProblem.pattern,
-        tags: selectedProblem.tags,
         relevanceScore: selectedProblem.relevanceScore,
-        otherMatches: searchResult.matchedProblems
-          .filter((p) => p.id !== selectedProblem.id)
-          .slice(0, 4)
-          .map((p) => ({
-            id: p.id,
-            title: p.title,
-            difficulty: p.difficulty,
-            pattern: p.pattern,
-          })),
-      },
+        otherMatches: searchResult.matchedProblems.filter(p => p.id !== selectedProblem.id).slice(0, 4).map(p => ({
+          id: p.id,
+          title: p.title,
+          difficulty: p.difficulty,
+          pattern: p.pattern
+        }))
+      }
     });
   } catch (error) {
     console.error("Generate problem error:", error);
@@ -272,11 +291,33 @@ exports.getHistory = async (req, res) => {
   }
 };
 
+exports.clearHistory = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await Problem.deleteMany({ createdBy: userId });
+    res.status(200).json({ message: "History cleared successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to clear history", error: error.message });
+  }
+};
+
 exports.getProblem = async (req, res) => {
   try {
     const problem = await Problem.findById(req.params.id);
     if (!problem) return res.status(404).json({ message: "Problem not found" });
-    res.status(200).json({ problem });
+    
+    // Find similar problems
+    const similarSearch = searchProblems(problem.topic || "", 5);
+    const similarProblems = similarSearch.matchedProblems
+      .filter(p => p.title !== problem.title)
+      .slice(0, 3)
+      .map(p => ({ 
+        title: p.title, 
+        difficultyScore: p.difficultyScore || (p.difficulty === 'Easy' ? 1000 : p.difficulty === 'Medium' ? 1500 : 2000), 
+        topic: p.pattern 
+      }));
+
+    res.status(200).json({ problem, similarProblems });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch problem", error: error.message });
   }

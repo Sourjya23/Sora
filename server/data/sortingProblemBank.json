@@ -1,0 +1,761 @@
+[
+  {
+    "id": "sort_1",
+    "title": "Restaurant Order Dispatch",
+    "difficulty": "Easy",
+    "pattern": "Custom Comparator Sorting",
+    "tags": ["sorting", "comparator", "multi-key", "story"],
+    "problemStatement": "At SpiceRoute, a popular cloud kitchen chain, during peak dinner hours the system receives multiple customer orders. Each order has a preparation time and a customer loyalty tier. To ensure maximum customer satisfaction and efficient kitchen flow, orders must be dispatched to chefs in a specific sequence. Higher loyalty customers get priority, and for same loyalty, faster-to-prepare orders come first. Given the list of orders with their prep_time and loyalty, return the 1-based original indices in the order they should be processed by the kitchen.",
+    "examples": [
+      {
+        "input": "4\n18 85\n12 92\n25 85\n15 90",
+        "output": "2 4 1 3"
+      }
+    ],
+    "storyContext": "Sort orders by loyalty descending, then by prep_time ascending."
+  },
+  {
+    "id": "sort_2",
+    "title": "E-commerce Product Recommendation Rank",
+    "difficulty": "Easy",
+    "pattern": "Multi-level Sorting",
+    "tags": ["sorting", "frequency", "story"],
+    "problemStatement": "TrendCart's recommendation engine needs to rank products for a user's homepage. Each product has a popularity score (number of views) and a conversion rate. The system prioritizes products that are both popular and convert well. Given the product data, determine the display order (1-based indices) using the platform's ranking policy.",
+    "examples": [
+      {
+        "input": "5\n450 78\n620 65\n450 82\n300 90\n520 70",
+        "output": "3 1 5 2 4"
+      }
+    ],
+    "storyContext": "Sort by popularity descending, then by conversion rate descending."
+  },
+  {
+    "id": "sort_3",
+    "title": "Library Book Issuance Queue",
+    "difficulty": "Easy",
+    "pattern": "Custom Comparator Sorting",
+    "tags": ["sorting", "tie-breaker", "story"],
+    "problemStatement": "Central Public Library uses a digital system to manage book issuance requests. Each request includes a book rarity score and the number of days the member has been waiting. The librarian wants to process requests fairly by prioritizing rare books while considering wait time. Return the 1-based indices in the order books should be issued.",
+    "examples": [
+      {
+        "input": "6\n85 12\n92 8\n70 15\n92 10\n80 12\n75 20",
+        "output": "2 4 1 5 3 6"
+      }
+    ],
+    "storyContext": "Sort by rarity descending, then by waiting days descending."
+  },
+  {
+    "id": "sort_4",
+    "title": "Fitness Challenge Leaderboard",
+    "difficulty": "Easy",
+    "pattern": "Multi-key Sorting",
+    "tags": ["sorting", "story"],
+    "problemStatement": "FitPulse runs monthly fitness challenges. Participants are ranked based on total calories burned and consistency (number of days participated). Higher calories get priority, and for ties, more consistent participants rank higher. Generate the leaderboard order using 1-based indices.",
+    "examples": [
+      {
+        "input": "5\n2450 18\n2450 22\n1980 25\n2100 20\n2300 18",
+        "output": "2 1 5 4 3"
+      }
+    ],
+    "storyContext": "Sort by calories descending, then by consistency descending."
+  },
+  {
+    "id": "sort_5",
+    "title": "Parcel Sorting for Delivery",
+    "difficulty": "Medium",
+    "pattern": "Custom Score Sorting",
+    "tags": ["sorting", "derived-score", "story"],
+    "problemStatement": "SwiftLogistics manages last-mile delivery. Each parcel has weight, distance to destination, and urgency level. The routing engine calculates an efficiency score = urgency * (weight / distance) to decide loading order into delivery vans. Return the 1-based indices in the optimal loading sequence.",
+    "examples": [
+      {
+        "input": "5\n12 8 85\n15 5 90\n10 12 80\n18 6 88\n9 10 92",
+        "output": "5 2 4 1 3"
+      }
+    ],
+    "storyContext": "Sort using derived efficiency score with cross-multiplication comparator."
+  },
+  {
+    "id": "sort_6",
+    "title": "Customer Support Ticket Prioritization",
+    "difficulty": "Medium",
+    "pattern": "Multi-level Sorting",
+    "tags": ["sorting", "comparator", "story"],
+    "problemStatement": "HelpDesk Pro handles support tickets for a SaaS company. Each ticket has severity, response time so far, and customer tier. The system must prioritize tickets using: severity first (descending), then customer tier (descending), and finally response time (descending) to avoid SLA breaches. Output the processing order using original 1-based indices.",
+    "examples": [
+      {
+        "input": "6\n9 120 3\n8 80 5\n9 200 2\n7 150 4\n9 90 3\n8 100 4",
+        "output": "3 1 5 2 6 4"
+      }
+    ],
+    "storyContext": "Three-level custom comparator with mixed sort directions."
+  },
+  {
+    "id": "sort_7",
+    "title": "Stock Trading Signal Ranking",
+    "difficulty": "Medium",
+    "pattern": "Derived Metric Sorting",
+    "tags": ["sorting", "precision", "story"],
+    "problemStatement": "AlphaTrade's algorithmic system ranks trading signals. Each signal has predicted profit, confidence score, and risk factor. The ranking score is (profit * confidence) / risk. Higher score signals are executed first. Return the 1-based indices in execution order. Use careful comparison to avoid precision issues.",
+    "examples": [
+      {
+        "input": "4\n4500 85 25\n6200 78 30\n3800 92 18\n5100 80 22",
+        "output": "3 1 4 2"
+      }
+    ],
+    "storyContext": "Cross-multiplication based fractional sorting."
+  },
+  {
+    "id": "sort_8",
+    "title": "Event Sponsorship Ranking",
+    "difficulty": "Easy",
+    "pattern": "Custom Comparator Sorting",
+    "tags": ["sorting", "story"],
+    "problemStatement": "GlobalSummit organizes large conferences. Sponsors are ranked for priority booth allocation based on sponsorship amount and past engagement score. Higher amount first, and for equal amounts, higher engagement wins. Generate the ranking order (1-based indices).",
+    "examples": [
+      {
+        "input": "5\n25000 92\n18000 88\n25000 95\n30000 85\n22000 90",
+        "output": "4 3 1 5 2"
+      }
+    ],
+    "storyContext": "Sort by amount descending, then by engagement descending."
+  },
+  {
+    "id": "sort_9",
+    "title": "Hospital Bed Allocation",
+    "difficulty": "Medium",
+    "pattern": "Multi-criteria Sorting",
+    "tags": ["sorting", "greedy-insight", "story"],
+    "problemStatement": "MediCare Hospital manages emergency bed requests. Each request has severity, expected stay duration, and patient age. The system processes requests by severity descending, then shorter stay duration first (to free beds faster), and older patients as final tie-breaker. Return the allocation processing order.",
+    "examples": [
+      {
+        "input": "5\n9 120 68\n8 45 45\n9 80 72\n7 200 80\n8 60 55",
+        "output": "3 1 2 5 4"
+      }
+    ],
+    "storyContext": "Three-level sorting combining urgency, duration, and age."
+  },
+  {
+    "id": "sort_10",
+    "title": "Social Media Content Moderator Queue",
+    "difficulty": "Medium",
+    "pattern": "Frequency + Priority Sorting",
+    "tags": ["sorting", "frequency", "story"],
+    "problemStatement": "ViralNet uses AI + human moderation. Posts are queued based on reported count and content sensitivity. Higher reports first, and for same reports, higher sensitivity score. Build a frequency map of report types if needed and return the review order (1-based indices).",
+    "examples": [
+      {
+        "input": "6\n85 4\n92 5\n85 4\n70 3\n92 4\n80 5",
+        "output": "2 6 1 3 5 4"
+      }
+    ],
+    "storyContext": "Priority descending with frequency tie-breaker."
+  },
+  {
+    "id": "sort_11",
+    "title": "Ride Sharing Driver Assignment",
+    "difficulty": "Medium",
+    "pattern": "Custom Score + Distance Sorting",
+    "tags": ["sorting", "story"],
+    "problemStatement": "RideFlow matches ride requests to drivers. Each request has fare, distance from nearest driver, and rider rating. The matching score = fare / distance * rating. Higher score requests are assigned first. Return 1-based indices in assignment order using precise comparison.",
+    "examples": [
+      {
+        "input": "5\n450 8 5\n320 5 4\n680 12 5\n290 6 3\n410 7 5",
+        "output": "3 5 1 2 4"
+      }
+    ],
+    "storyContext": "Derived efficiency score with cross-multiplication."
+  },
+  {
+    "id": "sort_12",
+    "title": "Warehouse Inventory Replenishment",
+    "difficulty": "Easy",
+    "pattern": "Multi-key Sorting",
+    "tags": ["sorting", "story"],
+    "problemStatement": "MegaStore warehouse needs to replenish items. Each item has current stock level, daily sales velocity, and restock priority. Items with higher velocity and lower stock are processed first. Generate the replenishment order using original 1-based indices.",
+    "examples": [
+      {
+        "input": "5\n120 45 8\n80 60 9\n150 30 7\n200 25 9\n90 55 8",
+        "output": "4 2 5 1 3"
+      }
+    ],
+    "storyContext": "Sort by velocity descending, then by (low stock priority) ascending."
+  },
+  {
+    "id": "sort_13",
+    "title": "Online Course Recommendation",
+    "difficulty": "Medium",
+    "pattern": "Custom Comparator Sorting",
+    "tags": ["sorting", "story"],
+    "problemStatement": "EduForge recommends courses to users. Each course has completion rate, enrollment count, and difficulty level. The system ranks by enrollment * completion_rate, with lower difficulty preferred in ties. Return the recommendation order.",
+    "examples": [
+      {
+        "input": "6\n85 1200 3\n92 800 2\n78 1500 4\n88 950 2\n90 1100 3\n75 1300 1",
+        "output": "2 4 5 1 3 6"
+      }
+    ],
+    "storyContext": "Composite score descending with difficulty as tie-breaker."
+  },
+  {
+    "id": "sort_14",
+    "title": "Fraud Detection Alert Ranking",
+    "difficulty": "Medium",
+    "pattern": "Risk Score Sorting",
+    "tags": ["sorting", "derived-score", "story"],
+    "problemStatement": "SecurePay processes thousands of transactions. Each flagged transaction has amount, velocity (transactions per minute), and anomaly score. The risk score = amount * velocity * anomaly. Rank them for manual review in descending risk order.",
+    "examples": [
+      {
+        "input": "5\n15000 12 85\n8000 25 92\n22000 8 78\n12000 18 88\n9500 30 90",
+        "output": "5 2 4 1 3"
+      }
+    ],
+    "storyContext": "Multiplication-based risk score descending sort."
+  },
+  {
+    "id": "sort_15",
+    "title": "Cloud Resource Deallocation Order",
+    "difficulty": "Medium",
+    "pattern": "Multi-criteria Resource Sorting",
+    "tags": ["sorting", "comparator", "story"],
+    "problemStatement": "NexusCloud needs to deallocate idle resources during low traffic. Each instance has runtime hours, memory usage, and business criticality. The system deallocates low criticality first, then lower memory usage, and finally longer running instances. Return the deallocation order (1-based indices).",
+    "examples": [
+      {
+        "input": "6\n450 1200 7\n320 800 9\n500 1500 6\n280 900 8\n600 1100 7\n400 950 8",
+        "output": "3 1 5 6 4 2"
+      }
+    ],
+    "storyContext": "Criticality ascending, memory ascending, runtime descending."
+  },
+  {
+    "id": "sort_16",
+    "title": "Warehouse Slot Assignment",
+    "difficulty": "Easy",
+    "pattern": "Custom Comparator Sorting",
+    "tags": ["sorting", "comparator", "multi-key", "story"],
+    "problemStatement": "TechMart operates a high-volume fulfillment center where incoming packages must be assigned to conveyor belts for sorting. Each package has a priority score (based on customer tier) and an expected processing time. The system must decide the exact order in which packages enter the main sorting line to maximize throughput while ensuring high-priority packages aren't delayed too much. Given a list of packages with their priority and processing time, return the order (1-based indices) in which they should enter the sorting line following the company's optimized policy.",
+    "examples": [
+      {
+        "input": "5\n80 12\n95 8\n60 15\n95 10\n70 9",
+        "output": "2 4 1 5 3"
+      }
+    ],
+    "storyContext": "Sort by priority descending, then by processing time ascending."
+  },
+  {
+    "id": "sort_17",
+    "title": "Ad Campaign Ranking Engine",
+    "difficulty": "Medium",
+    "pattern": "Derived Score Sorting",
+    "tags": ["sorting", "derived-score", "precision", "story"],
+    "problemStatement": "NovaAds runs real-time bidding for thousands of ad slots. Each campaign has a bid amount, remaining budget, and historical CTR (click-through rate). The platform must rank campaigns for each impression opportunity. The ranking isn't just highest bid — it considers efficiency and remaining spend to avoid burning out high-budget campaigns too early. Given a list of campaigns, return their ranking order (1-based indices) for the current impression batch using NovaAds' proprietary scoring. Score = bid × (CTR/1000) × (remaining_budget / 10000).",
+    "examples": [
+      {
+        "input": "4\n500 10000 45\n750 8000 38\n500 12000 52\n600 9000 40",
+        "output": "3 1 4 2"
+      }
+    ],
+    "storyContext": "Sort by derived score descending: bid * CTR * remaining_budget (using cross-multiplication to avoid precision issues)."
+  },
+  {
+    "id": "sort_18",
+    "title": "Airport Gate Allocation Scheduler",
+    "difficulty": "Hard",
+    "pattern": "Multi-criteria Greedy Sorting",
+    "tags": ["sorting", "greedy", "interval", "story"],
+    "problemStatement": "International AirHub manages gate assignments for arriving flights. Each flight has an arrival time, departure time, aircraft size, and priority level (VIP, International, Domestic). Gates are limited resources. The system must assign an optimal processing order for gate allocation requests to minimize conflicts and maximize utilization while respecting hard constraints on overlapping times and aircraft compatibility. Determine the order in which the gate allocation system should process these requests.",
+    "examples": [
+      {
+        "input": "6\n100 300 3 5\n150 400 2 8\n120 250 4 3\n200 450 2 7\n90 280 3 6\n180 350 1 9",
+        "output": "6 2 5 1 4 3"
+      }
+    ],
+    "storyContext": "Sort by priority descending, then by duration ascending, then by arrival time ascending."
+  },
+  {
+    "id": "sort_19",
+    "title": "Food Delivery Dispatch Order",
+    "difficulty": "Easy",
+    "pattern": "Custom Comparator Sorting",
+    "tags": ["sorting", "comparator", "story"],
+    "problemStatement": "QuickBite is a food delivery platform during dinner rush. Each order has a preparation time and a customer loyalty score. The dispatch team must decide the sequence in which riders pick up orders to ensure hot delivery and happy customers. Given a list of orders, return the order (1-based indices) in which they should be dispatched to riders.",
+    "examples": [
+      {
+        "input": "5\n25 80\n15 95\n30 70\n15 85\n20 90",
+        "output": "2 4 5 1 3"
+      }
+    ],
+    "storyContext": "Sort by loyalty descending, then by prep_time ascending."
+  },
+  {
+    "id": "sort_20",
+    "title": "Gaming Leaderboard Snapshot",
+    "difficulty": "Easy",
+    "pattern": "Multi-key Sorting",
+    "tags": ["sorting", "leaderboard", "story"],
+    "problemStatement": "PixelArena runs daily tournaments. Players have total score and time taken to complete all levels. The system needs to generate the current leaderboard ranking for prize distribution. Return the ranking order (1-based indices) of players according to the official leaderboard rules.",
+    "examples": [
+      {
+        "input": "4\n2450 890\n2450 720\n1800 650\n2100 890",
+        "output": "2 1 4 3"
+      }
+    ],
+    "storyContext": "Sort by score descending, then by time ascending."
+  },
+  {
+    "id": "sort_21",
+    "title": "Stock Sell Order Matching",
+    "difficulty": "Easy",
+    "pattern": "Custom Comparator Sorting",
+    "tags": ["sorting", "stock", "story"],
+    "problemStatement": "TradeFlow is a stock trading platform. Sellers submit orders with price and quantity. The matching engine must decide the sequence in which sell orders are displayed and potentially matched. Output the order (1-based indices) in which sell orders should be processed by the matching engine.",
+    "examples": [
+      {
+        "input": "5\n450 120\n320 300\n450 80\n500 50\n320 250",
+        "output": "4 1 3 2 5"
+      }
+    ],
+    "storyContext": "Sort by price descending, then by quantity descending."
+  },
+  {
+    "id": "sort_22",
+    "title": "Social Media Post Feed Ranking",
+    "difficulty": "Easy",
+    "pattern": "Composite Score Sorting",
+    "tags": ["sorting", "frequency", "story"],
+    "problemStatement": "ConnectSphere wants to show trending posts in users' feeds. Each post has likes and comments count. The algorithm decides the order to display posts to maximize engagement. Given posts data, return the order (1-based indices) in which they should appear in the feed.",
+    "examples": [
+      {
+        "input": "6\n1200 340\n850 520\n1200 280\n950 410\n850 650\n1100 300",
+        "output": "1 3 6 4 5 2"
+      }
+    ],
+    "storyContext": "Sort by (likes + comments) descending, then by likes descending."
+  },
+  {
+    "id": "sort_23",
+    "title": "Robot Warehouse Task Prioritization",
+    "difficulty": "Easy",
+    "pattern": "Custom Comparator Sorting",
+    "tags": ["sorting", "robotics", "story"],
+    "problemStatement": "AutoBot Robotics manages warehouse robots. Each task has a distance from robot and urgency level. The central controller assigns tasks to the nearest available robot in an optimized sequence. Determine the order (1-based indices) in which tasks should be assigned to robots.",
+    "examples": [
+      {
+        "input": "5\n45 7\n20 9\n45 8\n30 9\n60 6",
+        "output": "2 4 3 1 5"
+      }
+    ],
+    "storyContext": "Sort by urgency descending, then by distance ascending."
+  },
+  {
+    "id": "sort_24",
+    "title": "Employee Promotion Sequencing",
+    "difficulty": "Medium",
+    "pattern": "Composite Score Sorting",
+    "tags": ["sorting", "derived-score", "story"],
+    "problemStatement": "Nexlify HR uses an internal system to finalize promotion recommendations. Each employee has a performance rating, years of experience, and number of projects delivered. The system must generate a fair ranking order for the promotion committee to review. Return the order (1-based indices) in which employees should be reviewed for promotion based on the company’s weighted ranking policy.",
+    "examples": [
+      {
+        "input": "5\n92 8 45\n88 12 38\n92 7 52\n95 5 40\n88 12 42",
+        "output": "3 1 4 5 2"
+      }
+    ],
+    "storyContext": "Sort by performance descending, then by (projects * experience) descending."
+  },
+  {
+    "id": "sort_25",
+    "title": "Package Consolidation Order",
+    "difficulty": "Medium",
+    "pattern": "Fractional Sorting",
+    "tags": ["sorting", "density", "precision", "story"],
+    "problemStatement": "PrimeShip’s warehouse needs to consolidate packages into vans. Each package has weight, volume, and destination priority. The system decides the loading sequence to optimize van space utilization and delivery urgency. Determine the order (1-based indices) in which packages should be loaded into the current van.",
+    "examples": [
+      {
+        "input": "6\n450 300 85\n620 450 92\n450 300 88\n800 200 92\n300 500 85\n620 450 90",
+        "output": "4 2 6 3 1 5"
+      }
+    ],
+    "storyContext": "Sort by priority descending, then by density (weight/volume) descending using cross-multiplication."
+  },
+  {
+    "id": "sort_26",
+    "title": "Log File Reordering for Analysis",
+    "difficulty": "Medium",
+    "pattern": "Frequency + Multi-level Sorting",
+    "tags": ["sorting", "frequency", "comparator", "story"],
+    "problemStatement": "CloudGuard’s security team analyzes server logs. Each log entry has a timestamp, severity level, and error code frequency in the current batch. They need the logs sorted for efficient root cause analysis. Return the order (1-based indices) in which log entries should be reviewed.",
+    "examples": [
+      {
+        "input": "5\n162345 4 503\n162300 5 404\n162345 4 503\n162310 5 500\n162345 3 404",
+        "output": "2 4 1 3 5"
+      }
+    ],
+    "storyContext": "Precompute error code frequencies, then sort by severity descending, then by error frequency descending, then by timestamp ascending."
+  },
+  {
+    "id": "sort_27",
+    "title": "Ad Budget Allocation Order",
+    "difficulty": "Medium",
+    "pattern": "Derived Metric Sorting",
+    "tags": ["sorting", "precision", "story"],
+    "problemStatement": "VibeAds runs multiple campaigns with limited daily budget. Each campaign has bid, remaining budget, and predicted conversions. The system decides the bidding order for the next hour to maximize ROI. Output the sequence (1-based indices) in which campaigns should be activated for bidding. Score = (bid * conversions) / remaining_budget.",
+    "examples": [
+      {
+        "input": "4\n120 8000 45\n200 5000 30\n150 12000 55\n180 6000 40",
+        "output": "3 1 4 2"
+      }
+    ],
+    "storyContext": "Sort by derived score descending using cross-multiplication: (bid_a * conversions_a * remaining_b) vs (bid_b * conversions_b * remaining_a)."
+  },
+  {
+    "id": "sort_28",
+    "title": "Hospital Resource Assignment",
+    "difficulty": "Medium",
+    "pattern": "Multi-criteria Sorting",
+    "tags": ["sorting", "comparator", "story"],
+    "problemStatement": "MediFlow Hospital allocates specialized equipment (ventilators, scanners). Each request has urgency, duration needed, and patient age group. The system decides the allocation sequence to optimize resource usage. Return the order (1-based indices) in which equipment requests should be processed.",
+    "examples": [
+      {
+        "input": "5\n9 120 65\n8 60 45\n9 90 72\n7 180 80\n8 75 50",
+        "output": "3 1 2 5 4"
+      }
+    ],
+    "storyContext": "Sort by urgency descending, then by duration ascending, then by age descending."
+  },
+  {
+    "id": "sort_29",
+    "title": "Dynamic Server Load Balancer",
+    "difficulty": "Hard",
+    "pattern": "Density + Multi-level Sorting",
+    "tags": ["sorting", "greedy", "story"],
+    "problemStatement": "NexusDataCenter manages thousands of incoming tasks that need to be assigned to servers. Each task has arrival time, processing duration, memory requirement, and priority. The load balancer must decide the processing order to minimize maximum server load while handling time overlaps intelligently. Given the task details, return the order (1-based indices) in which the system should attempt to schedule these tasks for optimal resource distribution.",
+    "examples": [
+      {
+        "input": "6\n100 50 800 9\n150 30 1200 7\n80 90 600 9\n200 40 900 8\n120 25 1500 9\n180 60 700 8",
+        "output": "5 1 3 4 6 2"
+      }
+    ],
+    "storyContext": "Sort by priority descending, then by memory/duration density descending (using cross-multiplication), then by arrival time ascending."
+  },
+  {
+    "id": "sort_30",
+    "title": "Investment Portfolio Rebalancing",
+    "difficulty": "Hard",
+    "pattern": "Risk-Adjusted Score Sorting",
+    "tags": ["sorting", "precision", "story"],
+    "problemStatement": "WealthForge manages client portfolios. Each investment has expected return, risk score, current allocation percentage, and liquidity score. During market volatility, the system must decide the rebalancing order to minimize risk exposure while maximizing returns. Return the order (1-based indices) in which assets should be rebalanced. Score = (return - risk) * liquidity / allocation.",
+    "examples": [
+      {
+        "input": "5\n18 25 45000 85\n22 30 120000 70\n18 20 80000 90\n25 35 60000 65\n20 22 95000 80",
+        "output": "3 5 1 2 4"
+      }
+    ],
+    "storyContext": "Sort by derived score descending using cross-multiplication: (return_a - risk_a) * liquidity_a * allocation_b vs (return_b - risk_b) * liquidity_b * allocation_a."
+  },
+  {
+    "id": "sort_31",
+    "title": "Event Hall Booking Optimizer",
+    "difficulty": "Hard",
+    "pattern": "Multi-level Greedy Sorting",
+    "tags": ["sorting", "greedy", "interval", "story"],
+    "problemStatement": "GrandVista Convention Center processes booking requests with overlapping time slots. Each request includes start time, end time, hall capacity needed, VIP status, and revenue. The system must determine the processing order to maximize accepted bookings and revenue. Output the optimal order (1-based indices) to process booking requests.",
+    "examples": [
+      {
+        "input": "7\n100 400 200 1 45000\n150 300 150 0 32000\n50 600 300 1 78000\n200 450 100 1 29000\n120 250 250 0 41000\n180 350 180 1 52000\n90 280 220 0 38000",
+        "output": "3 6 1 5 7 2 4"
+      }
+    ],
+    "storyContext": "Sort by VIP descending, then by revenue descending, then by duration ascending, then by start time ascending."
+  },
+  {
+    "id": "sort_32",
+    "title": "Supply Chain Disruption Recovery",
+    "difficulty": "Hard",
+    "pattern": "Fractional Impact Score",
+    "tags": ["sorting", "precision", "story"],
+    "problemStatement": "GlobalForge runs a complex supply chain. Each shipment has delay risk, cost of delay, volume, and supplier reliability. During a disruption, the system must prioritize recovery order to minimize overall business impact. Determine the recovery processing order (1-based indices). Impact Score = (delay_risk × cost) / reliability, with volume as tie-breaker.",
+    "examples": [
+      {
+        "input": "5\n85 12000 450 92\n70 25000 800 88\n85 18000 300 95\n60 15000 600 90\n75 22000 550 85",
+        "output": "3 1 5 2 4"
+      }
+    ],
+    "storyContext": "Sort by impact score descending using cross-multiplication, then by volume descending."
+  },
+  {
+    "id": "sort_33",
+    "title": "Gaming Matchmaking Queue",
+    "difficulty": "Hard",
+    "pattern": "Group-based Median Sorting",
+    "tags": ["sorting", "grouping", "median", "story"],
+    "problemStatement": "BattleForge uses a sophisticated matchmaking system. Each player has skill rating, waiting time, ping, and preferred game mode. The system must decide the queue processing order to create balanced matches quickly. Return the order (1-based indices) in which players should be considered for matchmaking.",
+    "examples": [
+      {
+        "input": "6\n2450 120 45 3\n2450 80 30 3\n2100 300 60 2\n2600 90 25 3\n2300 150 40 3\n2450 200 35 3",
+        "output": "4 2 1 6 5 3"
+      }
+    ],
+    "storyContext": "Group by mode, compute median skill per group, then sort by |skill - median| ascending, then by waiting time descending."
+  },
+  {
+    "id": "sort_34",
+    "title": "Music Playlist Generation",
+    "difficulty": "Easy",
+    "pattern": "Multi-key Sorting",
+    "tags": ["sorting", "playlist", "story"],
+    "problemStatement": "MelodyStream wants to generate a personalized playlist for each user. Each song has a popularity score (number of plays) and a freshness score (days since release). The algorithm should prioritize highly popular songs, but among those with similar popularity, fresher songs get higher priority. Given the list of songs with their popularity and freshness, return the 1-based indices in the order they should appear in the playlist.",
+    "examples": [
+      {
+        "input": "5\n850 12\n920 8\n850 5\n780 20\n920 15",
+        "output": "2 5 1 3 4"
+      }
+    ],
+    "storyContext": "Sort by popularity descending, then by freshness descending (higher freshness = newer = first).",
+    "constraints": "1 ≤ N ≤ 10000, 1 ≤ popularity ≤ 10^5, 1 ≤ freshness ≤ 365",
+    "hiddenObservation": "Simple multi-level sort with both keys descending.",
+    "expectedApproach": "Create struct (popularity, freshness, index). Sort using comparator: if popularity != other.popularity return popularity > other.popularity else return freshness > other.freshness.",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "All popularity equal, all freshness equal, N=1, large freshness values.",
+    "whyCandidatesFail": "Sorting freshness ascending by mistake, forgetting to preserve original indices.",
+    "companyFlavor": "Spotify / Apple Music OA"
+  },
+  {
+    "id": "sort_35",
+    "title": "Customer Review Ranking",
+    "difficulty": "Easy",
+    "pattern": "Custom Comparator Sorting",
+    "tags": ["sorting", "review", "story"],
+    "problemStatement": "ReviewHub aggregates customer feedback. Each review has a helpfulness score (number of upvotes) and a recency score (days since posted). The platform wants to display reviews that are both helpful and recent. Higher helpfulness first, and for equal helpfulness, more recent reviews first. Given the list of reviews, output the 1-based indices in display order.",
+    "examples": [
+      {
+        "input": "4\n120 5\n95 2\n120 3\n80 8",
+        "output": "1 3 2 4"
+      }
+    ],
+    "storyContext": "Sort by helpfulness descending, then by recency ascending (smaller days = more recent).",
+    "constraints": "1 ≤ N ≤ 8000, 1 ≤ helpfulness ≤ 5000, 1 ≤ recency ≤ 100",
+    "hiddenObservation": "Primary key descending, secondary key ascending.",
+    "expectedApproach": "Store (helpfulness, recency, index). Sort: helpfulness desc, then recency asc.",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "Same helpfulness and recency, very old reviews, N=10000.",
+    "whyCandidatesFail": "Using recency descending instead of ascending, unstable sort on ties.",
+    "companyFlavor": "Yelp / Amazon OA"
+  },
+  {
+    "id": "sort_36",
+    "title": "Flight Baggage Loading Order",
+    "difficulty": "Medium",
+    "pattern": "Derived Efficiency Score",
+    "tags": ["sorting", "aviation", "story"],
+    "problemStatement": "SkyLift Airlines needs to load baggage into cargo holds. Each baggage item has weight, priority (1-5, higher = more urgent), and handling time. The loading score is defined as priority * weight / handling_time. Higher score items should be loaded first. Return the 1-based indices in the optimal loading sequence.",
+    "examples": [
+      {
+        "input": "4\n15 4 8\n22 5 10\n18 3 6\n20 4 9",
+        "output": "2 1 4 3"
+      }
+    ],
+    "storyContext": "Sort by derived score (priority * weight / handling_time) descending using cross-multiplication to avoid floating point.",
+    "constraints": "1 ≤ N ≤ 50000, 1 ≤ weight, handling_time ≤ 10^6, 1 ≤ priority ≤ 5",
+    "hiddenObservation": "Comparator: compare priority_a * weight_a * handling_time_b vs priority_b * weight_b * handling_time_a.",
+    "expectedApproach": "Use 64-bit integers for cross multiplication, implement custom comparator.",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "Handling_time = 1, large weight causing overflow (use 128-bit or careful ordering), identical scores.",
+    "whyCandidatesFail": "Using double division causing precision errors, overflow in multiplication.",
+    "companyFlavor": "Delta / United Airlines OA"
+  },
+  {
+    "id": "sort_37",
+    "title": "Smart Irrigation System Scheduling",
+    "difficulty": "Medium",
+    "pattern": "Multi-criteria Sorting",
+    "tags": ["sorting", "agriculture", "story"],
+    "problemStatement": "AgriTech’s smart irrigation system controls water valves. Each zone has soil moisture deficit (lower = needs more water), crop water sensitivity (higher = more critical), and area size. The system prioritizes zones with higher sensitivity first, then lower moisture deficit, then larger area. Generate the watering order (1-based indices).",
+    "examples": [
+      {
+        "input": "5\n25 8 120\n30 9 80\n25 7 150\n20 9 100\n28 8 110",
+        "output": "2 4 1 5 3"
+      }
+    ],
+    "storyContext": "Sort by sensitivity descending, then by moisture deficit ascending, then by area descending.",
+    "constraints": "1 ≤ N ≤ 40000, 0 ≤ moisture_deficit ≤ 100, 1 ≤ sensitivity ≤ 10, 10 ≤ area ≤ 10000",
+    "hiddenObservation": "Three-level comparator with mixed directions.",
+    "expectedApproach": "Struct with all fields, comparator: sensitivity desc, deficit asc, area desc.",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "All sensitivity equal, all deficit equal, tie on all three keys.",
+    "whyCandidatesFail": "Mixing up ascending/descending orders, missing tie-breaker.",
+    "companyFlavor": "John Deere / Bayer OA"
+  },
+  {
+    "id": "sort_38",
+    "title": "Data Center Cooling Prioritization",
+    "difficulty": "Medium",
+    "pattern": "Composite Risk Score",
+    "tags": ["sorting", "hardware", "story"],
+    "problemStatement": "CoolServer manages data center cooling. Each server rack has temperature, power draw, and criticality level. The cooling system must prioritize racks with higher risk: risk = temperature * power_draw * criticality. Racks with higher risk get cooling first. Return the 1-based indices in the cooling order.",
+    "examples": [
+      {
+        "input": "5\n72 450 8\n68 500 9\n75 400 7\n70 480 9\n65 520 6",
+        "output": "2 4 1 3 5"
+      }
+    ],
+    "storyContext": "Sort by risk score (temperature * power_draw * criticality) descending.",
+    "constraints": "1 ≤ N ≤ 60000, 30 ≤ temperature ≤ 100, 100 ≤ power_draw ≤ 2000, 1 ≤ criticality ≤ 10",
+    "hiddenObservation": "Multiplication may overflow 32-bit, use 64-bit integers or careful comparison.",
+    "expectedApproach": "Compute score as 64-bit integer, sort descending. Use stable sort for ties.",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "Very high temperature and power draw, identical scores, N=1.",
+    "whyCandidatesFail": "Integer overflow, using float for product, incorrect tie-breaking.",
+    "companyFlavor": "Google Cloud / AWS OA"
+  },
+  {
+    "id": "sort_39",
+    "title": "Emergency Communication Dispatch",
+    "difficulty": "Hard",
+    "pattern": "Weighted Priority + Time Windows",
+    "tags": ["sorting", "emergency", "greedy", "story"],
+    "problemStatement": "City911 receives emergency calls. Each call has priority (1-10), estimated response time, and a deadline by which response must start. The dispatch system must order calls to maximize the number of responses before deadlines. The ordering rule: higher priority first, but for same priority, shorter response time first, and finally earlier deadline first. Return the 1-based indices in the order the system should attempt to dispatch.",
+    "examples": [
+      {
+        "input": "5\n10 15 100\n8 20 90\n10 10 105\n9 18 95\n8 12 110",
+        "output": "3 1 4 5 2"
+      }
+    ],
+    "storyContext": "Sort by priority descending, then by response time ascending, then by deadline ascending.",
+    "constraints": "1 ≤ N ≤ 80000, 1 ≤ priority ≤ 10, 1 ≤ response_time ≤ 60, 1 ≤ deadline ≤ 10^9",
+    "hiddenObservation": "Three-level comparator that mimics earliest deadline first after priority and duration.",
+    "expectedApproach": "Custom comparator with three keys: priority desc, response_time asc, deadline asc.",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "Very large deadlines, overlapping deadlines, all priorities same.",
+    "whyCandidatesFail": "Ignoring deadline as tie-breaker, wrong order of secondary keys.",
+    "companyFlavor": "RapidSOS / Motorola OA"
+  },
+  {
+    "id": "sort_40",
+    "title": "Blockchain Transaction Ordering",
+    "difficulty": "Hard",
+    "pattern": "Gas Price + Nonce + Value Sorting",
+    "tags": ["sorting", "blockchain", "story"],
+    "problemStatement": "CryptoLedger processes pending transactions. Each transaction has gas price (higher = more profitable for miners), nonce (sequence number from sender), and transaction value. Miners order transactions by gas price descending, but for same gas price, lower nonce first (to maintain order within sender), and finally higher value first. Return the 1-based indices in the order they should be included in the next block.",
+    "examples": [
+      {
+        "input": "6\n120 5 1000\n150 2 800\n120 3 1200\n150 1 600\n130 4 900\n120 6 1100",
+        "output": "4 2 5 3 1 6"
+      }
+    ],
+    "storyContext": "Sort by gas price descending, then by nonce ascending, then by value descending.",
+    "constraints": "1 ≤ N ≤ 100000, 1 ≤ gas_price ≤ 1000, 0 ≤ nonce ≤ 10^9, 1 ≤ value ≤ 10^12",
+    "hiddenObservation": "Complex multi-level comparator with large numeric ranges.",
+    "expectedApproach": "Use 128-bit integers for value if needed, implement comparator with three levels.",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "Same gas price and nonce, very large nonce values, N max.",
+    "whyCandidatesFail": "Sorting nonce descending by mistake, overflow in value comparison, forgetting to handle large nonce properly.",
+    "companyFlavor": "Coinbase / Binance OA"
+  },
+  {
+    "id": "sort_41",
+    "title": "Conference Badge Queue",
+    "difficulty": "Easy",
+    "pattern": "Object Ordering",
+    "tags": ["sorting", "comparator", "lexicographical", "story"],
+    "problemStatement": "During a global tech summit, attendees must pass through an automated badge-printing kiosk. Each attendee record contains: attendee name, company tier, registration timestamp. The kiosk follows a strict internal priority model: 1. Lower company tier gets processed first. 2. If company tiers are equal: earlier registrations are processed first. 3. If both are equal: names are processed lexicographically. The event team wants the exact printing order. Given attendee details, print the final badge-printing order.",
+    "examples": [
+      {
+        "input": "5\nAlex 2 100\nBob 1 200\nChris 2 90\nDavid 1 200\nAaron 1 150",
+        "output": "Aaron Bob David Chris Alex"
+      }
+    ],
+    "storyContext": "Sort by tier ascending, then timestamp ascending, then name ascending.",
+    "constraints": "1 ≤ N ≤ 2 × 10^5, Name length ≤ 20",
+    "hiddenObservation": "The challenge is actually: object ordering, comparator precision, lexicographical tie-breaking",
+    "expectedApproach": "Use custom comparator: 1. tier ascending 2. timestamp ascending 3. name ascending",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "Identical timestamps, Same names, Already sorted data",
+    "whyCandidatesFail": "Forget lexicographical tie-break, Incorrect timestamp direction",
+    "companyFlavor": "Amazon / Microsoft event-management style OA."
+  },
+  {
+    "id": "sort_42",
+    "title": "Cold Storage Shipment Merge",
+    "difficulty": "Medium",
+    "pattern": "Interval Merge",
+    "tags": ["sorting", "intervals", "greedy", "story"],
+    "problemStatement": "A pharmaceutical company ships temperature-sensitive medicines. Each shipment reserves a cooling chamber during a specific time interval. Due to energy optimization: overlapping reservations must be merged into a single cooling cycle. The operations dashboard wants the minimized cooling schedule. Given shipment reservation intervals, merge all overlapping intervals. Intervals touching at boundaries are considered overlapping.",
+    "examples": [
+      {
+        "input": "5\n1 3\n2 5\n7 9\n8 10\n12 15",
+        "output": "1 5\n7 10\n12 15"
+      }
+    ],
+    "storyContext": "Merge overlapping intervals using chronological processing.",
+    "constraints": "1 ≤ N ≤ 2 × 10^5",
+    "hiddenObservation": "The challenge secretly requires: interval ordering, greedy merging, chronological processing",
+    "expectedApproach": "1. Arrange intervals by start time. 2. Traverse while maintaining current merged interval.",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "Fully nested intervals, Exact boundary overlaps, Single interval",
+    "whyCandidatesFail": "Forgetting boundary overlap, Incorrect merge updates",
+    "companyFlavor": "Google / Bloomberg interval processing style."
+  },
+  {
+    "id": "sort_43",
+    "title": "Trending Creator Feed",
+    "difficulty": "Medium",
+    "pattern": "Top-K Selection",
+    "tags": ["sorting", "comparator", "heap", "story"],
+    "problemStatement": "A social media platform ranks creators daily. Each creator has: total likes, total shares, creator ID. The feed ranking engine follows: 1. Higher likes first 2. If likes equal: higher shares first 3. If still equal: smaller creator ID first. Only top K creators appear on homepage. Return IDs of top K creators.",
+    "examples": [
+      {
+        "input": "6 3\n101 500 20\n102 700 15\n103 500 50\n104 700 15\n105 300 10\n106 500 50",
+        "output": "102 104 103"
+      }
+    ],
+    "storyContext": "Custom ranking comparator for selecting the top K elements.",
+    "constraints": "1 ≤ K ≤ N ≤ 2 × 10^5",
+    "hiddenObservation": "This is: custom ranking, top-k selection, comparator-heavy processing",
+    "expectedApproach": "Use: heap OR efficient ordering, comparator logic",
+    "timeComplexity": "O(N log K) or O(N log N)",
+    "edgeCases": "Equal likes/shares, K = N, Duplicate ranking scores",
+    "whyCandidatesFail": "Wrong comparator ordering, Heap comparator mistakes",
+    "companyFlavor": "TikTok / Meta / YouTube recommendation ranking."
+  },
+  {
+    "id": "sort_44",
+    "title": "Cloud Server Heat Balancer",
+    "difficulty": "Hard",
+    "pattern": "Sweep Line",
+    "tags": ["sorting", "sweep-line", "greedy", "heap", "story"],
+    "problemStatement": "A cloud provider monitors server workloads. Each task contains: start time, end time, heat generation value. A server cluster crashes if overlapping heat exceeds threshold H. The infrastructure team wants the minimum number of tasks removed so the system remains stable. Find the minimum tasks to remove so that at any time: activeHeat ≤ H.",
+    "examples": [
+      {
+        "input": "5 10\n1 5 6\n2 6 5\n4 8 4\n7 10 3\n9 12 5",
+        "output": "1"
+      }
+    ],
+    "storyContext": "Use sweep line to track heat and greedily remove max heat tasks when overloaded.",
+    "constraints": "1 ≤ N ≤ 2 × 10^5",
+    "hiddenObservation": "This secretly combines: sweep line, event sorting, greedy removals, max heap",
+    "expectedApproach": "1. Convert intervals into events. 2. Process chronologically. 3. Maintain active tasks using max heap. 4. Remove highest heat tasks when threshold exceeded.",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "Multiple identical intervals, Large overlaps, Heat exactly equals threshold",
+    "whyCandidatesFail": "Incorrect event ordering, Removing wrong task greedily",
+    "companyFlavor": "Google Cloud / Uber Infrastructure style."
+  },
+  {
+    "id": "sort_45",
+    "title": "Autonomous Taxi Dispatch Radius",
+    "difficulty": "Hard",
+    "pattern": "Multidimensional LIS",
+    "tags": ["sorting", "dp", "fenwick-tree", "story"],
+    "problemStatement": "A smart-city taxi platform assigns autonomous taxis to passengers. Each taxi has: coordinate position, fuel efficiency, passenger capacity. A dispatch chain is valid only if: next taxi is farther east, has greater or equal efficiency, has strictly greater capacity. The company wants the maximum total passenger capacity chain. Find the maximum achievable total passenger capacity.",
+    "examples": [
+      {
+        "input": "6\n1 2 10\n2 2 20\n3 3 15\n5 4 30\n6 4 40\n7 5 25",
+        "output": "140"
+      }
+    ],
+    "storyContext": "Sort to satisfy multi-dimensional sequence constraints and optimize passenger capacity.",
+    "constraints": "1 ≤ N ≤ 2 × 10^5",
+    "hiddenObservation": "The challenge combines: multidimensional ordering, LIS-style transitions, coordinate sorting, Fenwick/Segment Tree optimization",
+    "expectedApproach": "1. Arrange by: x ascending, efficiency ascending 2. Coordinate compress capacities/efficiencies 3. Use DP + Fenwick Tree",
+    "timeComplexity": "O(N log N)",
+    "edgeCases": "Equal efficiencies, Equal coordinates, Non-chainable taxis",
+    "whyCandidatesFail": "Incorrect ordering, Quadratic DP, Wrong state transitions",
+    "companyFlavor": "Uber autonomous systems / DE Shaw optimization style."
+  }
+]

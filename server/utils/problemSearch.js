@@ -5,8 +5,9 @@
 
 const problemBankOriginal = require("../data/problemBank.json");
 const stringProblemBank = require("../data/stringProblemBank.json");
+const sortingProblemBank = require("../data/sortingProblemBank.json");
 
-const problemBank = [...problemBankOriginal, ...stringProblemBank];
+const problemBank = [...problemBankOriginal, ...stringProblemBank, ...sortingProblemBank];
 
 // Precompute search index for blazing-fast lookups
 const searchIndex = {
@@ -74,11 +75,15 @@ function parseQuery(query) {
     }
   }
 
+  // Aliases
+  if (/\bsort\b/.test(q) && !filters.tags.includes("sorting")) filters.tags.push("sorting");
+  if (/\bstring\b/.test(q) && !filters.tags.includes("string")) filters.tags.push("string");
+
   // Extract remaining keywords for fuzzy matching
   const words = q.split(/\s+/).filter((w) => w.length > 2);
   words.forEach((word) => {
     // Skip already-matched words
-    if (["easy", "medium", "hard", "beginner", "intermediate", "advanced", "problem", "problems", "question", "questions", "based", "give", "me", "practice", "want", "some"].includes(word)) return;
+    if (["easy", "medium", "hard", "beginner", "intermediate", "advanced", "problem", "problems", "question", "questions", "based", "give", "me", "practice", "want", "some", "sort"].includes(word)) return;
     if (!filters.tags.includes(word) && !filters.patterns.some((p) => p.includes(word))) {
       filters.keywords.push(word);
     }
@@ -119,6 +124,11 @@ function scoreProblem(problem, filters) {
 
   // Bonus for recommended problems: +5
   if (problem.recommended) score += 5;
+
+  // Bonus for dedicated domain banks (sort_, str_) to outrank general array problems: +15
+  if (typeof problem.id === 'string' && (problem.id.startsWith('sort_') || problem.id.startsWith('str_'))) {
+    score += 15;
+  }
 
   return score;
 }

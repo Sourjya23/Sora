@@ -45,9 +45,11 @@ export default function AdaptivePractice() {
   const [problem, setProblem] = useState(null);
   const [loadingProblem, setLoadingProblem] = useState(false);
   const [searchMeta, setSearchMeta] = useState(null);
+  const [searchOptions, setSearchOptions] = useState(null);
   
   // History State
   const [history, setHistory] = useState([]);
+  const [similarProblems, setSimilarProblems] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   
   // Editor State
@@ -95,6 +97,7 @@ export default function AdaptivePractice() {
       const res = await API.get(`/adaptive/problem/${id}`, getAuthHeaders());
       const loadedProblem = res.data.problem;
       setProblem(loadedProblem);
+      setSimilarProblems(res.data.similarProblems || []);
       setCode(loadedProblem.starterCode || "// Start coding here...");
       setQuery("");
     } catch (err) {
@@ -102,6 +105,24 @@ export default function AdaptivePractice() {
       alert("Failed to load problem. Try again.");
     } finally {
       setLoadingProblem(false);
+    }
+  };
+
+  const handleClearHistory = async () => {
+    if (!window.confirm("Are you sure you want to clear your entire problem history? This action cannot be undone.")) return;
+    try {
+      await API.delete("/adaptive/history", getAuthHeaders());
+      setHistory([]);
+      if (problem) {
+        setProblem(null);
+        setEvaluationResult(null);
+        setSearchMeta(null);
+        setCode("// Your code here");
+        setSimilarProblems([]);
+      }
+    } catch (err) {
+      console.error("Failed to clear history", err);
+      alert("Failed to clear history.");
     }
   };
 
@@ -119,16 +140,51 @@ export default function AdaptivePractice() {
         query: query.trim(),
         previousProblemId: problem?._id 
       }, getAuthHeaders());
-      const newProblem = res.data.problem;
-      setProblem(newProblem);
-      setSearchMeta(res.data.searchMeta || null);
-      setCode(newProblem.starterCode || "// Start coding here...");
-      setQuery(""); // Clear input after successful generation
-      fetchHistory(); // Refresh history
+
+      if (res.data.requiresClarification) {
+        setSearchOptions(res.data.options);
+      } else {
+        const newProblem = res.data.problem;
+        setProblem(newProblem);
+        setSearchMeta(res.data.searchMeta || null);
+        setSimilarProblems(res.data.similarProblems || []);
+        setCode(newProblem.starterCode || "// Start coding here...");
+        setQuery(""); // Clear input after successful generation
+        setSearchOptions(null);
+        fetchHistory(); // Refresh history
+      }
     } catch (err) {
       console.error("Failed to generate problem", err);
       const msg = err.response?.data?.message || "Failed to find a matching problem. Try different keywords.";
       alert(msg);
+    } finally {
+      setLoadingProblem(false);
+    }
+  };
+
+  const handleOptionSelect = async (option) => {
+    setLoadingProblem(true);
+    setSearchOptions(null);
+    setProblem(null);
+    setEvaluationResult(null);
+    setSearchMeta(null);
+
+    try {
+      const res = await API.post("/adaptive/generate-problem", { 
+        query: option,
+        exactMatch: true
+      }, getAuthHeaders());
+      
+      const newProblem = res.data.problem;
+      setProblem(newProblem);
+      setSearchMeta(res.data.searchMeta || null);
+      setSimilarProblems(res.data.similarProblems || []);
+      setCode(newProblem.starterCode || "// Start coding here...");
+      setQuery(""); 
+      fetchHistory();
+    } catch (err) {
+      console.error("Failed to fetch specific problem", err);
+      alert("Failed to load that problem option.");
     } finally {
       setLoadingProblem(false);
     }
@@ -152,6 +208,7 @@ export default function AdaptivePractice() {
       const newProblem = res.data.problem;
       setProblem(newProblem);
       setSearchMeta(res.data.searchMeta || null);
+      setSimilarProblems(res.data.similarProblems || []);
       setCode(newProblem.starterCode || "// Start coding here...");
       setQuery("");
       fetchHistory();
@@ -269,8 +326,13 @@ const handleSubmitCode = async () => {
         {/* SIDEBAR: History */}
         {sidebarOpen && (
           <div className="w-64 bg-white/5 backdrop-blur-lg/5 border-r border-white/10 flex flex-col shrink-0 overflow-hidden">
-            <div className="p-4 border-b border-white/10">
+            <div className="p-4 border-b border-white/10 flex items-center justify-between">
               <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Problem History</h2>
+              {history.length > 0 && (
+                <button onClick={handleClearHistory} className="text-[10px] text-red-400 hover:text-red-300 hover:bg-red-500/10 px-2 py-1 rounded transition-colors" title="Clear all history">
+                  Clear
+                </button>
+              )}
             </div>
             <div className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-hide">
               {history.length === 0 ? (
@@ -301,7 +363,7 @@ const handleSubmitCode = async () => {
               
               {/* Main Problem Display Area */}
           <div className="flex-1 overflow-y-auto p-6 scrollbar-hide pb-32">
-            {!problem && !loadingProblem && (
+            {!problem && !loadingProblem && (!searchOptions || searchOptions.length === 0) && (
               <div className="flex flex-col items-center justify-center h-full text-center max-w-sm mx-auto">
                 <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
                   <svg className="w-8 h-8 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -325,15 +387,34 @@ const handleSubmitCode = async () => {
                 </div>
               </div>
             )}
-
-            {loadingProblem && (
-              <div className="flex flex-col items-center justify-center h-full">
-                <div className="w-8 h-8 border-3 border-white/10 border-t-emerald-500 rounded-full animate-spin"></div>
-                <p className="mt-4 text-sm font-bold text-emerald-700">Searching problem bank...</p>
+              {/* Main Content Area */}
+            {loadingProblem ? (
+              <div className="flex-1 flex flex-col items-center justify-center">
+                <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p className="text-zinc-400 font-medium">Finding the perfect problem...</p>
               </div>
-            )}
-
-            {problem && !loadingProblem && (
+            ) : searchOptions && searchOptions.length > 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black/40">
+                <h2 className="text-xl font-bold text-white mb-2">Did you mean?</h2>
+                <p className="text-sm text-zinc-400 mb-8 text-center max-w-md">
+                  Your search matched multiple topic areas. Please select a specific pattern below to fetch the exact problem you want.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
+                  {searchOptions.map((option, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleOptionSelect(option)}
+                      className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-emerald-500/50 rounded-xl transition-all group text-left"
+                    >
+                      <span className="text-sm font-bold text-zinc-200 group-hover:text-emerald-400 transition-colors">{option}</span>
+                      <svg className="w-5 h-5 text-zinc-500 group-hover:text-emerald-500 transform group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : problem ? (
               <div className="space-y-4">
                 {/* Search Meta Badge */}
                 {searchMeta && (
@@ -407,33 +488,36 @@ const handleSubmitCode = async () => {
                   </p>
                 </div>
 
-                {/* Other Suggestions */}
-                {searchMeta?.otherMatches?.length > 0 && (
-                  <div className="pt-4 border-t border-white/10">
-                    <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Related Problems</h3>
-                    <div className="space-y-2">
-                      {searchMeta.otherMatches.map((match) => (
+                {/* Similar Problems */}
+                {similarProblems && similarProblems.length > 0 && (
+                  <div className="pt-6 mt-4 border-t border-white/10">
+                    <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                      <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Similar Problems
+                    </h3>
+                    <div className="grid grid-cols-1 gap-2">
+                      {similarProblems.map((sim, i) => (
                         <button
-                          key={match.id}
-                          onClick={() => handleLoadSuggested(match.title)}
-                          className="w-full text-left p-3 bg-white/5/50 rounded-lg border border-white/10/50 hover:border-white/20 hover:bg-white/20/10/50 transition-all group"
+                          key={i}
+                          onClick={() => handleLoadSuggested(sim.title)}
+                          className="w-full text-left p-3 bg-white/5 rounded-lg border border-white/10 hover:border-emerald-500/50 hover:bg-white/10 transition-all group flex items-center justify-between"
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-zinc-300 font-medium group-hover:text-white transition-colors">{match.title}</span>
-                            <span className={`text-[10px] font-bold ${
-                              match.difficulty === 'Easy' ? 'text-green-400' :
-                              match.difficulty === 'Medium' ? 'text-yellow-400' :
-                              'text-red-400'
-                            }`}>{match.difficulty}</span>
+                          <div>
+                            <p className="text-xs text-zinc-300 font-medium group-hover:text-white transition-colors">{sim.title}</p>
+                            <span className="text-[10px] text-zinc-500 font-bold uppercase">{sim.topic}</span>
                           </div>
-                          <span className="text-[10px] text-zinc-400">{match.pattern}</span>
+                          <span className="text-[10px] font-bold text-emerald-600/80 bg-emerald-500/10 px-2 py-1 rounded">
+                            ELO: {sim.difficultyScore}
+                          </span>
                         </button>
                       ))}
                     </div>
                   </div>
                 )}
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Chat/Command Input fixed at bottom */}

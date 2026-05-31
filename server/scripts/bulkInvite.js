@@ -10,7 +10,7 @@ const { sendEmail } = require('../utils/emailService');
 // Add the 10 emails you want to invite in this array.
 // --------------------------------------------------------------------------
 const RECIPIENTS = [
-  'teamsora23@gmail.com',
+  'henrytheblasianhtb@gmail.com',
 ];
 
 const DEPLOYED_URL = 'https://sorabuild.netlify.app';
@@ -209,7 +209,7 @@ const getEmailHTML = () => `
 // --------------------------------------------------------------------------
 const runBulkInvite = async () => {
   console.log(`🚀 Preparing to send ${RECIPIENTS.length} custom invitations...`);
-  
+
   if (RECIPIENTS.length === 0) {
     console.log('❌ No recipients found. Please add emails to the RECIPIENTS array.');
     process.exit(1);

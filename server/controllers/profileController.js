@@ -143,3 +143,18 @@ exports.getMyProfile = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch profile" });
   }
 };
+
+exports.markTourCompleted = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.hasSeenTour = true;
+    await user.save();
+    res.status(200).json({ message: "Tour marked as completed" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to mark tour as completed" });
+  }
+};

@@ -163,7 +163,7 @@ function CandidateDashboard() {
       <header className="border-b border-white/10 bg-black/40 backdrop-blur-xl border-b border-white/10 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-[30px] h-[30px] rounded-[8px] bg-white flex items-center justify-center overflow-hidden">
+            <div id="tour-profile" className="w-[30px] h-[30px] rounded-[8px] bg-white flex items-center justify-center overflow-hidden">
               <img src="/Sora_Favicon.jpg" alt="Sora Logo" className="w-full h-full object-cover" />
             </div>
             <span style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }} className="text-[20px] font-extrabold text-white tracking-[-0.01em]">
@@ -282,6 +282,7 @@ function CandidateDashboard() {
                 <p className="text-xs text-zinc-400 mt-1">Learn any topic with interactive coding →</p>
               </button>
               <button
+                id="tour-adaptive-practice"
                 onClick={() => navigate("/adaptive-practice")}
                 className="p-6 rounded-2xl bg-gradient-to-br from-emerald-600/10 to-teal-600/10 border border-emerald-500/20 backdrop-blur-sm text-left hover:border-emerald-500/40 transition-all group relative overflow-hidden"
               >
@@ -326,7 +327,7 @@ function CandidateDashboard() {
             )}
 
             {/* Dashboard Content Container */}
-            <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden backdrop-blur-md">
+            <div id="tour-schedule" className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden backdrop-blur-md">
               <div className="p-6 border-b border-white/10 flex items-center justify-between flex-wrap gap-4">
                 <div>
                   <h3 className="font-semibold text-lg">Your Interviews</h3>
@@ -427,7 +428,7 @@ function CandidateDashboard() {
               </div>
 
               {/* Previous Interviews Section */}
-              <div className="bg-white/5 px-6 py-3 border-y border-white/10 mt-4">
+              <div id="tour-feedback" className="bg-white/5 px-6 py-3 border-y border-white/10 mt-4">
                 <h4 className="text-sm font-bold text-zinc-300 uppercase tracking-wider">Previous Interviews</h4>
               </div>
               <div className="divide-y divide-slate-900">

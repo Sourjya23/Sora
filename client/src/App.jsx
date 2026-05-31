@@ -10,6 +10,7 @@ import MeetingRoom from "./pages/MeetingRoom";
 import PracticePage from "./pages/PracticePage";
 import AdaptivePractice from "./pages/AdaptivePractice";
 import Feedback from "./pages/Feedback";
+import ProductTour from "./components/ProductTour";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           }}
         />
         <div className="relative z-10 flex flex-col min-h-screen w-full">
+          <ProductTour />
           <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
