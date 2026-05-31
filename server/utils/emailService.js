@@ -1,10 +1,13 @@
 const nodemailer = require('nodemailer');
+const dns = require('dns');
+
+// Force IPv4 resolution to prevent IPv6 connection timeouts on Render's network
+dns.setDefaultResultOrder('ipv4first');
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // true for 465, false for other ports
-  requireTLS: true,
+  port: 465,
+  secure: true, // Use port 465 secure
   connectionTimeout: 10000,
   greetingTimeout: 10000,
   socketTimeout: 10000,
