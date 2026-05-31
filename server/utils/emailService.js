@@ -1,36 +1,24 @@
-const nodemailer = require('nodemailer');
-const dns = require('dns');
+const { Resend } = require('resend');
 
-// Force IPv4 resolution to prevent IPv6 connection timeouts on Render's network
-dns.setDefaultResultOrder('ipv4first');
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // Use port 465 secure
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS?.replace(/\s+/g, ''),
-  },
-});
+// Initialize Resend with the API key from .env
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    console.log(`[SMTP] Attempting to connect as ${process.env.EMAIL_USER}...`);
-    const info = await transporter.sendMail({
-      from: `"Sora Platform" <${process.env.EMAIL_USER}>`,
+    console.log(`[Resend] Attempting to send email to ${to}...`);
+    
+    const data = await resend.emails.send({
+      from: 'Sora Platform <onboarding@resend.dev>', // Default testing domain
       to,
       subject,
       html,
     });
-    console.log('Email sent successfully:', info.messageId);
-    return info;
+
+    console.log('Email sent successfully via Resend:', data.id);
+    return data;
   } catch (error) {
-    console.error('Error sending email via Nodemailer:', error);
-    throw error;
+    console.error('Error sending email via Resend:', error);
+    throw new Error('Failed to send email via Resend API');
   }
 };
 
