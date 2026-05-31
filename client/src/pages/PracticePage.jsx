@@ -217,11 +217,14 @@ const handleRunCode = async () => {
 
     const langConfig = LANGUAGES[language];
 
-    // Frontend Compilation (React / HTML)
     if (langConfig?.isFrontend) {
       setTimeout(() => {
         let html = editorCode;
         if (language === "react") {
+          // Strip ESM imports so Babel standalone doesn't throw SyntaxError
+          const strippedCode = editorCode.replace(/import\s+.*?\s+from\s+['"].*?['"];?/g, '');
+          const hasRootRender = editorCode.includes('createRoot');
+          
           html = `
             <!DOCTYPE html>
             <html>
@@ -235,10 +238,13 @@ const handleRunCode = async () => {
               <div id="root"></div>
               <script type="text/babel">
                 try {
-                  ${editorCode}
+                  // Destructure common React hooks so they are available globally
+                  const { useState, useEffect, useRef, useMemo, useCallback, useReducer, useContext } = React;
+                  
+                  ${strippedCode}
                   
                   // Auto-mount if App is defined and root.render is not explicitly called
-                  if (typeof App !== 'undefined' && !editorCode.includes('createRoot')) {
+                  if (typeof App !== 'undefined' && !${hasRootRender}) {
                     const root = ReactDOM.createRoot(document.getElementById('root'));
                     root.render(<App />);
                   }
