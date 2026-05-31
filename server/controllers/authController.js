@@ -12,10 +12,14 @@ exports.signup = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
 
-    if (existingUser) {
+    if (existingUser && existingUser.isVerified) {
       return res.status(400).json({
         message: "User already exists",
       });
+    }
+
+    if (existingUser && !existingUser.isVerified) {
+      await User.deleteOne({ email });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -27,12 +31,6 @@ exports.signup = async (req, res) => {
     });
 
     const otpExpiry = Date.now() + 5 * 60 * 1000;
-
-    // Check if user was registered but not verified, if so reuse or delete
-    const unverifiedUser = await User.findOne({ email, isVerified: false });
-    if (unverifiedUser) {
-      await User.deleteOne({ email, isVerified: false });
-    }
 
     const user = await User.create({
       name,
