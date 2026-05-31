@@ -121,6 +121,26 @@ export default function PracticePage() {
     }
   };
 
+  const handleCompleteLesson = async () => {
+    const lessonId = searchParams.get("lessonId");
+    if (!lessonId) return;
+    
+    try {
+      await API.put(`/ai/lessons/${lessonId}/complete`, {}, getAuthHeaders());
+      // Reset state so user can generate a new lesson
+      setLesson(null);
+      setTopicInput("");
+      setCurrentTopic("");
+      setSearchParams({});
+      setEditorCode("// Start coding here...\\n");
+      setExecutionOutput(null);
+      setFrontendHtml(null);
+    } catch (err) {
+      console.error("Failed to complete lesson:", err);
+      alert("Failed to mark lesson as completed. Please try again.");
+    }
+  };
+
   const handleGenerateLesson = async (e) => {
     e.preventDefault();
     if (!topicInput.trim() || loadingLesson) return;
@@ -539,13 +559,21 @@ const handleRunCode = async () => {
                           ← Previous
                         </button>
                         <span className="text-[10px] text-zinc-400">{activeSection + 1} / {lesson.sections.length}</span>
-                        <button
-                          onClick={() => handleSectionClick(Math.min(lesson.sections.length - 1, activeSection + 1))}
-                          disabled={activeSection === lesson.sections.length - 1}
-                          className="text-xs text-white hover:text-zinc-200 disabled:opacity-30 font-bold"
-                        >
-                          Next →
-                        </button>
+                        {activeSection === lesson.sections.length - 1 ? (
+                          <button
+                            onClick={handleCompleteLesson}
+                            className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1"
+                          >
+                            Complete Lesson ✓
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleSectionClick(Math.min(lesson.sections.length - 1, activeSection + 1))}
+                            className="text-xs text-white hover:text-zinc-200 font-bold"
+                          >
+                            Next →
+                          </button>
+                        )}
                       </div>
                     </div>
                   )}

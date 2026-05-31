@@ -318,7 +318,10 @@ function CandidateDashboard() {
                         </span>
                         <span className="text-xs text-zinc-400">{new Date(lesson.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <h4 className="text-sm font-bold text-white mb-2 group-hover:text-zinc-200 transition-colors">{lesson.topic}</h4>
+                      <h4 className="text-sm font-bold text-white mb-2 group-hover:text-zinc-200 transition-colors">
+                        {lesson.topic}
+                        {lesson.completed && <span className="ml-2 text-emerald-400 font-bold" title="Completed">✓</span>}
+                      </h4>
                       <p className="text-xs text-zinc-400">Click to resume this interactive lesson →</p>
                     </div>
                   ))}

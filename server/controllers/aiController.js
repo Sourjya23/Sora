@@ -137,6 +137,20 @@ exports.getLessons = async (req, res) => {
   }
 };
 
+exports.completeLesson = async (req, res) => {
+  try {
+    const lesson = await Lesson.findOne({ _id: req.params.id, userId: req.user.id });
+    if (!lesson) return res.status(404).json({ message: "Lesson not found" });
+
+    lesson.completed = true;
+    await lesson.save();
+
+    res.status(200).json({ message: "Lesson marked as completed", lesson });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to mark lesson as completed" });
+  }
+};
+
 exports.getLessonById = async (req, res) => {
   try {
     const lesson = await Lesson.findOne({ _id: req.params.id, userId: req.user.id });
