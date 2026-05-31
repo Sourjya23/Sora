@@ -54,8 +54,15 @@ exports.generateLesson = async (req, res) => {
 
 
 
-    // Strip markdown code fences if present
-    text = text.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
+    // Extract only the JSON object, ignoring any markdown or conversation text
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}');
+    
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      text = text.substring(jsonStart, jsonEnd + 1);
+    } else {
+      throw new Error("No JSON object found in AI response");
+    }
 
     let lesson;
     try {

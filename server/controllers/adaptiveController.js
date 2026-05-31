@@ -188,11 +188,19 @@ JSON Format:
   "suggestions": "Try using a hash map to reduce time complexity to O(N)."
 }`;
 
-    const jsonText = await OllamaService.generate("deepseek-coder", prompt, true);
+    const rawText = await OllamaService.generate("deepseek-coder", prompt, true);
     
     let aiFeedback;
     try {
-      aiFeedback = JSON.parse(jsonText);
+      // Extract only the JSON object
+      const jsonStart = rawText.indexOf('{');
+      const jsonEnd = rawText.lastIndexOf('}');
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+        const jsonText = rawText.substring(jsonStart, jsonEnd + 1);
+        aiFeedback = JSON.parse(jsonText);
+      } else {
+        throw new Error("No JSON found");
+      }
     } catch (e) {
       aiFeedback = {
         timeComplexity: "Unknown",
