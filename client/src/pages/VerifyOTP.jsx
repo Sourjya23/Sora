@@ -8,7 +8,17 @@ function VerifyOTP() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let timer;
+    if (cooldown > 0) {
+      timer = setInterval(() => setCooldown((c) => c - 1), 1000);
+    }
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   useEffect(() => {
     const signupEmail = sessionStorage.getItem("signup_email");
@@ -16,6 +26,27 @@ function VerifyOTP() {
       setEmail(signupEmail);
     }
   }, []);
+
+  const handleResendOtp = async () => {
+    if (!email) {
+      setError("Please enter your email address to resend OTP.");
+      return;
+    }
+
+    setError("");
+    setSuccess("");
+    setResending(true);
+
+    try {
+      const response = await API.post("/auth/resend-otp", { email });
+      setSuccess(response.data.message || "A new OTP has been sent to your email!");
+      setCooldown(60); // Start 60-second cooldown
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to resend OTP. Please try again.");
+    } finally {
+      setResending(false);
+    }
+  };
 
   const handleVerify = async (e) => {
     e.preventDefault();
@@ -116,6 +147,15 @@ function VerifyOTP() {
               className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-violet-500/10 hover:shadow-violet-500/20 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
             >
               {loading ? "Verifying..." : "Verify OTP Code"}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={resending || cooldown > 0}
+              className="w-full bg-slate-800/50 hover:bg-slate-800 text-slate-300 font-medium py-3 px-4 rounded-xl text-sm transition-all duration-300 border border-slate-700 hover:border-slate-600 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+            >
+              {resending ? "Sending..." : cooldown > 0 ? `Resend OTP in ${cooldown}s` : "Resend OTP"}
             </button>
           </form>
 

@@ -193,3 +193,38 @@ exports.getPlatformStats = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch platform stats" });
   }
 };
+
+exports.resendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User is already verified" });
+    }
+
+    const otp = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+    });
+
+    const otpExpiry = Date.now() + 5 * 60 * 1000;
+
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+    await user.save();
+
+    await sendMail(email, otp);
+
+    res.status(200).json({ message: "A new OTP has been sent to your email" });
+  } catch (error) {
+    console.error("Error resending OTP:", error);
+    res.status(500).json({ message: "Failed to resend OTP" });
+  }
+};
