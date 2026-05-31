@@ -3,6 +3,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
 const sendMail = require("../utils/sendMail");
+const { sendEmail } = require("../utils/emailService");
+const { getWelcomeEmailHtml } = require("../utils/emailTemplates");
 
 exports.signup = async (req, res) => {
   try {
@@ -97,6 +99,18 @@ exports.verifyOTP = async (req, res) => {
       }
     );
 
+    // Send the customized welcome email asynchronously
+    try {
+      const emailHtml = getWelcomeEmailHtml(user.name);
+      sendEmail({
+        to: user.email,
+        subject: "Welcome to Sora — The ultimate interview preparation platform for engineers",
+        html: emailHtml
+      }).catch(err => console.error("Non-blocking error sending welcome email:", err));
+    } catch (emailErr) {
+      console.error("Error setting up welcome email:", emailErr);
+    }
+
     res.status(200).json({
       message: "OTP verified successfully",
       token,
@@ -169,5 +183,15 @@ exports.login = async (req, res) => {
     res.status(500).json({
       message: "Login failed",
     });
+  }
+};
+
+exports.getPlatformStats = async (req, res) => {
+  try {
+    const verifiedUsersCount = await User.countDocuments({ isVerified: true });
+    res.status(200).json({ verifiedUsersCount });
+  } catch (error) {
+    console.error("Failed to fetch platform stats:", error);
+    res.status(500).json({ message: "Failed to fetch platform stats" });
   }
 };

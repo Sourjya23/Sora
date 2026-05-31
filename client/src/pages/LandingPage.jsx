@@ -160,9 +160,19 @@ const TYPING_LINES = [
 function Hero() {
   const [companyIdx, setCompanyIdx] = useState(0);
   const [companyVisible, setCompanyVisible] = useState(true);
+  const [userCount, setUserCount] = useState(8400); // Default fallback
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch dynamic user count
+    API.get('/auth/stats')
+      .then(res => {
+        if (res.data && res.data.verifiedUsersCount) {
+          setUserCount(res.data.verifiedUsersCount + 8400); // Base count + dynamic
+        }
+      })
+      .catch(err => console.error("Could not fetch user stats", err));
+
     const interval = setInterval(() => {
       setCompanyVisible(false);
       setTimeout(() => {
@@ -231,7 +241,7 @@ function Hero() {
         {/* Stats */}
         <div className="flex gap-10 justify-center flex-wrap pt-8 border-t border-white/10">
           {[
-            { target: 8400, suffix: "+", label: "Live Sessions Done" },
+            { target: userCount, suffix: "+", label: "Engineers Joined" },
             { target: 200, suffix: "+", label: "Story Problems" },
             { target: 30, suffix: "+", label: "Companies Covered" },
             { target: 94, suffix: "%", label: "Success Rate" },
