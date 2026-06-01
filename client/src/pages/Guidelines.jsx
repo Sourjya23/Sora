@@ -22,23 +22,23 @@ export default function Guidelines() {
           <div className="inline-block px-3 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold uppercase tracking-wider rounded-full mb-6">
             How It Works
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-bold mb-8 font-slogan text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">
             Master the Engineering Loop.
           </h1>
-          <p className="text-lg text-zinc-400">
+          <p className="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
             Sora is built to eliminate the pain of isolated LeetCode grinding. 
             We simulate the actual engineering experience through story-driven AI and live pressure testing.
           </p>
         </div>
 
         {/* Feature 1: AI Tutor */}
-        <div className="grid md:grid-cols-2 gap-12 items-center mb-32">
-          <div className="order-2 md:order-1">
-            <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center mb-6">
-              <BrainCircuit className="w-6 h-6 text-emerald-400" />
+        <div className="grid lg:grid-cols-2 gap-20 items-center mb-40">
+          <div className="order-2 lg:order-1 pr-0 lg:pr-8">
+            <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mb-8">
+              <BrainCircuit className="w-7 h-7 text-emerald-400" />
             </div>
-            <h2 className="text-3xl font-bold mb-4">Learn through Stories, Not LeetCode.</h2>
-            <p className="text-zinc-400 mb-6 leading-relaxed">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-slogan text-emerald-50">Learn through Stories, Not LeetCode.</h2>
+            <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
               Tired of boring, abstract algorithms? Search for any topic like <em>Dynamic Programming</em> or <em>React Hooks</em>, and our <strong>Adaptive AI Tutor</strong> generates a unique, story-driven scenario just for you. 
             </p>
             <ul className="space-y-3 text-sm text-zinc-300">
@@ -67,21 +67,21 @@ export default function Guidelines() {
         </div>
 
         {/* Feature 2: Code Compiler */}
-        <div className="grid md:grid-cols-2 gap-12 items-center mb-32">
+        <div className="grid lg:grid-cols-2 gap-20 items-center mb-40">
           <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+            <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition duration-1000"></div>
             <img 
               src="/guidelines_compiler.png" 
               alt="Live Compiler Test Cases" 
-              className="relative rounded-2xl border border-white/10 shadow-2xl shadow-black/50 w-full"
+              className="relative rounded-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] w-full"
             />
           </div>
-          <div>
-            <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center mb-6">
-              <TerminalSquare className="w-6 h-6 text-blue-400" />
+          <div className="pl-0 lg:pl-8">
+            <div className="w-14 h-14 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mb-8">
+              <TerminalSquare className="w-7 h-7 text-blue-400" />
             </div>
-            <h2 className="text-3xl font-bold mb-4">Write, Compile, and Prove.</h2>
-            <p className="text-zinc-400 mb-6 leading-relaxed">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-slogan text-blue-50">Write, Compile, and Prove.</h2>
+            <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
               Don't just write pseudo-code. Our browser-based IDE features a live <strong>Multi-Tier Execution Engine</strong>. 
               We support over 14 backend languages and modern React rendering right in the browser.
             </p>
@@ -103,13 +103,13 @@ export default function Guidelines() {
         </div>
 
         {/* Feature 3: Live Interviews */}
-        <div className="grid md:grid-cols-2 gap-12 items-center mb-32">
-          <div className="order-2 md:order-1">
-            <div className="w-12 h-12 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center justify-center mb-6">
-              <Video className="w-6 h-6 text-rose-400" />
+        <div className="grid lg:grid-cols-2 gap-20 items-center mb-40">
+          <div className="order-2 lg:order-1 pr-0 lg:pr-8">
+            <div className="w-14 h-14 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-center mb-8">
+              <Video className="w-7 h-7 text-rose-400" />
             </div>
-            <h2 className="text-3xl font-bold mb-4">Face the Real Pressure.</h2>
-            <p className="text-zinc-400 mb-6 leading-relaxed">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-slogan text-rose-50">Face the Real Pressure.</h2>
+            <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
               Once you're warmed up, book a live 1-on-1 session. Get matched with a verified FAANG engineer and code together in a real-time synchronized environment.
             </p>
             <ul className="space-y-3 text-sm text-zinc-300">
