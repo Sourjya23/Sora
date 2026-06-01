@@ -1,76 +1,127 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const OpenAI = require("openai");
 
-// Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const openai = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
+const GEMINI_CASCADE = [
+  "gemini-3.5-flash",
+  "gemini-2.5-flash",
+  "gemini-1.5-flash"
+];
+
+const OPENROUTER_CASCADE = [
+  "google/gemma-2-9b-it:free",
+  "mistralai/mistral-7b-instruct:free",
+  "meta-llama/llama-3-8b-instruct:free"
+];
 
 class OllamaService {
-  /**
-   * Drop-in replacement for Ollama generate using Gemini.
-   */
   static async generate(modelName, prompt, expectJson = false, options = {}) {
-    try {
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        generationConfig: expectJson ? { responseMimeType: "application/json" } : {},
-      });
+    // Attempt Gemini Models
+    for (const geminiModel of GEMINI_CASCADE) {
+      try {
+        const model = genAI.getGenerativeModel({
+          model: geminiModel,
+          generationConfig: expectJson ? { responseMimeType: "application/json" } : {},
+        });
 
-      const result = await model.generateContent(prompt);
-      return result.response.text();
-    } catch (error) {
-      console.error(`Gemini Generate Error:`, error.message);
-      throw new Error(`Failed to generate response from AI`);
+        const result = await Promise.race([
+          model.generateContent(prompt),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("TIMEOUT")), 10000))
+        ]);
+        return result.response.text();
+      } catch (error) {
+        console.warn(`[Gemini Generate Router] ${geminiModel} failed: ${error.message}. Cascading...`);
+      }
     }
+
+    // Fallback to OpenRouter Models
+    for (const orModel of OPENROUTER_CASCADE) {
+      try {
+        const response = await Promise.race([
+          openai.chat.completions.create({
+            model: orModel,
+            messages: [{ role: "user", content: prompt }]
+          }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("TIMEOUT")), 10000))
+        ]);
+        return response.choices[0].message.content;
+      } catch (error) {
+        console.warn(`[OpenRouter Generate Router] ${orModel} failed: ${error.message}. Cascading...`);
+      }
+    }
+
+    throw new Error("Failed to generate response. All AI models and fallbacks exhausted.");
   }
 
-  /**
-   * Drop-in replacement for Ollama chat using Gemini.
-   */
   static async chat(modelName, messages, expectJson = false, options = {}) {
-    try {
-      // Extract system instructions for Gemini
-      const systemInstruction = messages.find(m => m.role === "system")?.content;
-      
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        systemInstruction: systemInstruction || undefined,
-        generationConfig: expectJson ? { responseMimeType: "application/json" } : {},
-      });
-
-      // Filter out system messages and map to Gemini format
-      const rawHistory = messages
-        .filter(m => m.role !== "system")
-        .slice(0, -1) // All except the last message
-        .map(m => ({
-          role: m.role === "assistant" ? "model" : "user",
-          parts: [{ text: m.content }]
-        }));
-
-      // Gemini strictly requires history to start with 'user' and alternate 'user', 'model', 'user', 'model'
-      const history = [];
-      for (const msg of rawHistory) {
-        if (history.length === 0 && msg.role === 'model') {
-          // If the first message is model, prepend a dummy user message to satisfy Gemini
-          history.push({ role: 'user', parts: [{ text: 'Hello' }] });
-        }
+    // Attempt Gemini Models
+    for (const geminiModel of GEMINI_CASCADE) {
+      try {
+        const systemInstruction = messages.find(m => m.role === "system")?.content;
         
-        if (history.length > 0 && history[history.length - 1].role === msg.role) {
-          // Merge consecutive messages of the same role
-          history[history.length - 1].parts[0].text += '\\n\\n' + msg.parts[0].text;
-        } else {
-          history.push(msg);
+        const model = genAI.getGenerativeModel({
+          model: geminiModel,
+          systemInstruction: systemInstruction || undefined,
+          generationConfig: expectJson ? { responseMimeType: "application/json" } : {},
+        });
+
+        const rawHistory = messages
+          .filter(m => m.role !== "system")
+          .slice(0, -1)
+          .map(m => ({
+            role: m.role === "assistant" ? "model" : "user",
+            parts: [{ text: m.content }]
+          }));
+
+        const history = [];
+        for (const msg of rawHistory) {
+          if (history.length === 0 && msg.role === 'model') {
+            history.push({ role: 'user', parts: [{ text: 'Hello' }] });
+          }
+          if (history.length > 0 && history[history.length - 1].role === msg.role) {
+            history[history.length - 1].parts[0].text += '\\n\\n' + msg.parts[0].text;
+          } else {
+            history.push(msg);
+          }
         }
+
+        const lastMessage = messages[messages.length - 1].content;
+        const chatSession = model.startChat({ history });
+        
+        const result = await Promise.race([
+          chatSession.sendMessage(lastMessage),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("TIMEOUT")), 10000))
+        ]);
+        
+        return result.response.text();
+      } catch (error) {
+        console.warn(`[Gemini Chat Router] ${geminiModel} failed: ${error.message}. Cascading...`);
       }
-
-      const lastMessage = messages[messages.length - 1].content;
-
-      const chatSession = model.startChat({ history });
-      const result = await chatSession.sendMessage(lastMessage);
-      
-      return result.response.text();
-    } catch (error) {
-      console.error(`Gemini Chat Error:`, error.message);
-      throw new Error(`Failed to chat with AI`);
     }
+
+    // Fallback to OpenRouter Models
+    for (const orModel of OPENROUTER_CASCADE) {
+      try {
+        // OpenRouter natively supports standard system/user/assistant formats
+        const response = await Promise.race([
+          openai.chat.completions.create({
+            model: orModel,
+            messages: messages,
+          }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("TIMEOUT")), 10000))
+        ]);
+        return response.choices[0].message.content;
+      } catch (error) {
+        console.warn(`[OpenRouter Chat Router] ${orModel} failed: ${error.message}. Cascading...`);
+      }
+    }
+
+    throw new Error("Failed to chat with AI. All models and fallbacks exhausted.");
   }
 }
 
