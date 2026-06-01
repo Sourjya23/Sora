@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
     password: String,
     role: {
       type: String,
-      enum: ["candidate", "interviewer"],
+      enum: ["candidate", "interviewer", "admin"],
       default: "candidate",
     },
     isVerified: {
@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema(
     profileCompleted: {
       type: Boolean,
       default: false,
+    },
+    profileViews: {
+      type: Number,
+      default: 0,
     },
     profileStatus: {
       type: String,

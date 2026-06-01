@@ -70,8 +70,8 @@ exports.completeProfile = async (req, res) => {
 exports.getPendingProfiles = async (req, res) => {
   try {
     const admin = await User.findById(req.user.id);
-    if (admin.role !== "interviewer") {
-      return res.status(403).json({ message: "Unauthorized" });
+    if (admin.role !== "admin") {
+      return res.status(403).json({ message: "Unauthorized: Admins only" });
     }
 
     const profiles = await User.find({ 
@@ -94,8 +94,8 @@ exports.getPendingProfiles = async (req, res) => {
 exports.reviewProfile = async (req, res) => {
   try {
     const admin = await User.findById(req.user.id);
-    if (admin.role !== "interviewer") {
-      return res.status(403).json({ message: "Unauthorized" });
+    if (admin.role !== "admin") {
+      return res.status(403).json({ message: "Unauthorized: Admins only" });
     }
 
     const { id } = req.params;

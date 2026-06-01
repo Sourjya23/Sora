@@ -1,10 +1,12 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import VerifyOTP from "./pages/VerifyOTP";
 import CandidateDashboard from "./pages/CandidateDashboard";
 import InterviewerDashboard from "./pages/InterviewerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import MeetingRoom from "./pages/MeetingRoom";
 import PracticePage from "./pages/PracticePage";
@@ -12,8 +14,24 @@ import AdaptivePractice from "./pages/AdaptivePractice";
 import Feedback from "./pages/Feedback";
 import Guidelines from "./pages/Guidelines";
 import ProductTour from "./components/ProductTour";
+import API from './api/axios';
 
 function App() {
+  // Global site metrics tracking
+  useEffect(() => {
+    const trackSiteVisit = async () => {
+      try {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        await API.post('/admin/track-visit', {
+          isRegistered: !!token
+        });
+      } catch (error) {
+        console.error('Failed to track site visit', error);
+      }
+    };
+    trackSiteVisit();
+  }, []);
+
   return (
     <BrowserRouter>
       <div className="min-h-screen relative text-white bg-transparent">
@@ -38,6 +56,16 @@ function App() {
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/guidelines" element={<Guidelines />} />
+
+        {/* Admin Routes */}
+        <Route 
+          path="/admin-dashboard" 
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } 
+        />
 
         {/* Protected Dashboards */}
         <Route

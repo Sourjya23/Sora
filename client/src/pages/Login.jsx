@@ -76,7 +76,9 @@ function Login() {
 
       localStorage.setItem("user", JSON.stringify(user));
 
-      if (user.role === "candidate") {
+      if (user.role === "admin") {
+        navigate("/admin-dashboard");
+      } else if (user.role === "candidate") {
         navigate("/candidate-dashboard");
       } else {
         navigate("/interviewer-dashboard");

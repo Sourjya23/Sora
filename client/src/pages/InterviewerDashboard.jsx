@@ -7,14 +7,10 @@ function InterviewerDashboard() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("Interviewer");
   const [tickets, setTickets] = useState([]);
-  const [pendingProfiles, setPendingProfiles] = useState([]);
   const [completedMeetings, setCompletedMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("tickets");
   const [joinNotification, setJoinNotification] = useState(null);
-
-  const [reviewNotes, setReviewNotes] = useState("");
-  const [reviewingId, setReviewingId] = useState(null);
 
   // Schedule Modal State
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -26,13 +22,11 @@ function InterviewerDashboard() {
     setLoading(true);
     try {
       const headers = { Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}` };
-      const [ticketsRes, profilesRes, completedRes] = await Promise.all([
+      const [ticketsRes, completedRes] = await Promise.all([
         API.get("/interview/tickets", { headers }),
-        API.get("/profile/pending-profiles", { headers }),
         API.get("/meeting/completed", { headers })
       ]);
       setTickets(ticketsRes.data);
-      setPendingProfiles(profilesRes.data);
       setCompletedMeetings(completedRes.data);
     } catch (err) {
       console.error("Failed to fetch data", err);
@@ -62,22 +56,7 @@ function InterviewerDashboard() {
     };
   }, []);
 
-  const handleReview = async (id, status) => {
-    try {
-      setReviewingId(id);
-      await API.put(`/profile/review-profile/${id}`, { status, adminNotes: reviewNotes }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`
-        }
-      });
-      setPendingProfiles(pendingProfiles.filter(p => p._id !== id));
-      setReviewNotes("");
-    } catch (err) {
-      console.error("Failed to review profile", err);
-    } finally {
-      setReviewingId(null);
-    }
-  };
+
 
   const generatePassword = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -252,12 +231,6 @@ function InterviewerDashboard() {
             Assigned Tickets ({tickets.filter(t => t.status !== "dismissed").length})
           </button>
           <button
-            onClick={() => setActiveTab("profiles")}
-            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "profiles" ? "border-zinc-900 text-white" : "border-transparent text-zinc-400 hover:text-zinc-200"}`}
-          >
-            Pending Verifications ({pendingProfiles.length})
-          </button>
-          <button
             onClick={() => setActiveTab("completed")}
             className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "completed" ? "border-zinc-900 text-white" : "border-transparent text-zinc-400 hover:text-zinc-200"}`}
           >
@@ -361,12 +334,17 @@ function InterviewerDashboard() {
                           <strong>Candidate Resume:</strong>
                           <div className="mt-1">
                             {ticket.resumeUrl ? (
-                              <a 
-                                href={ticket.resumeUrl} 
-                                target="_blank" 
-                                rel="noreferrer" 
-                                className="text-white hover:underline font-semibold"
-                              >
+                                <a 
+                                  href={ticket.resumeUrl} 
+                                  target="_blank" 
+                                  rel="noreferrer" 
+                                  className="text-white hover:underline font-semibold"
+                                  onClick={() => {
+                                    if (ticket.candidateId?._id) {
+                                      API.post(`/admin/profile-view/${ticket.candidateId._id}`).catch(e => console.log(e));
+                                    }
+                                  }}
+                                >
                                 View PDF Resume &rarr;
                               </a>
                             ) : "No resume attached"}
@@ -381,80 +359,7 @@ function InterviewerDashboard() {
           </div>
         )}
 
-        {activeTab === "profiles" && (
-          <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden backdrop-blur-md">
-            <div className="p-6 border-b border-white/10">
-              <h3 className="font-semibold text-lg">Pending Candidate Verifications</h3>
-            </div>
 
-            <div className="divide-y divide-slate-900">
-              {loading ? (
-                <div className="p-8 text-center text-zinc-400">Loading profiles...</div>
-              ) : pendingProfiles.length === 0 ? (
-                <div className="p-8 text-center text-zinc-400">
-                  <p>No pending profiles to verify.</p>
-                </div>
-              ) : (
-                pendingProfiles.map((profile) => (
-                  <div key={profile._id} className="p-6 flex flex-col gap-4 bg-white/5/30">
-                    <div>
-                      <h4 className="font-bold text-xl text-white mb-1">{profile.name}</h4>
-                      <p className="text-zinc-400 text-sm mb-4">{profile.email} • {profile.experienceLevel} • National ID: {profile.nationalId}</p>
-                      
-                      <div className="bg-white/5 backdrop-blur-lg p-4 rounded-xl border border-white/10 text-sm mb-4">
-                        <p className="mb-2"><strong>Intro:</strong> {profile.intro}</p>
-                        <p className="mb-2"><strong>Skills:</strong> {profile.skills?.join(", ")}</p>
-                        {profile.resumeUrl && (
-                          <p className="mb-2">
-                            <strong>Resume:</strong> <a href={profile.resumeUrl} target="_blank" rel="noreferrer" className="text-white hover:underline">View PDF</a>
-                          </p>
-                        )}
-                        {profile.projects?.length > 0 && (
-                          <div className="mt-2">
-                            <strong>Projects:</strong>
-                            <ul className="list-disc pl-4 mt-1 space-y-1">
-                              {profile.projects.map((proj, i) => (
-                                <li key={i}><a href={proj.link} target="_blank" rel="noreferrer" className="text-white hover:underline">{proj.title}</a> - {proj.description}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
-                        <div className="flex-1 w-full">
-                          <label className="block text-xs font-medium text-zinc-400 mb-1 uppercase">Review Notes (Sent to Candidate)</label>
-                          <textarea
-                            value={reviewNotes}
-                            onChange={(e) => setReviewNotes(e.target.value)}
-                            placeholder="Add feedback for approval or rejection..."
-                            className="w-full bg-white/5 backdrop-blur-lg border border-white/20 rounded-lg py-2 px-3 text-sm text-zinc-200 outline-none focus:border-white min-h-[60px]"
-                          />
-                        </div>
-                        <div className="flex space-x-3 w-full sm:w-auto">
-                          <button
-                            onClick={() => handleReview(profile._id, "approved")}
-                            disabled={reviewingId === profile._id}
-                            className="flex-1 sm:flex-none bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 font-semibold px-4 py-2 rounded-xl text-sm transition-all"
-                          >
-                            Approve & Shortlist
-                          </button>
-                          <button
-                            onClick={() => handleReview(profile._id, "rejected")}
-                            disabled={reviewingId === profile._id}
-                            className="flex-1 sm:flex-none bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:bg-rose-500/30 font-semibold px-4 py-2 rounded-xl text-sm transition-all"
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
 
         {activeTab === "completed" && (
           <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden backdrop-blur-md">
