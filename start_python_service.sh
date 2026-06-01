@@ -17,5 +17,5 @@ echo "Installing dependencies..."
 pip install -r requirements.txt
 
 echo "Starting FastAPI Server with Uvicorn..."
-# Run the FastAPI app on port 8000
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+# Run the FastAPI app on port 8001 to avoid conflicts
+uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
