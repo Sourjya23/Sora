@@ -40,9 +40,30 @@ function Signup() {
     return () => clearInterval(interval);
   }, []);
 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validatePassword = (password) => {
+    // Min 8 chars, 1 uppercase, 1 number, 1 special character
+    const re = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return re.test(password);
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
+    
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address (e.g., example@gmail.com).");
+      return;
+    }
+    if (!validatePassword(password)) {
+      setError("Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -156,8 +177,15 @@ function Signup() {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. andrew@example.com"
+                  onChange={(e) => setEmail(e.target.value.toLowerCase())}
+                  onBlur={() => {
+                    if (email && !validateEmail(email)) {
+                      setError("Invalid email format detected.");
+                    } else if (error === "Invalid email format detected.") {
+                      setError("");
+                    }
+                  }}
+                  placeholder="andrew@example.com"
                   className="w-full bg-transparent border border-white/10 focus:border-white/30 focus:bg-white/5 rounded-[8px] py-2.5 px-3 text-[14px] text-white outline-none transition-all placeholder:text-zinc-600"
                 />
               </div>

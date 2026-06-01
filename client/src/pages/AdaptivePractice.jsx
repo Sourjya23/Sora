@@ -604,7 +604,7 @@ const handleSubmitCode = async () => {
                   {isEvaluating && (
               <div className="flex items-center gap-3 text-zinc-400">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-emerald-500 rounded-full animate-spin"></div>
-                <span className="text-xs font-medium uppercase tracking-wider">DeepSeek Senior Engineer is reviewing your code...</span>
+                <span className="text-xs font-medium uppercase tracking-wider">Code is being compiled...</span>
               </div>
             )}
 

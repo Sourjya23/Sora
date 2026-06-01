@@ -278,7 +278,7 @@ function CandidateDashboard() {
                 className="p-6 rounded-2xl bg-gradient-to-br from-violet-600/10 to-fuchsia-600/10 border border-zinc-900/20 backdrop-blur-sm text-left hover:border-zinc-900/40 transition-all group"
               >
                 <p className="text-xs text-white uppercase tracking-wider font-bold">Practice & Learn</p>
-                <h3 className="text-xl font-bold mt-2 tracking-tight text-white group-hover:text-zinc-200 transition-colors">AI Tutor</h3>
+                <h3 className="text-xl font-bold mt-2 tracking-tight text-white group-hover:text-zinc-200 transition-colors">LessonBasedLearning</h3>
                 <p className="text-xs text-zinc-400 mt-1">Learn any topic with interactive coding →</p>
               </button>
               <button
@@ -288,7 +288,7 @@ function CandidateDashboard() {
               >
                 <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-widest">DeepSeek</div>
                 <p className="text-xs text-emerald-400 uppercase tracking-wider font-bold">Coding Interview</p>
-                <h3 className="text-xl font-bold mt-2 tracking-tight text-white group-hover:text-emerald-300 transition-colors">Adaptive AI</h3>
+                <h3 className="text-xl font-bold mt-2 tracking-tight text-white group-hover:text-emerald-300 transition-colors">StorybaseCodePractise</h3>
                 <p className="text-xs text-zinc-400 mt-1">Generate custom placement problems →</p>
               </button>
             </div>

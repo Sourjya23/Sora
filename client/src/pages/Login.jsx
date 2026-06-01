@@ -39,9 +39,20 @@ function Login() {
     return () => clearInterval(interval);
   }, []);
 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -143,8 +154,15 @@ function Login() {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. andrew@example.com"
+                  onChange={(e) => setEmail(e.target.value.toLowerCase())}
+                  onBlur={() => {
+                    if (email && !validateEmail(email)) {
+                      setError("Invalid email format detected.");
+                    } else if (error === "Invalid email format detected.") {
+                      setError("");
+                    }
+                  }}
+                  placeholder="andrew@example.com"
                   className="w-full bg-transparent border border-white/10 focus:border-white/30 focus:bg-white/5 rounded-[8px] py-2.5 px-3 text-[14px] text-white outline-none transition-all placeholder:text-zinc-600"
                 />
               </div>

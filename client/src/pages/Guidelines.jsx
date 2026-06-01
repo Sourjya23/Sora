@@ -31,7 +31,7 @@ export default function Guidelines() {
           </p>
         </div>
 
-        {/* Feature 1: AI Tutor */}
+        {/* Feature 1: LessonBasedLearning */}
         <div className="grid lg:grid-cols-2 gap-20 items-center mb-40">
           <div className="order-2 lg:order-1 pr-0 lg:pr-8">
             <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mb-8">
@@ -39,7 +39,7 @@ export default function Guidelines() {
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 font-slogan text-emerald-50">Learn through Stories, Not LeetCode.</h2>
             <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
-              Tired of boring, abstract algorithms? Search for any topic like <em>Dynamic Programming</em> or <em>React Hooks</em>, and our <strong>Adaptive AI Tutor</strong> generates a unique, story-driven scenario just for you. 
+              Tired of boring, abstract algorithms? Search for any topic like <em>Dynamic Programming</em> or <em>React Hooks</em>, and our <strong>LessonBasedLearning</strong> engine generates a unique, story-driven scenario just for you. 
             </p>
             <ul className="space-y-3 text-sm text-zinc-300">
               <li className="flex items-center gap-3">
@@ -60,7 +60,7 @@ export default function Guidelines() {
             <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-violet-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
             <img 
               src="/guidelines_ai_tutor.png" 
-              alt="AI Tutor Interface" 
+              alt="LessonBasedLearning Interface" 
               className="relative rounded-2xl border border-white/10 shadow-2xl shadow-black/50 w-full"
             />
           </div>
