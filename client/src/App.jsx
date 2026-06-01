@@ -10,6 +10,7 @@ import MeetingRoom from "./pages/MeetingRoom";
 import PracticePage from "./pages/PracticePage";
 import AdaptivePractice from "./pages/AdaptivePractice";
 import Feedback from "./pages/Feedback";
+import Guidelines from "./pages/Guidelines";
 import ProductTour from "./components/ProductTour";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/feedback" element={<Feedback />} />
+        <Route path="/guidelines" element={<Guidelines />} />
 
         {/* Protected Dashboards */}
         <Route

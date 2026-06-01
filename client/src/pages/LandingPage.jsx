@@ -233,7 +233,10 @@ function Hero() {
           >
             Book a Live Interview →
           </button>
-          <button className="flex items-center gap-2 bg-transparent border border-white/30 text-white hover:bg-white/5 backdrop-blur-md/10 px-6 py-[13px] rounded-[10px] text-[15px] hover:border-zinc-400 hover:text-white transition-all duration-200 cursor-pointer">
+          <button 
+            onClick={() => navigate('/guidelines')}
+            className="flex items-center gap-2 bg-transparent border border-white/30 text-white hover:bg-white/5 backdrop-blur-md/10 px-6 py-[13px] rounded-[10px] text-[15px] hover:border-zinc-400 hover:text-white transition-all duration-200 cursor-pointer"
+          >
             ▶&nbsp; See How It Works
           </button>
         </div>
