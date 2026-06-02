@@ -3,10 +3,11 @@ const SiteMetrics = require('../models/SiteMetrics');
 
 // Initialize SiteMetrics singleton if it doesn't exist
 const getMetrics = async () => {
-  let metrics = await SiteMetrics.findOne({ isSingleton: true });
-  if (!metrics) {
-    metrics = await SiteMetrics.create({ isSingleton: true });
-  }
+  let metrics = await SiteMetrics.findOneAndUpdate(
+    { isSingleton: true },
+    { $setOnInsert: { isSingleton: true, totalVisits: 0, registeredVisits: 0 } },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
   return metrics;
 };
 

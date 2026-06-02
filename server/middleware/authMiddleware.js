@@ -10,7 +10,6 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    // Support Bearer token format if present
     if (token.startsWith("Bearer ")) {
       token = token.split(" ")[1];
     }
@@ -25,4 +24,19 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
+const checkRole = (roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Forbidden: Insufficient privileges" });
+    }
+    next();
+  };
+};
+
+// Export as both default and named for backward compatibility
+authMiddleware.requireAuth = authMiddleware;
+authMiddleware.checkRole = checkRole;
+
 module.exports = authMiddleware;
+module.exports.requireAuth = authMiddleware;
+module.exports.checkRole = checkRole;
