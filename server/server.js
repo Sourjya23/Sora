@@ -42,7 +42,7 @@ app.get("/", (req, res) => {
   res.send("API Running");
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 const server = http.createServer(app);
 
@@ -91,6 +91,13 @@ io.on("connection", (socket) => {
     const room = data.meetingId || socket.meetingId;
     if (room) {
       socket.to(room).emit("language-changed", data);
+    }
+  });
+
+  socket.on("telemetry-update", (data) => {
+    const room = data.meetingId || socket.meetingId;
+    if (room) {
+      socket.to(room).emit("telemetry-update", data);
     }
   });
 

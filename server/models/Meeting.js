@@ -28,6 +28,17 @@ const meetingSchema = new mongoose.Schema(
       enum: ["scheduled", "live", "completed", "dismissed", "approved", "rejected"],
       default: "scheduled",
     },
+    forensicReport: {
+      timeComplexity: String,
+      spaceComplexity: String,
+      codeCorrectness: String,
+      screenSharedEntirely: Boolean,
+      tabChanges: [String],
+      copyPasted: [String],
+      recommendation: String,
+      detailedSummary: String,
+      isProcessing: { type: Boolean, default: false }
+    },
   },
   {
     timestamps: true,

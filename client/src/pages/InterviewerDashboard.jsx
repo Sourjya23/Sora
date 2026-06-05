@@ -18,6 +18,10 @@ function InterviewerDashboard() {
   const [scheduledTime, setScheduledTime] = useState("");
   const [keyPassword, setKeyPassword] = useState("");
 
+  // Report Modal State
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -436,6 +440,27 @@ function InterviewerDashboard() {
                       </div>
                     )}
 
+                    {meeting.forensicReport && (
+                      <div className="mt-4 pt-4 border-t border-white/10">
+                        {meeting.forensicReport.isProcessing ? (
+                          <div className="text-amber-400 text-sm animate-pulse flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                            AI Video Forensics Processing...
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => navigate(`/report/${meeting.meetingId}`)}
+                            className="relative overflow-hidden bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 border border-teal-500/30 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 group shadow-[0_0_15px_rgba(20,184,166,0.15)] hover:shadow-[0_0_20px_rgba(20,184,166,0.3)]"
+                          >
+                            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            View AI Forensic Report
+                            <svg className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity ml-1 group-hover:translate-x-1 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                          </button>
+                        )}
+                      </div>
+                    )}
+
                     {meeting.status === "approved" && (
                       <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-sm font-semibold">
                         Candidate Selected - Offer Email Sent
@@ -522,6 +547,14 @@ function InterviewerDashboard() {
           </div>
         </div>
       )}
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes shimmer {
+          100% {
+            transform: translateX(100%);
+          }
+        }
+      `}} />
     </div>
   );
 }

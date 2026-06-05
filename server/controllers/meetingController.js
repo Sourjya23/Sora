@@ -144,6 +144,7 @@ exports.getMeetingDetails = async (req, res) => {
       jobDescription: meeting.jobDescription,
       resumeUrl: meeting.resumeUrl,
       status: meeting.status,
+      forensicReport: meeting.forensicReport,
     });
   } catch (error) {
     console.error("Get meeting details error:", error);
@@ -221,9 +222,13 @@ exports.getAllProblems = async (req, res) => {
   }
 };
 
+const { processInterviewVideo } = require("../utils/aiForensics");
+
 exports.uploadRecording = async (req, res) => {
   try {
     const { id } = req.params; // meetingId
+    const { finalCode, problemStatement, telemetryEvents } = req.body;
+    
     const meeting = await Meeting.findOne({ meetingId: id });
     if (!meeting) {
       return res.status(404).json({ message: "Meeting not found" });
@@ -232,8 +237,27 @@ exports.uploadRecording = async (req, res) => {
     if (req.file) {
       meeting.recordingUrl = req.file.path; // Cloudinary URL
       meeting.status = "completed";
+      
+      // Initialize forensic report processing state
+      meeting.forensicReport = { isProcessing: true };
+      
       await meeting.save();
-      res.status(200).json({ message: "Recording uploaded successfully", recordingUrl: meeting.recordingUrl });
+      
+      // Trigger background AI forensic job
+      let parsedTelemetry = [];
+      try {
+        if (telemetryEvents) parsedTelemetry = JSON.parse(telemetryEvents);
+      } catch(e) {}
+      
+      processInterviewVideo(
+        id, 
+        meeting.recordingUrl, 
+        finalCode || "No code submitted", 
+        problemStatement || "No problem statement", 
+        parsedTelemetry
+      );
+
+      res.status(200).json({ message: "Recording uploaded successfully, AI report generation started", recordingUrl: meeting.recordingUrl });
     } else {
       res.status(400).json({ message: "No recording file provided" });
     }

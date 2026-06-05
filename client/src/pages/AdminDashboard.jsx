@@ -11,19 +11,26 @@ function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("analytics");
   const [reviewNotes, setReviewNotes] = useState("");
   const [reviewingId, setReviewingId] = useState(null);
+  const [completedMeetings, setCompletedMeetings] = useState([]);
+
+  // Report Modal State
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const headers = { Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}` };
-      const [statsRes, usersRes, profilesRes] = await Promise.all([
+      const [statsRes, usersRes, profilesRes, completedRes] = await Promise.all([
         API.get("/admin/stats", { headers }),
         API.get("/admin/users", { headers }),
-        API.get("/profile/pending-profiles", { headers })
+        API.get("/profile/pending-profiles", { headers }),
+        API.get("/admin/completed-meetings", { headers }) // Need to add this endpoint if it doesn't exist, but wait, there is no /admin/completed-meetings yet.
       ]);
       setStats(statsRes.data);
       setUsers(usersRes.data);
       setPendingProfiles(profilesRes.data);
+      setCompletedMeetings(completedRes.data);
     } catch (err) {
       console.error("Failed to fetch admin data", err);
     } finally {
@@ -110,6 +117,12 @@ function AdminDashboard() {
             className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "evaluations" ? "border-amber-400 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"}`}
           >
             Pending Evaluations ({pendingProfiles.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("forensics")}
+            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "forensics" ? "border-amber-400 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"}`}
+          >
+            AI Forensics
           </button>
         </div>
 
@@ -280,9 +293,154 @@ function AdminDashboard() {
                 </div>
               </div>
             )}
+
+            {activeTab === "forensics" && (
+              <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden">
+                <div className="p-6 border-b border-white/10 bg-amber-500/5">
+                  <h3 className="font-semibold text-lg text-amber-400">AI Forensic Reports</h3>
+                  <p className="text-xs text-zinc-400 mt-1">Review AI analysis for completed interviews.</p>
+                </div>
+                
+                <div className="divide-y divide-white/5">
+                  {completedMeetings.length === 0 ? (
+                    <div className="p-12 text-center text-zinc-400">No completed interviews with forensic reports found.</div>
+                  ) : (
+                    completedMeetings.map((meeting) => (
+                      <div key={meeting._id} className="p-6 flex flex-col hover:bg-white/5 transition-colors gap-4">
+                        <div className="flex items-start justify-between flex-wrap gap-4">
+                          <div>
+                            <h4 className="font-semibold text-base mb-1">
+                              Interview: {meeting.candidateId?.name} & {meeting.interviewerId?.name}
+                            </h4>
+                            <div className="flex items-center gap-2 text-xs text-zinc-400">
+                              <span className="bg-white/10 px-2 py-0.5 rounded text-zinc-300">
+                                Job ID: {meeting.jobId || "N/A"}
+                              </span>
+                              <span>•</span>
+                              <span>{new Date(meeting.scheduledTime).toLocaleString()}</span>
+                            </div>
+                          </div>
+                          
+                          {meeting.forensicReport && !meeting.forensicReport.isProcessing && (
+                            <button
+                              onClick={() => {
+                                setSelectedReport(meeting.forensicReport);
+                                setShowReportModal(true);
+                              }}
+                              className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/30 px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                              View AI Forensic Report
+                            </button>
+                          )}
+                          {meeting.forensicReport?.isProcessing && (
+                            <div className="text-amber-400 text-sm animate-pulse flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                              Processing Video...
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </>
         )}
       </main>
+
+      {/* Forensic Report Modal */}
+      {showReportModal && selectedReport && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button 
+              onClick={() => setShowReportModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+            >
+              ✕
+            </button>
+            
+            <div className="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
+              <div className="p-2 bg-amber-500/20 rounded-lg text-amber-400">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white">AI Forensic Report (Founder View)</h3>
+            </div>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                  <span className="text-xs text-slate-400 uppercase font-bold tracking-wider block mb-1">Time Complexity</span>
+                  <span className="text-lg font-mono text-emerald-400">{selectedReport.timeComplexity || "N/A"}</span>
+                </div>
+                <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                  <span className="text-xs text-slate-400 uppercase font-bold tracking-wider block mb-1">Space Complexity</span>
+                  <span className="text-lg font-mono text-emerald-400">{selectedReport.spaceComplexity || "N/A"}</span>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2">Code Correctness</h4>
+                <p className="text-sm text-slate-400 bg-slate-800/30 p-3 rounded-lg border border-slate-800">
+                  {selectedReport.codeCorrectness || "No analysis provided."}
+                </p>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+                  Screen Shared Entirely
+                  {selectedReport.screenSharedEntirely ? 
+                    <span className="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs">Yes</span> : 
+                    <span className="bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded text-xs">No</span>
+                  }
+                </h4>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2">Tab Changes</h4>
+                  <ul className="text-xs text-rose-400 space-y-2 bg-rose-500/5 p-3 rounded-lg border border-rose-500/10 h-32 overflow-y-auto">
+                    {selectedReport.tabChanges && selectedReport.tabChanges.length > 0 ? (
+                      selectedReport.tabChanges.map((change, i) => <li key={i}>• {change}</li>)
+                    ) : (
+                      <li className="text-emerald-500">None detected.</li>
+                    )}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2">Copy & Paste</h4>
+                  <ul className="text-xs text-amber-400 space-y-2 bg-amber-500/5 p-3 rounded-lg border border-amber-500/10 h-32 overflow-y-auto">
+                    {selectedReport.copyPasted && selectedReport.copyPasted.length > 0 ? (
+                      selectedReport.copyPasted.map((paste, i) => <li key={i}>• {paste}</li>)
+                    ) : (
+                      <li className="text-emerald-500">None detected.</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2">Detailed Summary</h4>
+                <p className="text-sm text-slate-400 bg-slate-800/30 p-4 rounded-lg border border-slate-800 whitespace-pre-wrap">
+                  {selectedReport.detailedSummary || "No summary provided."}
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-slate-800 text-center">
+                <span className="text-xs text-slate-500 uppercase tracking-wider block mb-2">AI Recommendation</span>
+                <span className={`inline-block px-6 py-2 rounded-full text-lg font-bold border ${
+                  selectedReport.recommendation?.toLowerCase() === 'offer' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
+                  selectedReport.recommendation?.toLowerCase() === 'reject' ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' :
+                  'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                }`}>
+                  {selectedReport.recommendation || "Pending"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

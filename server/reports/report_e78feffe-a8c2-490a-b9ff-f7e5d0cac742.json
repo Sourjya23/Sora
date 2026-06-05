@@ -1,0 +1,11 @@
+{
+  "timeComplexity": "N/A (No code submitted)",
+  "spaceComplexity": "N/A (No code submitted)",
+  "codeCorrectness": "No code submitted for evaluation, therefore correctness cannot be assessed.",
+  "screenSharedEntirely": false,
+  "tabChanges": [],
+  "copyPasted": [],
+  "recommendation": "Reject",
+  "detailedSummary": "The candidate did not submit any code for the problem statement. While the video shows the candidate on camera for the majority of the duration, screen sharing was only active for a very brief period (approximately 8 seconds from 3:00 to 3:08). During this short interval, a coding environment with Java code (a string reversal implementation) was visible, but no changes or active coding were observed before the screen sharing was stopped. The lack of submitted code means there is no solution to evaluate for correctness, time complexity, or space complexity. The provided raw telemetry events array is empty, so no external activity like tab changes or copy-pasting could be cross-referenced. Based on the absence of a submitted solution, the candidate's performance cannot be deemed satisfactory for a Software Engineer I role which requires coding skills.",
+  "isProcessing": false
+}

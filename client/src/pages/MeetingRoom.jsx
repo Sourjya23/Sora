@@ -68,6 +68,9 @@ function MeetingRoom() {
   const [uploadingRecording, setUploadingRecording] = useState(false);
   const recordedChunks = useRef([]);
 
+  // Telemetry State
+  const [telemetryEvents, setTelemetryEvents] = useState([]);
+
   // Screen Share State (Candidate)
   const [isSharingScreen, setIsSharingScreen] = useState(false);
   const screenStreamRef = useRef(null);
@@ -110,6 +113,33 @@ function MeetingRoom() {
     }
     fetchMeetingMetadata();
   }, [id, navigate]);
+
+  // Telemetry Setup
+  useEffect(() => {
+    if (user?.role !== "candidate") return;
+    
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        const newEvent = { type: "tab_change", timestamp: new Date().toISOString(), description: "Candidate switched tabs or minimized window." };
+        setTelemetryEvents((prev) => [...prev, newEvent]);
+        socket.emit("telemetry-update", { meetingId: id, event: newEvent });
+      }
+    };
+    
+    const handlePaste = (e) => {
+      const newEvent = { type: "paste", timestamp: new Date().toISOString(), description: "Candidate pasted content into the document." };
+      setTelemetryEvents((prev) => [...prev, newEvent]);
+      socket.emit("telemetry-update", { meetingId: id, event: newEvent });
+    };
+    
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("paste", handlePaste, true); // Use capture phase
+    
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("paste", handlePaste, true);
+    };
+  }, [user, id]);
 
   // Fetch problem bank for interviewer
   useEffect(() => {
@@ -179,6 +209,10 @@ function MeetingRoom() {
       setMessages((prev) => [...prev, data]);
     };
 
+    const telemetryListener = (data) => {
+      setTelemetryEvents((prev) => [...prev, data.event]);
+    };
+
     const endListener = () => {
       alert("The interview has been ended by the interviewer.");
       navigate(user.role === "candidate" ? "/candidate-dashboard" : "/interviewer-dashboard");
@@ -188,6 +222,7 @@ function MeetingRoom() {
     socket.on("language-changed", langListener);
     socket.on("problem-statement-changed", problemListener);
     socket.on("receive-message", messageListener);
+    socket.on("telemetry-update", telemetryListener);
     socket.on("meeting-ended", endListener);
 
     return () => {
@@ -195,6 +230,7 @@ function MeetingRoom() {
       socket.off("language-changed", langListener);
       socket.off("problem-statement-changed", problemListener);
       socket.off("receive-message", messageListener);
+      socket.off("telemetry-update", telemetryListener);
       socket.off("meeting-ended", endListener);
     };
   }, [isJoined, user, id, editorCode, language, problemStatement, navigate]);
@@ -448,6 +484,9 @@ function MeetingRoom() {
         
         const formData = new FormData();
         formData.append("recording", file);
+        formData.append("finalCode", editorCode);
+        formData.append("problemStatement", problemStatement);
+        formData.append("telemetryEvents", JSON.stringify(telemetryEvents));
 
         try {
           const token = localStorage.getItem("token");

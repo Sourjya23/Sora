@@ -14,6 +14,7 @@ import AdaptivePractice from "./pages/AdaptivePractice";
 import Feedback from "./pages/Feedback";
 import Guidelines from "./pages/Guidelines";
 import ProductTour from "./components/ProductTour";
+import ForensicReport from "./pages/ForensicReport";
 import API from './api/axios';
 
 function App() {
@@ -89,6 +90,14 @@ function App() {
           element={
             <ProtectedRoute>
               <MeetingRoom />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/report/:meetingId"
+          element={
+            <ProtectedRoute>
+              <ForensicReport />
             </ProtectedRoute>
           }
         />

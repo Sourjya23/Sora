@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const SiteMetrics = require('../models/SiteMetrics');
+const Meeting = require('../models/Meeting');
 
 // Initialize SiteMetrics singleton if it doesn't exist
 const getMetrics = async () => {
@@ -81,5 +82,18 @@ exports.incrementProfileView = async (req, res) => {
   } catch (error) {
     console.error('Error incrementing profile view:', error);
     res.status(500).json({ message: 'Error incrementing profile view' });
+  }
+};
+
+exports.getCompletedMeetings = async (req, res) => {
+  try {
+    const meetings = await Meeting.find({ status: { $in: ['completed', 'approved', 'rejected'] } })
+      .populate('candidateId', 'name email')
+      .populate('interviewerId', 'name email')
+      .sort({ updatedAt: -1 });
+    res.json(meetings);
+  } catch (error) {
+    console.error('Error fetching completed meetings:', error);
+    res.status(500).json({ message: 'Error fetching meetings' });
   }
 };
