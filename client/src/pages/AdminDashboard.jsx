@@ -12,6 +12,7 @@ function AdminDashboard() {
   const [reviewNotes, setReviewNotes] = useState("");
   const [reviewingId, setReviewingId] = useState(null);
   const [completedMeetings, setCompletedMeetings] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
   // Report Modal State
   const [showReportModal, setShowReportModal] = useState(false);
@@ -21,16 +22,18 @@ function AdminDashboard() {
     setLoading(true);
     try {
       const headers = { Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}` };
-      const [statsRes, usersRes, profilesRes, completedRes] = await Promise.all([
+      const [statsRes, usersRes, profilesRes, completedRes, notificationsRes] = await Promise.all([
         API.get("/admin/stats", { headers }),
         API.get("/admin/users", { headers }),
         API.get("/profile/pending-profiles", { headers }),
-        API.get("/admin/completed-meetings", { headers }) // Need to add this endpoint if it doesn't exist, but wait, there is no /admin/completed-meetings yet.
+        API.get("/admin/completed-meetings", { headers }),
+        API.get("/admin/notifications", { headers })
       ]);
       setStats(statsRes.data);
       setUsers(usersRes.data);
       setPendingProfiles(profilesRes.data);
       setCompletedMeetings(completedRes.data);
+      setNotifications(notificationsRes.data);
     } catch (err) {
       console.error("Failed to fetch admin data", err);
     } finally {
@@ -123,6 +126,12 @@ function AdminDashboard() {
             className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "forensics" ? "border-amber-400 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"}`}
           >
             AI Forensics
+          </button>
+          <button
+            onClick={() => setActiveTab("notifications")}
+            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "notifications" ? "border-amber-400 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"}`}
+          >
+            System Notifications ({notifications.length})
           </button>
         </div>
 
@@ -339,6 +348,54 @@ function AdminDashboard() {
                               Processing Video...
                             </div>
                           )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "notifications" && (
+              <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden">
+                <div className="p-6 border-b border-white/10 bg-amber-500/5">
+                  <h3 className="font-semibold text-lg text-amber-400">System Notifications</h3>
+                  <p className="text-xs text-zinc-400 mt-1">Real-time alerts and automated system events.</p>
+                </div>
+                <div className="divide-y divide-white/5 max-h-[600px] overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="p-12 text-center text-zinc-400">No recent system notifications.</div>
+                  ) : (
+                    notifications.map((notif) => (
+                      <div key={notif._id} className="p-6 flex items-start gap-4 hover:bg-white/5 transition-colors">
+                        <div className={`p-2 rounded-lg shrink-0 mt-1 ${
+                          notif.type === 'email_sent' ? 'bg-blue-500/20 text-blue-400' :
+                          notif.type === 'system_alert' ? 'bg-rose-500/20 text-rose-400' :
+                          'bg-amber-500/20 text-amber-400'
+                        }`}>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {notif.type === 'email_sent' ? (
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            ) : (
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            )}
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-zinc-200 text-sm">{notif.message}</p>
+                          <div className="flex items-center gap-2 mt-2 text-xs text-zinc-500 font-mono">
+                            <span>{new Date(notif.createdAt).toLocaleDateString()}</span>
+                            <span>•</span>
+                            <span>{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            {notif.userId && (
+                              <>
+                                <span>•</span>
+                                <span className="text-zinc-400 font-sans bg-white/5 px-2 py-0.5 rounded">
+                                  User: {notif.userId.name || notif.userId.email}
+                                </span>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))

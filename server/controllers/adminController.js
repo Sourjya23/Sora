@@ -97,3 +97,18 @@ exports.getCompletedMeetings = async (req, res) => {
     res.status(500).json({ message: 'Error fetching meetings' });
   }
 };
+
+const AdminNotification = require('../models/AdminNotification');
+
+exports.getAdminNotifications = async (req, res) => {
+  try {
+    const notifications = await AdminNotification.find()
+      .populate('userId', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(100);
+    res.json(notifications);
+  } catch (error) {
+    console.error('Error fetching admin notifications:', error);
+    res.status(500).json({ message: 'Error fetching notifications' });
+  }
+};

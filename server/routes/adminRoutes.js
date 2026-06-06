@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getStats, getAllUsers, trackVisit, incrementProfileView, getCompletedMeetings } = require('../controllers/adminController');
+const { getStats, getAllUsers, trackVisit, incrementProfileView, getCompletedMeetings, getAdminNotifications } = require('../controllers/adminController');
 const { requireAuth, checkRole } = require('../middleware/authMiddleware');
 
 // Public route for tracking global visits
@@ -14,5 +14,6 @@ router.use(checkRole(['admin']));
 router.get('/stats', getStats);
 router.get('/users', getAllUsers);
 router.get('/completed-meetings', getCompletedMeetings);
+router.get('/notifications', getAdminNotifications);
 
 module.exports = router;

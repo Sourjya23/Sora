@@ -86,7 +86,7 @@ const init = () => {
 <ul>
   <li><strong>The Full Interview Flow:</strong> Test out our real-time, peer-to-peer collaborative coding environment before your actual interviews!</li>
   <li><strong>AI Forensic Practice:</strong> Generate adaptive coding challenges and get AI-graded Big-O evaluations.</li>
-  <li><strong>Visibility to Recruiters:</strong> Top companies can seamlessly find your complete portfolio and skills.</li>
+  <li><strong>Scope of Improvisation:</strong> Improving Time complexities, space complexities along with communication skills and representation skills.</li>
 </ul>
 <p>Please navigate to your dashboard and ensure the following fields are fully filled out:</p>
 <ul>
@@ -104,9 +104,16 @@ const init = () => {
 <p>Best regards,<br/>The Sora.ai Team</p>
             `
           });
+          
+          const AdminNotification = require('../models/AdminNotification');
+          await AdminNotification.create({
+            type: "email_sent",
+            message: `Profile verification reminder sent to ${user.email}`,
+            userId: user._id
+          });
         }
       }
-      
+
       if (unverifiedUsers.length > 0) {
         console.log(`📧 Sent profile verification reminders to ${unverifiedUsers.length} users.`);
       }
