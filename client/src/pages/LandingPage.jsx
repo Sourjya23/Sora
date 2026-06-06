@@ -101,7 +101,7 @@ function Navbar() {
         {/* Logo */}
         <a href="#" className="flex items-center gap-[10px] flex-none no-underline">
           <div className="w-[30px] h-[30px] rounded-[8px] bg-white flex items-center justify-center overflow-hidden">
-            <img src="/Sora_Favicon.jpg" alt="Sora Logo" className="w-full h-full object-cover" />
+            <img src="/Sora_Favicon.jpg" alt="Sora live interview platform logo" className="w-full h-full object-cover" />
           </div>
           <span
             style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
@@ -218,6 +218,9 @@ function Hero() {
         </h1>
 
         <p className="text-[1.05rem] text-zinc-300 mb-8 max-w-[560px] mx-auto">
+          <span className="sr-only" style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: 0 }}>
+            Sora is a live mock interview platform that helps software engineers practice technical coding interviews. Used by ambitious candidates to secure FAANG offers.
+          </span>
           Practice live coding sessions with engineers from top companies. Learn DSA
           through story-driven problems.
           <br />
