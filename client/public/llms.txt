@@ -1,0 +1,14 @@
+# Sora
+> Practice live technical interviews with Big Tech software engineers.
+
+Sora is a platform for software engineers to practice real-time technical interviews. Unlike automated platforms, Sora connects you with verified engineers from top-tier companies like Google, Amazon, and Meta for live, interactive sessions.
+
+## Key Features
+- **Live Peer-to-Peer Environment**: Shared code editor with real-time syncing.
+- **Story-Driven Practice**: Unique DSA challenges presented as interactive narrative adventures.
+- **AI Forensics**: Automated post-interview analysis on time complexity, space complexity, and coding patterns.
+
+## Key pages
+- [Homepage](https://sorabuild.netlify.app/): Main platform overview.
+- [Guidelines](https://sorabuild.netlify.app/guidelines): How the interview platform works.
+- [Sign Up](https://sorabuild.netlify.app/signup): Register for early access.

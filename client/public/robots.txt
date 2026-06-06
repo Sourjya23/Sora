@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://sorabuild.netlify.app/sitemap.xml
