@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import Joyride, { STATUS } from "react-joyride";
 import API from "../api/axios";
 
 // ── Utility ────────────────────────────────────────────────────────────────
@@ -82,11 +83,20 @@ function NumberCounter({ target, suffix = "", duration = 2000 }) {
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", fn);
     return () => window.removeEventListener("scroll", fn);
   }, []);
+
+  const handleDashboardRedirect = () => {
+    if (user.role === "admin") navigate("/admin-dashboard");
+    else if (user.role === "candidate") navigate("/candidate-dashboard");
+    else navigate("/interviewer-dashboard");
+  };
 
   return (
     <nav
@@ -113,31 +123,42 @@ function Navbar() {
 
         {/* Links */}
         <div className="hidden md:flex gap-7 flex-1 justify-center">
-          {["#features", "#learn", "#upcoming", "#success"].map((href, i) => (
+          {["#features", "#learn", "#lessons", "#upcoming", "#success"].map((href, i) => (
             <a
               key={href}
               href={href}
               className="text-zinc-300 no-underline text-[13px] font-medium tracking-[0.01em] hover:text-white transition-colors duration-200"
             >
-              {["Features", "Learn", "Upcoming", "Stories"][i]}
+              {["Features", "Learn", "Lessons", "Upcoming", "Stories"][i]}
             </a>
           ))}
         </div>
 
         {/* Actions */}
         <div id="tour-login-btn" className="flex items-center gap-[10px] flex-none">
-          <button 
-            onClick={() => navigate('/login')}
-            className="hidden sm:block bg-transparent border border-white/30 text-white hover:bg-white/5 backdrop-blur-md/10 px-4 py-[7px] rounded-[8px] text-[13px] font-medium hover:border-white hover:bg-white/10 hover:text-white transition-all duration-200 cursor-pointer"
-          >
-            Sign in
-          </button>
-          <button 
-            onClick={() => navigate('/signup')}
-            className="bg-white text-zinc-900 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 border-none px-[18px] py-[8px] rounded-[8px] text-[13px] font-bold hover:bg-zinc-300 transition-all duration-200 cursor-pointer"
-          >
-            Get Early Access
-          </button>
+          {token ? (
+            <button 
+              onClick={handleDashboardRedirect}
+              className="bg-white text-zinc-900 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 border-none px-[18px] py-[8px] rounded-[8px] text-[13px] font-bold hover:bg-zinc-300 transition-all duration-200 cursor-pointer"
+            >
+              Go to Dashboard
+            </button>
+          ) : (
+            <>
+              <button 
+                onClick={() => navigate('/login')}
+                className="hidden sm:block bg-transparent border border-white/30 text-white hover:bg-white/5 backdrop-blur-md/10 px-4 py-[7px] rounded-[8px] text-[13px] font-medium hover:border-white hover:bg-white/10 hover:text-white transition-all duration-200 cursor-pointer"
+              >
+                Sign in
+              </button>
+              <button 
+                onClick={() => navigate('/signup')}
+                className="bg-white text-zinc-900 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 border-none px-[18px] py-[8px] rounded-[8px] text-[13px] font-bold hover:bg-zinc-300 transition-all duration-200 cursor-pointer"
+              >
+                Get Early Access
+              </button>
+            </>
+          )}
         </div>
       </div>
     </nav>
@@ -584,6 +605,47 @@ function RemoveSection() {
   );
 }
 
+// ── Lessons ────────────────────────────────────────────────────────────────
+function Lessons() {
+  const lessons = [
+    { name: "React Internals", desc: "Master the VDOM, reconciliation, and hooks under the hood.", icon: "⚛️" },
+    { name: "Java Concurrency", desc: "Deep dive into threads, locks, and synchronized blocks.", icon: "☕" },
+    { name: "Python Data Science", desc: "Learn NumPy, Pandas, and machine learning basics.", icon: "🐍" },
+    { name: "Go Microservices", desc: "Build scalable microservices using goroutines and channels.", icon: "🐹" },
+  ];
+
+  return (
+    <section className="py-22 px-8 bg-transparent" id="lessons">
+      <div className="max-w-[1160px] mx-auto">
+        <span className="inline-block text-[11px] font-bold text-zinc-300 uppercase tracking-[0.1em] border border-white/20 px-3 py-1 rounded-full mb-4">
+          AI Lesson Generation
+        </span>
+        <h2
+          style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
+          className="text-[clamp(1.8rem,3.5vw,2.6rem)] font-extrabold text-white mb-4 leading-[1.15] tracking-[-0.02em]"
+        >
+          Generate custom lessons instantly.
+        </h2>
+        <p className="text-zinc-300 max-w-[520px] mb-12 text-[15px]">
+          Stuck on a concept? Use our AI engine to generate interactive learning modules for any language or framework.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {lessons.map((lesson) => (
+            <div
+              key={lesson.name}
+              className="p-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-[12px] hover:border-white/20 transition-colors duration-300 shadow-sm hover:shadow"
+            >
+              <div className="text-[2rem] mb-3">{lesson.icon}</div>
+              <div className="text-[1rem] font-bold text-white mb-2">{lesson.name}</div>
+              <div className="text-[13px] text-zinc-300 leading-[1.6]">{lesson.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ── Upcoming ───────────────────────────────────────────────────────────────
 function Upcoming() {
   const items = [
@@ -836,11 +898,118 @@ const globalStyles = `
   .py-22 { padding-top: 5.5rem; padding-bottom: 5.5rem; }
 `;
 
+// ── Joyride Tour ───────────────────────────────────────────────────────────
+function JoyrideTour() {
+  const [run, setRun] = useState(false);
+
+  useEffect(() => {
+    const hasSeenTour = localStorage.getItem("hasSeenSoraTour");
+    const queryParams = new URLSearchParams(window.location.search);
+    const forceTour = queryParams.get("tour") === "true";
+
+    if (!hasSeenTour || forceTour) {
+      setRun(true);
+    }
+  }, []);
+
+  const steps = [
+    {
+      target: '#tour-login-btn',
+      content: (
+        <div>
+          <h3 className="text-lg font-bold mb-2">Welcome to Sora!</h3>
+          <p className="text-sm">First time here? Click <strong>Get Early Access</strong> or <strong>Sign In</strong> to begin. You'll need to complete a profile verification before booking live mock interviews.</p>
+        </div>
+      ),
+      disableBeacon: true,
+    },
+    {
+      target: '#features',
+      content: (
+        <div>
+          <h3 className="text-lg font-bold mb-2">Real-time Interviews</h3>
+          <p className="text-sm">Our core feature: Book sessions with verified Big Tech engineers. Code in a shared editor and get actionable feedback.</p>
+        </div>
+      ),
+    },
+    {
+      target: '#lessons',
+      content: (
+        <div>
+          <h3 className="text-lg font-bold mb-2">AI Generated Lessons</h3>
+          <p className="text-sm">Struggling with a concept? Let Sora generate tailored interactive lessons for you—from React to Java.</p>
+        </div>
+      ),
+    },
+    {
+      target: '#learn',
+      content: (
+        <div>
+          <h3 className="text-lg font-bold mb-2">Frictionless Practice</h3>
+          <p className="text-sm">We've removed the nonsense. No fake AI interviewers, no context-free grinding. Just curated problem solving.</p>
+        </div>
+      ),
+    },
+    {
+      target: '#success',
+      content: (
+        <div>
+          <h3 className="text-lg font-bold mb-2">Real Offers</h3>
+          <p className="text-sm">Read how other engineers used Sora to secure offers from top tech companies. Ready to start your journey?</p>
+        </div>
+      ),
+    }
+  ];
+
+  const handleJoyrideCallback = (data) => {
+    const { status } = data;
+    const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
+    
+    if (finishedStatuses.includes(status)) {
+      localStorage.setItem("hasSeenSoraTour", "true");
+      setRun(false);
+    }
+  };
+
+  return (
+    <Joyride
+      steps={steps}
+      run={run}
+      continuous
+      scrollToFirstStep
+      showProgress
+      showSkipButton
+      callback={handleJoyrideCallback}
+      styles={{
+        options: {
+          arrowColor: '#18181b',
+          backgroundColor: '#18181b',
+          overlayColor: 'rgba(0, 0, 0, 0.7)',
+          primaryColor: '#d2dbbd',
+          textColor: '#fff',
+          zIndex: 10000,
+        },
+        buttonNext: {
+          color: '#000',
+          fontWeight: 'bold',
+        },
+        buttonBack: {
+          color: '#a1a1aa',
+        },
+        buttonSkip: {
+          color: '#a1a1aa',
+        }
+      }}
+    />
+  );
+}
+
 // ── App ────────────────────────────────────────────────────────────────────
 export default function App() {
   return (
     <>
       <style>{globalStyles}</style>
+      <JoyrideTour />
       <div className="bg-transparent text-white font-sans overflow-x-hidden">
         <Navbar />
         <main>
@@ -848,6 +1017,7 @@ export default function App() {
           <CompanyMarquee />
           <Features />
           <RemoveSection />
+          <Lessons />
           <Upcoming />
           <Testimonials />
           <FinalCTA />
