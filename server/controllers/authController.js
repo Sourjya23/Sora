@@ -16,6 +16,27 @@ exports.signup = async (req, res) => {
       });
     }
 
+    // Server-side deep validation to prevent bypassing frontend
+    const abstractApiKey = process.env.ABSTRACT_API_KEY || "1d50b1ff0aaf44e7b7fc8df8c713cd1d";
+    const zeroBounceApiKey = process.env.ZEROBOUNCE_API_KEY || "731e1a97ff5a4e43935d753ba0268399";
+    const axios = require("axios");
+
+    const [abstractRes, zeroBounceRes] = await Promise.all([
+      axios.get(`https://emailvalidation.abstractapi.com/v1/?api_key=${abstractApiKey}&email=${email}`).catch(() => null),
+      axios.get(`https://api.zerobounce.net/v2/validate?api_key=${zeroBounceApiKey}&email=${email}`).catch(() => null)
+    ]);
+
+    let isEmailValid = false;
+    if (zeroBounceRes?.data?.status === "valid" || abstractRes?.data?.deliverability === "DELIVERABLE") {
+      isEmailValid = true;
+    }
+
+    if (!isEmailValid) {
+      return res.status(400).json({
+        message: "This mailbox does not exist or cannot receive mail. Please enter a real email.",
+      });
+    }
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser && existingUser.isVerified) {
