@@ -21,6 +21,7 @@ function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailStatus, setEmailStatus] = useState("idle"); // idle, checking, valid, invalid
   const navigate = useNavigate();
 
   // Carousel State
@@ -52,12 +53,42 @@ function Signup() {
     return re.test(password);
   };
 
+  const handleEmailBlur = async () => {
+    if (!email) return;
+    
+    if (!validateEmail(email)) {
+      setEmailStatus("invalid");
+      setError("Please enter a valid Gmail address. We currently only accept @gmail.com to prevent spam.");
+      return;
+    }
+
+    setEmailStatus("checking");
+    setError("");
+    try {
+      const response = await API.post("/auth/validate-email", { email });
+      if (response.data.valid) {
+        setEmailStatus("valid");
+      } else {
+        setEmailStatus("invalid");
+        setError("This mailbox does not exist or cannot receive mail. Please enter a real email.");
+      }
+    } catch (err) {
+      console.error(err);
+      setEmailStatus("invalid");
+      setError(err.response?.data?.message || "Failed to validate email. Please try again.");
+    }
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
     
     if (!validateEmail(email)) {
       setError("Please enter a valid Gmail address. We currently only accept @gmail.com to prevent spam.");
+      return;
+    }
+    if (emailStatus !== "valid") {
+      setError("Please wait for your email to be verified as valid before proceeding.");
       return;
     }
     if (!validatePassword(password)) {
@@ -178,17 +209,26 @@ function Signup() {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value.toLowerCase())}
-                  onBlur={() => {
-                    if (email && !validateEmail(email)) {
-                      setError("Invalid email format detected.");
-                    } else if (error === "Invalid email format detected.") {
-                      setError("");
-                    }
+                  onChange={(e) => {
+                    setEmail(e.target.value.toLowerCase());
+                    setEmailStatus("idle");
                   }}
+                  onBlur={handleEmailBlur}
                   placeholder="andrew@example.com"
-                  className="w-full bg-transparent border border-white/10 focus:border-white/30 focus:bg-white/5 rounded-[8px] py-2.5 px-3 text-[14px] text-white outline-none transition-all placeholder:text-zinc-600"
+                  className={`w-full bg-transparent border ${emailStatus === 'valid' ? 'border-green-500/50 focus:border-green-500' : emailStatus === 'invalid' ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'} focus:bg-white/5 rounded-[8px] py-2.5 px-3 text-[14px] text-white outline-none transition-all placeholder:text-zinc-600`}
                 />
+                {emailStatus === "checking" && (
+                  <div className="mt-2 text-[11px] text-zinc-400 flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-full border-2 border-zinc-500 border-t-zinc-200 animate-spin"></span>
+                    Verifying mailbox...
+                  </div>
+                )}
+                {emailStatus === "valid" && (
+                  <div className="mt-2 text-[11px] text-green-400 flex items-center gap-1.5 font-medium bg-green-500/10 px-2 py-1.5 rounded-md border border-green-500/20">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Valid email! You can proceed further.
+                  </div>
+                )}
               </div>
 
               <div>

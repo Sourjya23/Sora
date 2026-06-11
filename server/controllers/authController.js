@@ -234,3 +234,47 @@ exports.resendOTP = async (req, res) => {
     res.status(500).json({ message: "Failed to resend OTP" });
   }
 };
+
+const axios = require("axios");
+
+exports.validateEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ valid: false, message: "Email is required" });
+    }
+
+    if (!email.toLowerCase().endsWith("@gmail.com")) {
+      return res.status(200).json({ valid: false, message: "Must be a @gmail.com address" });
+    }
+
+    const abstractApiKey = "1d50b1ff0aaf44e7b7fc8df8c713cd1d";
+    const zeroBounceApiKey = "731e1a97ff5a4e43935d753ba0268399";
+
+    const abstractReq = axios.get(`https://emailvalidation.abstractapi.com/v1/?api_key=${abstractApiKey}&email=${email}`).catch(() => null);
+    const zeroBounceReq = axios.get(`https://api.zerobounce.net/v2/validate?api_key=${zeroBounceApiKey}&email=${email}`).catch(() => null);
+
+    const [abstractRes, zeroBounceRes] = await Promise.all([abstractReq, zeroBounceReq]);
+
+    let isValid = false;
+
+    // ZeroBounce returns { status: "valid" } or "invalid", "catch-all", etc.
+    if (zeroBounceRes && zeroBounceRes.data) {
+      if (zeroBounceRes.data.status === "valid") {
+        isValid = true;
+      }
+    }
+
+    // Abstract API returns { deliverability: "DELIVERABLE" } or "UNDELIVERABLE"
+    if (abstractRes && abstractRes.data) {
+      if (abstractRes.data.deliverability === "DELIVERABLE") {
+        isValid = true;
+      }
+    }
+
+    res.status(200).json({ valid: isValid });
+  } catch (error) {
+    console.error("Email validation error:", error);
+    res.status(500).json({ valid: false, message: "Validation service error" });
+  }
+};
