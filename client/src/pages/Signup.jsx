@@ -42,7 +42,8 @@ function Signup() {
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    if (!re.test(email)) return false;
+    return email.toLowerCase().endsWith("@gmail.com");
   };
 
   const validatePassword = (password) => {
@@ -56,7 +57,7 @@ function Signup() {
     setError("");
     
     if (!validateEmail(email)) {
-      setError("Please enter a valid email address (e.g., example@gmail.com).");
+      setError("Please enter a valid Gmail address. We currently only accept @gmail.com to prevent spam.");
       return;
     }
     if (!validatePassword(password)) {

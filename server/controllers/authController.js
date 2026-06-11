@@ -10,6 +10,12 @@ exports.signup = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
+    if (!email || !email.toLowerCase().endsWith("@gmail.com")) {
+      return res.status(400).json({
+        message: "Only @gmail.com email addresses are allowed to prevent spam.",
+      });
+    }
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser && existingUser.isVerified) {
