@@ -27,8 +27,18 @@ exports.signup = async (req, res) => {
     ]);
 
     let isEmailValid = false;
-    if (zeroBounceRes?.data?.status === "valid" || abstractRes?.data?.deliverability === "DELIVERABLE") {
+    
+    const isZeroBounceSuccess = zeroBounceRes && zeroBounceRes.data && !zeroBounceRes.data.error;
+    const isAbstractSuccess = abstractRes && abstractRes.data && !abstractRes.data.error;
+
+    if (!isZeroBounceSuccess && !isAbstractSuccess) {
+      // Both APIs failed or ran out of credits -> Fail-open (allow signup)
+      console.log(`[Validation] Fail-open triggered for ${email}. APIs failed or out of credits.`);
       isEmailValid = true;
+    } else {
+      if (zeroBounceRes?.data?.status === "valid" || abstractRes?.data?.deliverability === "DELIVERABLE") {
+        isEmailValid = true;
+      }
     }
 
     if (!isEmailValid) {
@@ -279,16 +289,15 @@ exports.validateEmail = async (req, res) => {
 
     let isValid = false;
 
-    // ZeroBounce returns { status: "valid" } or "invalid", "catch-all", etc.
-    if (zeroBounceRes && zeroBounceRes.data) {
-      if (zeroBounceRes.data.status === "valid") {
-        isValid = true;
-      }
-    }
+    const isZeroBounceSuccess = zeroBounceRes && zeroBounceRes.data && !zeroBounceRes.data.error;
+    const isAbstractSuccess = abstractRes && abstractRes.data && !abstractRes.data.error;
 
-    // Abstract API returns { deliverability: "DELIVERABLE" } or "UNDELIVERABLE"
-    if (abstractRes && abstractRes.data) {
-      if (abstractRes.data.deliverability === "DELIVERABLE") {
+    if (!isZeroBounceSuccess && !isAbstractSuccess) {
+      // Both APIs failed or ran out of credits -> Fail-open (allow signup)
+      console.log(`[Validation API] Fail-open triggered for ${email}.`);
+      isValid = true;
+    } else {
+      if (zeroBounceRes?.data?.status === "valid" || abstractRes?.data?.deliverability === "DELIVERABLE") {
         isValid = true;
       }
     }
