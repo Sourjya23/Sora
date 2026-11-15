@@ -60,12 +60,15 @@ export default function Login() {
       });
 
       const { token, user } = response.data;
-      if (rememberMe) {
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-      } else {
-        sessionStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      sessionStorage.setItem("token", token);
+
+      const params = new URLSearchParams(window.location.search);
+      const redirectPath = params.get("redirect");
+      if (redirectPath && redirectPath.startsWith("/")) {
+        navigate(redirectPath);
+        return;
       }
 
       if (user.role === "admin") {

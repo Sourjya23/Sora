@@ -59,6 +59,7 @@ io.on("connection", (socket) => {
     console.log(`[socket] User ${userName} joined room ${meetingId}`);
     socket.join(meetingId);
     socket.meetingId = meetingId;
+    socket.to(meetingId).emit("peer-joined", { userName });
   });
 
   socket.on("candidate-joined", (data) => {
@@ -74,9 +75,30 @@ io.on("connection", (socket) => {
   socket.on("send-message", (data) => {
     const room = data.meetingId || socket.meetingId;
     if (room) {
-      io.to(room).emit("receive-message", data);
+      socket.to(room).emit("receive-message", data);
     } else {
-      io.emit("receive-message", data);
+      socket.broadcast.emit("receive-message", data);
+    }
+  });
+
+  socket.on("code-execution-started", (data) => {
+    const room = data.meetingId || socket.meetingId;
+    if (room) {
+      socket.to(room).emit("code-execution-started", data);
+    }
+  });
+
+  socket.on("code-execution-result", (data) => {
+    const room = data.meetingId || socket.meetingId;
+    if (room) {
+      socket.to(room).emit("code-execution-result", data);
+    }
+  });
+
+  socket.on("screen-share-status", (data) => {
+    const room = data.meetingId || socket.meetingId;
+    if (room) {
+      socket.to(room).emit("screen-share-status", data);
     }
   });
 

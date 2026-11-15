@@ -1,23 +1,62 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Editor from "@monaco-editor/react";
-import Whiteboard from "../components/Whiteboard";
 import API from "../api/axios";
 import socket from "../socket/socket";
+import {
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  ScreenShare,
+  ScreenShareOff,
+  FileText,
+  Play,
+  Lock,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  Send,
+  ExternalLink,
+  X,
+  User,
+  Briefcase,
+  Eye,
+  Code as CodeIcon,
+  Video as VideoIcon,
+  RefreshCw,
+  Clock,
+  Sparkles,
+} from "lucide-react";
 
 // Language configurations
 const LANGUAGES = {
-  javascript: { name: "JavaScript", defaultCode: "// Write your solution here...\nfunction solve() {\n  \n}" },
-  python: { name: "Python", defaultCode: "def solve():\n    pass\n\nif __name__ == '__main__':\n    solve()" },
-  java: { name: "Java", defaultCode: "public class Solution {\n    public static void main(String[] args) {\n        \n    }\n}" },
-  c: { name: "C", defaultCode: "#include <stdio.h>\n\nint main() {\n    return 0;\n}" },
-  cpp: { name: "C++", defaultCode: "#include <iostream>\nusing namespace std;\n\nint main() {\n    return 0;\n}" }
+  javascript: {
+    name: "JavaScript",
+    defaultCode: "// Write your solution here...\nfunction solve() {\n  \n}",
+  },
+  python: {
+    name: "Python",
+    defaultCode: "def solve():\n    pass\n\nif __name__ == '__main__':\n    solve()",
+  },
+  java: {
+    name: "Java",
+    defaultCode: "public class Solution {\n    public static void main(String[] args) {\n        \n    }\n}",
+  },
+  c: {
+    name: "C",
+    defaultCode: "#include <stdio.h>\n\nint main() {\n    return 0;\n}",
+  },
+  cpp: {
+    name: "C++",
+    defaultCode: "#include <iostream>\nusing namespace std;\n\nint main() {\n    return 0;\n}",
+  },
 };
 
 function MeetingRoom() {
   const { id } = useParams(); // roomId
   const navigate = useNavigate();
-  
+
   const [user, setUser] = useState(null);
   const [meetingDetails, setMeetingDetails] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(true);
@@ -40,8 +79,8 @@ function MeetingRoom() {
 
   // Active view states
   const [isJoined, setIsJoined] = useState(false);
-  const [activeTool, setActiveTool] = useState("code"); // 'code', 'whiteboard', 'chat'
-  
+  const [activeInterviewerMainView, setActiveInterviewerMainView] = useState("video"); // 'video' | 'code'
+
   // Chat States
   const [chatMessage, setChatMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -53,42 +92,48 @@ function MeetingRoom() {
   const [executionResult, setExecutionResult] = useState(null);
   const [stdin, setStdin] = useState("");
 
-  // Problem / Chat States
+  // Problem / Tabs States
   const [problemStatement, setProblemStatement] = useState("");
   const [testCases, setTestCases] = useState([]);
   const [problemBank, setProblemBank] = useState([]);
   const [selectedProblemIndex, setSelectedProblemIndex] = useState("");
   const [isEditingProblem, setIsEditingProblem] = useState(false);
-  const [leftTab, setLeftTab] = useState("problem"); // "problem" or "chat"
+  const [leftTab, setLeftTab] = useState("problem"); // 'problem' | 'output' | 'chat'
   const [activeTestCaseTab, setActiveTestCaseTab] = useState(0);
 
   // Recording State
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [uploadingRecording, setUploadingRecording] = useState(false);
+  const mediaRecorderRef = useRef(null);
   const recordedChunks = useRef([]);
 
   // Telemetry State
   const [telemetryEvents, setTelemetryEvents] = useState([]);
 
-  // Screen Share State (Candidate)
+  // Screen Share State
   const [isSharingScreen, setIsSharingScreen] = useState(false);
+  const [candidateIsSharingScreen, setCandidateIsSharingScreen] = useState(false);
   const screenStreamRef = useRef(null);
+
+  // Resume Modal State
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
 
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
-  const pipVideoRef = useRef(null); // Used for PIP after join
+  const pipVideoRef = useRef(null);
 
+  // 1. Fetch meeting metadata & user
   const fetchMeetingMetadata = async () => {
     try {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
       if (!token) {
-        navigate("/login");
+        navigate(`/login?redirect=${encodeURIComponent(`/meeting/${id}`)}`);
         return;
       }
-      
+
       const res = await API.get(`/meeting/details/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.data.status === "completed") {
         alert("This meeting has already concluded.");
@@ -107,50 +152,62 @@ function MeetingRoom() {
   useEffect(() => {
     const userStr = localStorage.getItem("user") || sessionStorage.getItem("user");
     if (userStr) {
-      setUser(JSON.parse(userStr));
+      try {
+        setUser(JSON.parse(userStr));
+      } catch (e) {
+        navigate(`/login?redirect=${encodeURIComponent(`/meeting/${id}`)}`);
+      }
     } else {
-      navigate("/login");
+      navigate(`/login?redirect=${encodeURIComponent(`/meeting/${id}`)}`);
     }
     fetchMeetingMetadata();
   }, [id, navigate]);
 
-  // Telemetry Setup
+  // 2. Candidate Telemetry
   useEffect(() => {
     if (user?.role !== "candidate") return;
-    
+
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        const newEvent = { type: "tab_change", timestamp: new Date().toISOString(), description: "Candidate switched tabs or minimized window." };
+        const newEvent = {
+          type: "tab_change",
+          timestamp: new Date().toISOString(),
+          description: "Candidate switched tabs or minimized window.",
+        };
         setTelemetryEvents((prev) => [...prev, newEvent]);
         socket.emit("telemetry-update", { meetingId: id, event: newEvent });
       }
     };
-    
-    const handlePaste = (e) => {
-      const newEvent = { type: "paste", timestamp: new Date().toISOString(), description: "Candidate pasted content into the document." };
+
+    const handlePaste = () => {
+      const newEvent = {
+        type: "paste",
+        timestamp: new Date().toISOString(),
+        description: "Candidate pasted content into the editor.",
+      };
       setTelemetryEvents((prev) => [...prev, newEvent]);
       socket.emit("telemetry-update", { meetingId: id, event: newEvent });
     };
-    
+
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    document.addEventListener("paste", handlePaste, true); // Use capture phase
-    
+    document.addEventListener("paste", handlePaste, true);
+
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       document.removeEventListener("paste", handlePaste, true);
     };
   }, [user, id]);
 
-  // Fetch problem bank for interviewer
+  // 3. Interviewer Problem Bank
   useEffect(() => {
     if (user?.role === "interviewer") {
       const fetchProblemBank = async () => {
         try {
           const token = localStorage.getItem("token") || sessionStorage.getItem("token");
           const res = await API.get("/meeting/problem-bank", {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` },
           });
-          setProblemBank(res.data);
+          setProblemBank(res.data || []);
         } catch (err) {
           console.error("Failed to fetch problem bank", err);
         }
@@ -163,7 +220,7 @@ function MeetingRoom() {
     const idx = e.target.value;
     setSelectedProblemIndex(idx);
     if (idx === "") return;
-    
+
     const problem = problemBank[idx];
     let fullText = `${problem.title}\n\n${problem.description}\n`;
     if (problem.examples) {
@@ -175,18 +232,18 @@ function MeetingRoom() {
     if (problem.constraints) {
       fullText += `\nConstraints:\n${problem.constraints}\n`;
     }
-    
+
     setProblemStatement(fullText);
     setTestCases(problem.testCases || []);
-    
-    socket.emit("problem-statement-update", { 
-      meetingId: id, 
+
+    socket.emit("problem-statement-update", {
+      meetingId: id,
       text: fullText,
-      testCases: problem.testCases || []
+      testCases: problem.testCases || [],
     });
   };
 
-  // Setup sockets and room subscriptions
+  // 4. Socket Listeners
   useEffect(() => {
     if (!isJoined || !user) return;
 
@@ -195,7 +252,7 @@ function MeetingRoom() {
     const codeListener = (data) => {
       if (data.code !== editorCode) setEditorCode(data.code);
     };
-    
+
     const langListener = (data) => {
       if (data.language !== language) setLanguage(data.language);
     };
@@ -205,16 +262,39 @@ function MeetingRoom() {
       if (data.testCases) setTestCases(data.testCases);
     };
 
+    // Chat deduplication: ignore own socket or username echo
     const messageListener = (data) => {
-      setMessages((prev) => [...prev, data]);
+      if (data.senderId === socket.id || data.sender === user?.name) return;
+      setMessages((prev) => {
+        if (data.id && prev.some((m) => m.id === data.id)) return prev;
+        return [...prev, { ...data, isMe: false }];
+      });
     };
 
     const telemetryListener = (data) => {
       setTelemetryEvents((prev) => [...prev, data.event]);
     };
 
+    // Code execution sync
+    const executionStartedListener = () => {
+      setIsExecuting(true);
+      setExecutionResult(null);
+    };
+
+    const executionResultListener = (data) => {
+      setIsExecuting(false);
+      setExecutionResult(data.result);
+      // Auto-switch to output tab so interviewer sees candidate test results immediately
+      setLeftTab("output");
+    };
+
+    // Screen share status sync
+    const screenShareStatusListener = (data) => {
+      setCandidateIsSharingScreen(Boolean(data.isSharing));
+    };
+
     const endListener = () => {
-      alert("The interview has been ended by the interviewer.");
+      alert("The interview session has been ended.");
       navigate(user.role === "candidate" ? "/candidate-dashboard" : "/interviewer-dashboard");
     };
 
@@ -223,6 +303,9 @@ function MeetingRoom() {
     socket.on("problem-statement-changed", problemListener);
     socket.on("receive-message", messageListener);
     socket.on("telemetry-update", telemetryListener);
+    socket.on("code-execution-started", executionStartedListener);
+    socket.on("code-execution-result", executionResultListener);
+    socket.on("screen-share-status", screenShareStatusListener);
     socket.on("meeting-ended", endListener);
 
     return () => {
@@ -231,11 +314,14 @@ function MeetingRoom() {
       socket.off("problem-statement-changed", problemListener);
       socket.off("receive-message", messageListener);
       socket.off("telemetry-update", telemetryListener);
+      socket.off("code-execution-started", executionStartedListener);
+      socket.off("code-execution-result", executionResultListener);
+      socket.off("screen-share-status", screenShareStatusListener);
       socket.off("meeting-ended", endListener);
     };
   }, [isJoined, user, id, editorCode, language, problemStatement, navigate]);
 
-  // Play camera preview on screen
+  // 5. Video Element Binding
   useEffect(() => {
     if (stream && localVideoRef.current && !isJoined) {
       localVideoRef.current.srcObject = stream;
@@ -245,25 +331,26 @@ function MeetingRoom() {
     }
   }, [stream, isJoined]);
 
-  // Play remote stream
   useEffect(() => {
     if (remoteStream && remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = remoteStream;
     }
   }, [remoteStream]);
 
-  // WebRTC Setup
+  // 6. WebRTC Peer Connection
   useEffect(() => {
     if (!isJoined || !stream) return;
 
     const pc = new RTCPeerConnection({
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
     });
 
     stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
     pc.ontrack = (event) => {
-      setRemoteStream(event.streams[0]);
+      if (event.streams && event.streams[0]) {
+        setRemoteStream(event.streams[0]);
+      }
     };
 
     pc.onicecandidate = (event) => {
@@ -274,25 +361,48 @@ function MeetingRoom() {
 
     setPeerConnection(pc);
 
-    // If interviewer, create offer after a small delay to ensure candidate is ready
-    if (user?.role === "interviewer") {
-      setTimeout(async () => {
+    const sendOffer = async () => {
+      try {
+        if (pc.signalingState !== "stable") return;
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
         socket.emit("webrtc-offer", { meetingId: id, offer });
-      }, 2000);
+      } catch (err) {
+        console.error("Error creating WebRTC offer:", err);
+      }
+    };
+
+    if (user?.role === "interviewer") {
+      setTimeout(sendOffer, 1500);
     }
 
+    const peerJoinedListener = () => {
+      console.log("Peer joined, synchronizing WebRTC offer...");
+      if (user?.role === "interviewer") {
+        setTimeout(sendOffer, 600);
+      }
+    };
+
+    socket.on("peer-joined", peerJoinedListener);
+
     const offerListener = async (offer) => {
-      if (pc.signalingState !== "stable") return;
-      await pc.setRemoteDescription(new RTCSessionDescription(offer));
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      socket.emit("webrtc-answer", { meetingId: id, answer });
+      try {
+        if (pc.signalingState !== "stable") return;
+        await pc.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.emit("webrtc-answer", { meetingId: id, answer });
+      } catch (err) {
+        console.error("Error answering offer:", err);
+      }
     };
 
     const answerListener = async (answer) => {
-      await pc.setRemoteDescription(new RTCSessionDescription(answer));
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(answer));
+      } catch (err) {
+        console.error("Error setting remote description:", err);
+      }
     };
 
     const iceListener = async (candidate) => {
@@ -308,6 +418,7 @@ function MeetingRoom() {
     socket.on("webrtc-ice-candidate", iceListener);
 
     return () => {
+      socket.off("peer-joined", peerJoinedListener);
       socket.off("webrtc-offer", offerListener);
       socket.off("webrtc-answer", answerListener);
       socket.off("webrtc-ice-candidate", iceListener);
@@ -315,22 +426,184 @@ function MeetingRoom() {
     };
   }, [isJoined, stream, id, user]);
 
+  // 7. Screen Recording (Interviewer)
+  const startScreenRecording = async () => {
+    try {
+      if (isRecording || mediaRecorderRef.current) return;
+      if (!remoteVideoRef.current || !remoteVideoRef.current.srcObject) {
+        console.log("Waiting for remote stream to start recording...");
+        return;
+      }
+
+      const candidateStream = remoteVideoRef.current.srcObject;
+      const tracks = [];
+
+      // Video tracks
+      const vidTracks = candidateStream.getVideoTracks();
+      if (vidTracks.length > 0) {
+        tracks.push(vidTracks[0]);
+      }
+
+      // Audio mixing
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          const audioContext = new AudioContextClass();
+          if (audioContext.state === "suspended") {
+            await audioContext.resume();
+          }
+          const dest = audioContext.createMediaStreamDestination();
+          let hasAudio = false;
+
+          // Local interviewer audio
+          if (stream && stream.getAudioTracks().length > 0) {
+            try {
+              const micSource = audioContext.createMediaStreamSource(stream);
+              micSource.connect(dest);
+              hasAudio = true;
+            } catch (e) {
+              console.warn("Could not pipe local audio:", e);
+            }
+          }
+
+          // Candidate audio
+          if (candidateStream.getAudioTracks().length > 0) {
+            try {
+              const remoteSource = audioContext.createMediaStreamSource(candidateStream);
+              remoteSource.connect(dest);
+              hasAudio = true;
+            } catch (e) {
+              console.warn("Could not pipe candidate audio:", e);
+            }
+          }
+
+          if (hasAudio && dest.stream.getAudioTracks().length > 0) {
+            tracks.push(dest.stream.getAudioTracks()[0]);
+          }
+        }
+      } catch (aErr) {
+        console.warn("Audio mixing fallback:", aErr);
+        if (candidateStream.getAudioTracks().length > 0) {
+          tracks.push(candidateStream.getAudioTracks()[0]);
+        }
+      }
+
+      if (tracks.length === 0) {
+        console.warn("No active tracks found for screen recording.");
+        return;
+      }
+
+      const finalStream = new MediaStream(tracks);
+
+      // MIME type resolution
+      const candidates = [
+        "video/webm;codecs=vp9,opus",
+        "video/webm;codecs=vp8,opus",
+        "video/webm",
+        "video/mp4",
+      ];
+      const selectedMime = candidates.find((t) => MediaRecorder.isTypeSupported(t)) || "";
+      const options = selectedMime ? { mimeType: selectedMime } : {};
+
+      const recorder = new MediaRecorder(finalStream, options);
+      mediaRecorderRef.current = recorder;
+      recordedChunks.current = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          recordedChunks.current.push(event.data);
+        }
+      };
+
+      recorder.onerror = (err) => {
+        console.error("Screen recording recorder error:", err);
+      };
+
+      recorder.start(1000);
+      setMediaRecorder(recorder);
+      setIsRecording(true);
+      console.log("Interview screen recording started successfully.");
+    } catch (err) {
+      console.error("Screen recording initialization error:", err);
+    }
+  };
+
+  // Auto-record once remote stream arrives for interviewer
+  useEffect(() => {
+    if (user?.role === "interviewer" && isJoined && remoteStream && !isRecording) {
+      startScreenRecording();
+    }
+  }, [user, isJoined, remoteStream, isRecording]);
+
+  // 8. Stop Recording & Upload Forensic Report
+  const stopRecordingAndUpload = async () => {
+    setUploadingRecording(true);
+
+    const submitForensics = async (fileBlob = null) => {
+      const formData = new FormData();
+      if (fileBlob) {
+        const file = new File([fileBlob], `interview-${id}.webm`, { type: "video/webm" });
+        formData.append("recording", file);
+      }
+      formData.append("finalCode", editorCode || "");
+      formData.append("problemStatement", problemStatement || "");
+      formData.append("telemetryEvents", JSON.stringify(telemetryEvents || []));
+
+      try {
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        await API.post(`/meeting/upload-recording/${id}`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log("Forensics & recording payload submitted successfully.");
+      } catch (err) {
+        console.error("Failed to upload recording/forensics payload", err);
+      } finally {
+        setUploadingRecording(false);
+        socket.emit("end-meeting", { meetingId: id });
+        navigate("/interviewer-dashboard");
+      }
+    };
+
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+      mediaRecorderRef.current.onstop = () => {
+        const blob = new Blob(recordedChunks.current, { type: "video/webm" });
+        submitForensics(blob);
+      };
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    } else if (recordedChunks.current.length > 0) {
+      const blob = new Blob(recordedChunks.current, { type: "video/webm" });
+      submitForensics(blob);
+    } else {
+      // No video captured, still generate deterministic forensic report!
+      submitForensics(null);
+    }
+  };
+
+  // 9. Screen Share Toggle (Candidate)
   const toggleScreenShare = async () => {
     if (!isSharingScreen) {
       try {
-        const displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        const displayStream = await navigator.mediaDevices.getDisplayMedia({
+          video: { cursor: "always" },
+          audio: false,
+        });
         screenStreamRef.current = displayStream;
-        
+
         const videoTrack = displayStream.getVideoTracks()[0];
         if (peerConnection) {
-          const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === "video");
+          const sender = peerConnection.getSenders().find((s) => s.track && s.track.kind === "video");
           if (sender) {
             sender.replaceTrack(videoTrack);
           }
         }
-        
+
         setIsSharingScreen(true);
-        
+        socket.emit("screen-share-status", { meetingId: id, isSharing: true });
+
         videoTrack.onended = () => {
           stopScreenShare();
         };
@@ -344,20 +617,22 @@ function MeetingRoom() {
 
   const stopScreenShare = () => {
     if (screenStreamRef.current) {
-      screenStreamRef.current.getTracks().forEach(track => track.stop());
+      screenStreamRef.current.getTracks().forEach((track) => track.stop());
       screenStreamRef.current = null;
     }
-    
+
     if (peerConnection && stream) {
       const cameraTrack = stream.getVideoTracks()[0];
-      const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === "video");
+      const sender = peerConnection.getSenders().find((s) => s.track && s.track.kind === "video");
       if (sender && cameraTrack) {
         sender.replaceTrack(cameraTrack);
       }
     }
     setIsSharingScreen(false);
+    socket.emit("screen-share-status", { meetingId: id, isSharing: false });
   };
 
+  // 10. Passcode verification
   const handleVerifyPassword = async (e) => {
     e.preventDefault();
     setVerifyingPassword(true);
@@ -365,9 +640,11 @@ function MeetingRoom() {
 
     try {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      await API.post(`/meeting/verify-password/${id}`, { password }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await API.post(
+        `/meeting/verify-password/${id}`,
+        { password },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setPasswordVerified(true);
       requestPermissions();
     } catch (err) {
@@ -384,7 +661,7 @@ function MeetingRoom() {
       setHasGrantedPermissions(true);
     } catch (err) {
       console.error("Permission denied", err);
-      alert("You must grant camera and microphone permissions to enter the lobby.");
+      alert("Please grant camera and microphone access to proceed.");
     }
   };
 
@@ -408,131 +685,21 @@ function MeetingRoom() {
     }
   };
 
-  const startScreenRecording = async () => {
-    try {
-      if (!remoteVideoRef.current || !remoteVideoRef.current.srcObject) {
-        console.warn("No remote stream available yet, retrying in 2 seconds...");
-        setTimeout(startScreenRecording, 2000);
-        return;
-      }
-
-      const remoteStream = remoteVideoRef.current.srcObject;
-      const audioContext = new AudioContext();
-      const dest = audioContext.createMediaStreamDestination();
-
-      // Add interviewer's mic audio
-      if (stream && stream.getAudioTracks().length > 0) {
-        const micSource = audioContext.createMediaStreamSource(stream);
-        micSource.connect(dest);
-      }
-
-      // Add candidate's audio (from remote stream)
-      if (remoteStream.getAudioTracks().length > 0) {
-        const remoteAudioSource = audioContext.createMediaStreamSource(remoteStream);
-        remoteAudioSource.connect(dest);
-      }
-
-      const tracks = [];
-      if (remoteStream.getVideoTracks().length > 0) {
-        tracks.push(remoteStream.getVideoTracks()[0]);
-      }
-      if (dest.stream.getAudioTracks().length > 0) {
-        tracks.push(dest.stream.getAudioTracks()[0]);
-      }
-
-      if (tracks.length === 0) {
-        console.error("No tracks available to record.");
-        return;
-      }
-
-      const finalStream = new MediaStream(tracks);
-
-
-      const recorder = new MediaRecorder(finalStream, { mimeType: "video/webm" });
-      
-      recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          recordedChunks.current.push(event.data);
-        }
-      };
-
-      recorder.start(1000); // chunk every second
-      setMediaRecorder(recorder);
-      setIsRecording(true);
-
-      // Stop recording automatically after 10 minutes (600,000 ms)
-      setTimeout(() => {
-        if (recorder.state === "recording") {
-          recorder.stop();
-        }
-      }, 600000);
-
-    } catch (err) {
-      console.error("Screen recording failed", err);
-    }
-  };
-
-  const stopRecordingAndUpload = async () => {
-    if (mediaRecorder && isRecording) {
-      mediaRecorder.stop();
-      setIsRecording(false);
-      setUploadingRecording(true);
-
-      mediaRecorder.onstop = async () => {
-        const blob = new Blob(recordedChunks.current, { type: "video/webm" });
-        const file = new File([blob], `interview-${id}.webm`, { type: "video/webm" });
-        
-        const formData = new FormData();
-        formData.append("recording", file);
-        formData.append("finalCode", editorCode);
-        formData.append("problemStatement", problemStatement);
-        formData.append("telemetryEvents", JSON.stringify(telemetryEvents));
-
-        try {
-          const token = localStorage.getItem("token");
-          await API.post(`/meeting/upload-recording/${id}`, formData, {
-            headers: { 
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data" 
-            }
-          });
-          alert("Recording uploaded successfully");
-        } catch (err) {
-          console.error("Failed to upload recording", err);
-          alert("Failed to upload recording");
-        } finally {
-          setUploadingRecording(false);
-          socket.emit("end-meeting", { meetingId: id });
-          navigate("/interviewer-dashboard");
-        }
-      };
-    } else {
-      socket.emit("end-meeting", { meetingId: id });
-      navigate("/interviewer-dashboard");
-    }
-  };
-
   const joinMeeting = async () => {
     try {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      await API.post(`/meeting/join/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
+      await API.post(`/meeting/join/${id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+
       if (user?.role === "candidate") {
         socket.emit("candidate-joined", {
           meetingId: id,
-          candidateName: user.name
+          candidateName: user.name,
         });
       }
 
       setIsJoined(true);
-
-      if (user?.role === "interviewer") {
-        startScreenRecording();
-      }
     } catch (err) {
-      console.error("Failed to register join on backend", err);
+      console.error("Join registration fallback", err);
       setIsJoined(true);
     }
   };
@@ -555,60 +722,77 @@ function MeetingRoom() {
     socket.emit("problem-statement-update", { meetingId: id, text: e.target.value });
   };
 
+  // Chat message send with dedup id
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (chatMessage.trim()) {
-      socket.emit("send-message", {
-        meetingId: id,
-        sender: user?.name || "Anonymous",
-        text: chatMessage,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      });
-      setMessages((prev) => [...prev, {
-        sender: "You",
-        text: chatMessage,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }]);
-      setChatMessage("");
-    }
+    if (!chatMessage.trim()) return;
+
+    const msgId = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const payload = {
+      id: msgId,
+      meetingId: id,
+      sender: user?.name || "Participant",
+      senderId: socket.id,
+      role: user?.role,
+      text: chatMessage.trim(),
+      time,
+    };
+
+    socket.emit("send-message", payload);
+    setMessages((prev) => [...prev, { ...payload, isMe: true }]);
+    setChatMessage("");
   };
 
+  // Code Execution Sync
   const runCode = async () => {
+    if (user?.role === "candidate" && !isSharingScreen) {
+      alert("You must share your screen before running code.");
+      return;
+    }
+
     setIsExecuting(true);
     setExecutionResult(null);
+    socket.emit("code-execution-started", { meetingId: id });
 
     try {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      
+      let resultData = null;
+
       if (testCases && testCases.length > 0) {
-        setActiveTestCaseTab(0); // Reset tab when running tests
-        // Run against testcases
+        setActiveTestCaseTab(0);
         const res = await API.post(
           "/code/execute-tests",
           { language: language === "c" || language === "cpp" ? language : language, code: editorCode, testCases },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setExecutionResult({ type: "tests", results: res.data.results });
+        resultData = { type: "tests", results: res.data.results };
       } else {
-        // Run with custom stdin
         const res = await API.post(
           "/code/execute",
           { language: language === "c" || language === "cpp" ? language : language, code: editorCode, stdin },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setExecutionResult({ type: "single", ...res.data });
+        resultData = { type: "single", ...res.data };
       }
+
+      setExecutionResult(resultData);
+      socket.emit("code-execution-result", { meetingId: id, result: resultData });
+      setLeftTab("output");
     } catch (err) {
       console.error("Execution failed", err);
-      setExecutionResult({ type: "error", error: err.response?.data?.message || err.message });
+      const errorData = { type: "error", error: err.response?.data?.message || err.message };
+      setExecutionResult(errorData);
+      socket.emit("code-execution-result", { meetingId: id, result: errorData });
+      setLeftTab("output");
     } finally {
       setIsExecuting(false);
     }
   };
 
   const endMeeting = () => {
-    if (confirm("Are you sure you want to end the meeting for everyone?")) {
-      if (user?.role === "interviewer" && isRecording) {
+    if (confirm("Are you sure you want to end this interview for everyone?")) {
+      if (user?.role === "interviewer") {
         stopRecordingAndUpload();
       } else {
         socket.emit("end-meeting", { meetingId: id });
@@ -617,10 +801,23 @@ function MeetingRoom() {
     }
   };
 
+  // Helper variables for clean UI badges
+  const candidateName = meetingDetails?.candidate?.name || (user?.role === "candidate" ? user?.name : "Candidate");
+  const interviewerName = meetingDetails?.interviewer?.name || (user?.role === "interviewer" ? user?.name : "Interviewer");
+  const jobIdDisplay = meetingDetails?.jobId || `JOB-${id.slice(0, 6).toUpperCase()}`;
+  const effectiveResumeUrl = meetingDetails?.resumeUrl || meetingDetails?.candidate?.resumeUrl;
+
   if (loadingDetails) {
     return (
-      <div className="h-screen bg-[#041826] flex items-center justify-center text-white text-xs font-sans">
-        Loading session...
+      <div className="h-screen w-full bg-gradient-to-br from-[#062438] via-[#041a2a] to-[#02101b] flex flex-col items-center justify-center text-white font-sans">
+        <div className="relative flex items-center justify-center mb-4">
+          <img
+            src="/Sora_Favicon.jpg"
+            alt="Sora"
+            className="w-12 h-12 rounded-xl shadow-[0_0_25px_rgba(56,189,248,0.45)] border border-cyan-400/30 object-cover animate-pulse"
+          />
+        </div>
+        <p className="text-sm font-medium text-cyan-200/80 tracking-wide">Initializing Sora Secure Session...</p>
       </div>
     );
   }
@@ -628,41 +825,71 @@ function MeetingRoom() {
   // STEP 1: Enter Key Password
   if (!passwordVerified) {
     return (
-      <div className="min-h-screen bg-[#041826] flex flex-col items-center justify-center text-white p-4 font-sans">
-        <div className="bg-[#041a2a] border border-white/10 p-8 rounded-2xl max-w-sm w-full shadow-2xl">
-          <h2 className="text-xl font-normal mb-1 text-center text-white" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
-            Interview Room Access
-          </h2>
-          <p className="text-zinc-400 text-xs text-center mb-6">
-            {meetingDetails 
-              ? `Session with ${user?.role === "candidate" ? (meetingDetails.interviewer?.name || "Mentor") : (meetingDetails.candidate?.name || "Candidate")}` 
-              : "Enter your entry password key to unlock this room."}
-          </p>
+      <div className="min-h-screen bg-gradient-to-br from-[#062438] via-[#041a2a] to-[#02101b] flex flex-col items-center justify-center text-white p-4 font-sans relative overflow-hidden">
+        {/* Ambient Top Glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-cyan-500/10 rounded-full blur-[120px]"
+        />
+
+        <div className="bg-[#082235]/70 border border-cyan-500/20 backdrop-blur-2xl p-8 sm:p-10 rounded-3xl max-w-md w-full shadow-[0_20px_60px_rgba(0,0,0,0.6)] relative z-10">
+          <div className="flex flex-col items-center mb-6">
+            <div className="relative mb-3">
+              <img
+                src="/Sora_Favicon.jpg"
+                alt="Sora"
+                className="w-14 h-14 rounded-2xl shadow-[0_0_20px_rgba(56,189,248,0.4)] border border-cyan-400/40 object-cover"
+              />
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-[#082235] rounded-full" />
+            </div>
+            <h1
+              className="text-3xl font-normal text-white text-center tracking-tight"
+              style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+            >
+              Sora Live Loop
+            </h1>
+            <p className="text-cyan-200/60 text-xs mt-1.5 text-center">
+              Verified Technical Interview Room • {jobIdDisplay}
+            </p>
+          </div>
+
+          <div className="mb-6 p-3 rounded-2xl bg-cyan-950/40 border border-cyan-500/15 flex items-center justify-between text-xs text-cyan-200">
+            <div className="flex items-center gap-2">
+              <User className="w-3.5 h-3.5 text-cyan-400" />
+              <span>{user?.role === "candidate" ? `Mentor: ${interviewerName}` : `Candidate: ${candidateName}`}</span>
+            </div>
+            <span className="text-[10px] font-mono bg-cyan-500/15 px-2 py-0.5 rounded-md text-cyan-300">
+              {jobIdDisplay}
+            </span>
+          </div>
 
           {passwordError && (
-            <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs text-center">
-              {passwordError}
+            <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center flex items-center justify-center gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+              <span>{passwordError}</span>
             </div>
           )}
 
           <form onSubmit={handleVerifyPassword} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider text-center">Password Key</label>
-              <input 
-                type="text" 
+              <label className="block text-[11px] font-medium text-cyan-200/80 mb-1.5 uppercase tracking-wider text-center">
+                Room Passcode Key
+              </label>
+              <input
+                type="text"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value.toUpperCase())}
                 placeholder="PASS-XXXX"
-                className="w-full bg-white/[0.04] border border-white/10 rounded-xl py-2.5 px-4 text-sm text-center text-white outline-none focus:border-white/40 font-mono tracking-widest font-bold uppercase transition-colors"
+                className="w-full bg-[#051726]/80 border border-cyan-500/30 rounded-2xl py-3 px-4 text-sm text-center text-white outline-none focus:border-cyan-400 focus:shadow-[0_0_20px_rgba(56,189,248,0.25)] font-mono tracking-widest font-bold uppercase transition-all placeholder:text-zinc-600"
               />
             </div>
-            <button 
+            <button
               type="submit"
               disabled={verifyingPassword}
-              className="w-full bg-white hover:bg-zinc-200 text-[#041826] font-medium py-2.5 px-4 rounded-xl text-xs transition-all disabled:opacity-40"
+              className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-[#02101b] font-semibold py-3 px-4 rounded-2xl text-xs transition-all shadow-lg shadow-cyan-900/40 hover:shadow-cyan-400/25 disabled:opacity-40 cursor-pointer"
             >
-              {verifyingPassword ? "Verifying..." : "Enter Room"}
+              {verifyingPassword ? "Verifying..." : "Enter Interview Session"}
             </button>
           </form>
         </div>
@@ -670,64 +897,133 @@ function MeetingRoom() {
     );
   }
 
-  // STEP 2: Pre-join Lobby
+  // STEP 2: Pre-join Lobby (Media Check)
   if (!isJoined) {
     return (
-      <div className="min-h-screen bg-[#041826] flex items-center justify-center p-6 font-sans text-white">
-        <div className="max-w-3xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#062438] via-[#041a2a] to-[#02101b] flex items-center justify-center p-6 font-sans text-white relative overflow-hidden">
+        {/* Glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-cyan-500/10 rounded-full blur-[140px]"
+        />
+
+        <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
           <div className="flex flex-col items-center">
-            <h2 className="text-lg font-medium mb-3 self-start text-white">Media Check</h2>
-            <div className="w-full aspect-video bg-[#031320] rounded-2xl border border-white/10 overflow-hidden relative shadow-2xl flex items-center justify-center">
+            <div className="flex items-center justify-between w-full mb-3 px-1">
+              <span className="text-xs font-semibold text-cyan-300 flex items-center gap-2">
+                <VideoIcon className="w-4 h-4 text-cyan-400" /> Camera & Mic Check
+              </span>
+              <span className="text-[10px] text-cyan-400/70 font-mono">Live Preview</span>
+            </div>
+
+            <div className="w-full aspect-video bg-[#031320] rounded-3xl border border-cyan-500/20 overflow-hidden relative shadow-[0_15px_40px_rgba(0,0,0,0.6)] flex items-center justify-center">
               {hasGrantedPermissions ? (
                 <>
-                  <video 
-                    ref={localVideoRef} 
-                    autoPlay 
-                    playsInline 
-                    muted 
+                  <video
+                    ref={localVideoRef}
+                    autoPlay
+                    playsInline
+                    muted
                     className={`w-full h-full object-cover ${cameraActive ? "" : "hidden"}`}
                   />
                   {!cameraActive && (
-                    <div className="text-zinc-500 text-xs text-center">
-                      Camera turned off
+                    <div className="text-cyan-200/50 text-xs text-center flex flex-col items-center gap-2">
+                      <VideoOff className="w-6 h-6 text-cyan-400/40" />
+                      <span>Camera preview paused</span>
                     </div>
                   )}
                 </>
               ) : (
-                <div className="text-zinc-500 text-xs p-4 text-center">
-                  Enable camera and microphone permissions to proceed.
+                <div className="text-cyan-200/60 text-xs p-6 text-center flex flex-col items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                    <VideoIcon className="w-5 h-5" />
+                  </div>
+                  <span>Enable camera and microphone permissions to proceed into the loop.</span>
                 </div>
               )}
 
               {hasGrantedPermissions && (
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
-                  <button onClick={toggleMic} className={`px-2.5 py-1 rounded-lg text-xs border transition-all ${micActive ? "bg-white/[0.08] border-white/20 text-white" : "bg-rose-500/20 border-rose-500/30 text-rose-300"}`}>
-                    {micActive ? "Mute" : "Unmute"}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2.5 bg-black/70 backdrop-blur-md px-4 py-2 rounded-2xl border border-cyan-500/30 shadow-xl">
+                  <button
+                    onClick={toggleMic}
+                    className={`p-2 rounded-xl text-xs border transition-all flex items-center gap-1.5 cursor-pointer ${
+                      micActive
+                        ? "bg-cyan-500/20 border-cyan-400/40 text-cyan-200"
+                        : "bg-rose-500/20 border-rose-500/30 text-rose-300"
+                    }`}
+                  >
+                    {micActive ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
+                    <span className="text-[11px]">{micActive ? "Mic On" : "Muted"}</span>
                   </button>
-                  <button onClick={toggleCamera} className={`px-2.5 py-1 rounded-lg text-xs border transition-all ${cameraActive ? "bg-white/[0.08] border-white/20 text-white" : "bg-rose-500/20 border-rose-500/30 text-rose-300"}`}>
-                    {cameraActive ? "Cam Off" : "Cam On"}
+
+                  <button
+                    onClick={toggleCamera}
+                    className={`p-2 rounded-xl text-xs border transition-all flex items-center gap-1.5 cursor-pointer ${
+                      cameraActive
+                        ? "bg-cyan-500/20 border-cyan-400/40 text-cyan-200"
+                        : "bg-rose-500/20 border-rose-500/30 text-rose-300"
+                    }`}
+                  >
+                    {cameraActive ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
+                    <span className="text-[11px]">{cameraActive ? "Cam On" : "Cam Off"}</span>
                   </button>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="bg-[#041a2a] border border-white/10 p-8 rounded-2xl shadow-2xl flex flex-col justify-between min-h-[260px]">
+          <div className="bg-[#082235]/70 border border-cyan-500/20 p-8 sm:p-10 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl flex flex-col justify-between min-h-[320px]">
             <div>
-              <span className="text-[11px] text-zinc-400 font-mono">Room Unlocked</span>
-              <h1 className="text-2xl font-normal tracking-tight text-white mt-2" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
-                Ready to Join?
-              </h1>
-              <p className="text-xs text-zinc-400 mt-1">Make sure your camera and microphone are working smoothly before entering.</p>
+              <div className="flex items-center gap-3 mb-3">
+                <img
+                  src="/Sora_Favicon.jpg"
+                  alt="Sora"
+                  className="w-10 h-10 rounded-xl shadow-[0_0_15px_rgba(56,189,248,0.4)] border border-cyan-400/30 object-cover"
+                />
+                <div>
+                  <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest">
+                    Pre-Flight Check
+                  </span>
+                  <h2
+                    className="text-2xl font-normal text-white"
+                    style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+                  >
+                    Enter Live Loop
+                  </h2>
+                </div>
+              </div>
+
+              <div className="space-y-2 mt-4 text-xs text-cyan-100/70 leading-relaxed">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  <span>Job ID: <strong className="text-white font-mono">{jobIdDisplay}</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  <span>Role: <strong className="text-white capitalize">{user?.role}</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  <span>{user?.role === "candidate" ? `Interviewer: ${interviewerName}` : `Candidate: ${candidateName}`}</span>
+                </div>
+              </div>
             </div>
-            <div className="mt-6">
+
+            <div className="mt-8">
               {!hasGrantedPermissions ? (
-                <button onClick={requestPermissions} className="w-full bg-white hover:bg-zinc-200 text-[#041826] font-medium py-3 px-4 rounded-xl text-xs transition-all">
+                <button
+                  onClick={requestPermissions}
+                  className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-[#02101b] font-semibold py-3.5 px-4 rounded-2xl text-xs transition-all shadow-lg shadow-cyan-900/40 cursor-pointer"
+                >
                   Enable Camera & Mic
                 </button>
               ) : (
-                <button onClick={joinMeeting} className="w-full bg-white hover:bg-zinc-200 text-[#041826] font-medium py-3 px-4 rounded-xl text-xs transition-all">
-                  Enter Meeting Room
+                <button
+                  onClick={joinMeeting}
+                  className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-[#02101b] font-semibold py-3.5 px-4 rounded-2xl text-xs transition-all shadow-lg shadow-cyan-900/40 hover:shadow-cyan-400/30 cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>Enter Meeting Room</span>
+                  <Sparkles className="w-4 h-4 text-[#02101b]" />
                 </button>
               )}
             </div>
@@ -737,98 +1033,304 @@ function MeetingRoom() {
     );
   }
 
-  // STEP 3: Active meeting view (Split Screen)
+  // STEP 3: Active Meeting View (Full-Featured Live Loop)
   const renderTabsBlock = () => (
-    <div className="flex flex-col flex-1 overflow-hidden">
-      <div className="flex bg-[#031320] border-y border-white/10">
-        <button 
+    <div className="flex flex-col flex-1 overflow-hidden bg-[#051726]/80">
+      {/* Tab Navigation */}
+      <div className="flex bg-[#041523] border-b border-cyan-500/15 shrink-0">
+        <button
           onClick={() => setLeftTab("problem")}
-          className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
-            leftTab === "problem" ? "text-white border-b-2 border-white bg-white/[0.03]" : "text-zinc-400 hover:text-white"
+          className={`flex-1 py-3 text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+            leftTab === "problem"
+              ? "text-cyan-300 border-b-2 border-cyan-400 bg-cyan-500/10 font-semibold"
+              : "text-zinc-400 hover:text-cyan-200"
           }`}
         >
-          Problem Statement
+          <FileText className="w-3.5 h-3.5" />
+          <span>Problem</span>
         </button>
-        <button 
-          onClick={() => setLeftTab("chat")}
-          className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
-            leftTab === "chat" ? "text-white border-b-2 border-white bg-white/[0.03]" : "text-zinc-400 hover:text-white"
+
+        <button
+          onClick={() => setLeftTab("output")}
+          className={`flex-1 py-3 text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer relative ${
+            leftTab === "output"
+              ? "text-cyan-300 border-b-2 border-cyan-400 bg-cyan-500/10 font-semibold"
+              : "text-zinc-400 hover:text-cyan-200"
           }`}
         >
-          Chat
+          <Play className="w-3.5 h-3.5" />
+          <span>Output & Tests</span>
+          {isExecuting && (
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping absolute top-2 right-3" />
+          )}
+          {executionResult && (
+            <span
+              className={`w-2 h-2 rounded-full absolute top-2 right-3 ${
+                executionResult.type === "tests"
+                  ? executionResult.results?.every((r) => r.passed)
+                    ? "bg-emerald-400"
+                    : "bg-rose-400"
+                  : executionResult.statusCode === 200
+                  ? "bg-emerald-400"
+                  : "bg-rose-400"
+              }`}
+            />
+          )}
+        </button>
+
+        <button
+          onClick={() => setLeftTab("chat")}
+          className={`flex-1 py-3 text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+            leftTab === "chat"
+              ? "text-cyan-300 border-b-2 border-cyan-400 bg-cyan-500/10 font-semibold"
+              : "text-zinc-400 hover:text-cyan-200"
+          }`}
+        >
+          <Send className="w-3.5 h-3.5" />
+          <span>Chat</span>
+          {messages.length > 0 && (
+            <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 rounded-full font-mono">
+              {messages.length}
+            </span>
+          )}
         </button>
       </div>
 
+      {/* Tab Panels */}
       <div className="flex-1 flex flex-col p-4 overflow-hidden">
+        {/* PROBLEM TAB */}
         {leftTab === "problem" && (
           <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between mb-2 shrink-0">
-              <span className="text-[11px] text-zinc-400 uppercase tracking-wider font-mono">Overview</span>
+            <div className="flex items-center justify-between mb-3 shrink-0">
+              <span className="text-[10px] text-cyan-400 uppercase tracking-widest font-mono">
+                Problem Statement
+              </span>
               {user?.role === "interviewer" && (
                 <div className="flex items-center gap-2">
-                  <select 
-                    value={selectedProblemIndex} 
+                  <select
+                    value={selectedProblemIndex}
                     onChange={handleProblemSelect}
-                    className="bg-[#041826] border border-white/10 text-xs text-zinc-300 rounded-lg px-2.5 py-1 outline-none"
+                    className="bg-[#082235] border border-cyan-500/30 text-xs text-cyan-100 rounded-xl px-2.5 py-1 outline-none"
                   >
-                    <option value="">Select a Problem...</option>
+                    <option value="">Choose Problem Bank...</option>
                     {problemBank.map((p, i) => (
-                      <option key={i} value={i}>{p.title} ({p.difficulty})</option>
+                      <option key={i} value={i}>
+                        {p.title} ({p.difficulty || "Medium"})
+                      </option>
                     ))}
                   </select>
-                  <button 
+                  <button
                     onClick={() => setIsEditingProblem(!isEditingProblem)}
-                    className="text-xs text-zinc-300 hover:text-white underline font-medium"
+                    className="text-xs text-cyan-300 hover:text-cyan-100 underline font-medium cursor-pointer"
                   >
                     {isEditingProblem ? "Save" : "Edit"}
                   </button>
                 </div>
               )}
             </div>
-            
+
             {isEditingProblem ? (
-              <textarea 
-                className="w-full h-full bg-[#041826] border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-white/40 font-mono resize-none"
+              <textarea
+                className="w-full h-full bg-[#031320] border border-cyan-500/20 rounded-2xl p-4 text-xs text-white outline-none focus:border-cyan-400 font-mono resize-none leading-relaxed"
                 value={problemStatement}
                 onChange={handleProblemChange}
-                placeholder="Type or paste problem statement..."
+                placeholder="Type or paste the problem description, inputs, and constraints here..."
               />
             ) : (
-              <div className="w-full h-full bg-white/[0.02] border border-white/10 rounded-xl p-4 text-xs text-zinc-300 whitespace-pre-wrap overflow-y-auto leading-relaxed">
-                {problemStatement || "No problem statement selected yet."}
+              <div className="w-full h-full bg-[#031320]/60 border border-cyan-500/15 rounded-2xl p-4 text-xs text-cyan-100/90 whitespace-pre-wrap overflow-y-auto leading-relaxed font-sans">
+                {problemStatement || (
+                  <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 text-xs">
+                    <FileText className="w-8 h-8 text-cyan-500/30 mb-2" />
+                    <span>No problem statement assigned yet.</span>
+                    {user?.role === "interviewer" && (
+                      <span className="text-cyan-400/70 mt-1">Select a problem from the dropdown above.</span>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>
         )}
 
-        {leftTab === "chat" && (
-          <div className="flex-1 flex flex-col overflow-hidden bg-white/[0.01] rounded-xl border border-white/10">
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
-              {messages.length === 0 ? (
-                <div className="text-center text-xs text-zinc-500 italic mt-6">No messages yet.</div>
+        {/* OUTPUT & TESTS TAB (Synced Live for Interviewer & Candidate!) */}
+        {leftTab === "output" && (
+          <div className="flex-1 flex flex-col overflow-hidden bg-[#031320]/70 rounded-2xl border border-cyan-500/15 p-3">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-cyan-500/15 shrink-0">
+              <span className="text-[10px] text-cyan-400 uppercase tracking-widest font-mono flex items-center gap-1.5">
+                <Play className="w-3.5 h-3.5 text-cyan-400" />
+                Live Execution Results
+              </span>
+              {isExecuting ? (
+                <span className="text-[10px] font-mono text-cyan-300 bg-cyan-500/15 px-2 py-0.5 rounded-md flex items-center gap-1.5">
+                  <RefreshCw className="w-3 h-3 animate-spin text-cyan-400" /> Running code...
+                </span>
+              ) : executionResult ? (
+                executionResult.type === "tests" ? (
+                  <span
+                    className={`text-[10px] font-mono px-2 py-0.5 rounded-md font-semibold ${
+                      executionResult.results?.every((r) => r.passed)
+                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                        : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                    }`}
+                  >
+                    {executionResult.results?.filter((r) => r.passed).length}/
+                    {executionResult.results?.length} Tests Passed
+                  </span>
+                ) : (
+                  <span
+                    className={`text-[10px] font-mono px-2 py-0.5 rounded-md ${
+                      executionResult.statusCode === 200
+                        ? "bg-emerald-500/20 text-emerald-300"
+                        : "bg-rose-500/20 text-rose-300"
+                    }`}
+                  >
+                    {executionResult.statusCode === 200 ? "Success" : "Error"}
+                  </span>
+                )
               ) : (
-                messages.map((msg, idx) => (
-                  <div key={idx} className={`flex flex-col ${msg.sender === "You" ? "items-end" : "items-start"}`}>
-                    <span className="text-[10px] text-zinc-500 mb-0.5">{msg.sender} • {msg.time}</span>
-                    <div className={`px-3 py-1.5 rounded-xl text-xs max-w-[85%] break-words ${
-                      msg.sender === "You" ? "bg-white text-[#041826] font-medium" : "bg-white/[0.05] border border-white/10 text-zinc-300"
-                    }`}>
-                      {msg.text}
-                    </div>
-                  </div>
-                ))
+                <span className="text-[10px] text-zinc-500 font-mono">Idle</span>
               )}
             </div>
-            <form onSubmit={handleSendMessage} className="p-2 border-t border-white/10 bg-[#031320] flex items-center gap-2 shrink-0">
-              <input 
-                type="text" 
+
+            <div className="flex-1 overflow-y-auto font-mono text-xs text-zinc-200">
+              {isExecuting ? (
+                <div className="h-full flex flex-col items-center justify-center text-center text-cyan-300/80 gap-3">
+                  <RefreshCw className="w-8 h-8 animate-spin text-cyan-400" />
+                  <span className="text-xs">Executing candidate code against test harness...</span>
+                </div>
+              ) : executionResult ? (
+                executionResult.type === "tests" ? (
+                  <div className="space-y-3">
+                    {/* Test Case Tabs */}
+                    <div className="flex gap-1.5 border-b border-cyan-500/15 pb-2 overflow-x-auto">
+                      {executionResult.results?.map((tr, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setActiveTestCaseTab(idx)}
+                          className={`px-3 py-1.5 text-xs rounded-xl font-medium transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
+                            activeTestCaseTab === idx
+                              ? "bg-cyan-500 text-[#02101b] font-semibold shadow-md shadow-cyan-900/40"
+                              : "bg-[#061e31] text-zinc-400 hover:text-white"
+                          }`}
+                        >
+                          {tr.passed ? (
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          ) : (
+                            <XCircle className="w-3.5 h-3.5 text-rose-400" />
+                          )}
+                          <span>Case {tr.testCaseNumber || idx + 1}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Active Case Details */}
+                    {executionResult.results?.[activeTestCaseTab] && (
+                      <div className="space-y-2 bg-[#051726]/80 p-3 rounded-xl border border-cyan-500/10 text-xs">
+                        <div>
+                          <span className="text-cyan-400/80 text-[11px] block mb-1">Input:</span>
+                          <pre className="bg-[#03111c] p-2 rounded-lg text-zinc-200 overflow-x-auto">
+                            {executionResult.results[activeTestCaseTab].input || "(no input)"}
+                          </pre>
+                        </div>
+                        <div>
+                          <span className="text-emerald-400/80 text-[11px] block mb-1">Expected Output:</span>
+                          <pre className="bg-[#03111c] p-2 rounded-lg text-emerald-300 overflow-x-auto">
+                            {executionResult.results[activeTestCaseTab].expectedOutput}
+                          </pre>
+                        </div>
+                        <div>
+                          <span className="text-cyan-300 text-[11px] block mb-1">Actual Output:</span>
+                          <pre
+                            className={`p-2 rounded-lg overflow-x-auto ${
+                              executionResult.results[activeTestCaseTab].passed
+                                ? "bg-emerald-950/30 text-emerald-300 border border-emerald-500/20"
+                                : "bg-rose-950/40 text-rose-300 border border-rose-500/30"
+                            }`}
+                          >
+                            {executionResult.results[activeTestCaseTab].actualOutput || "(empty output)"}
+                          </pre>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : executionResult.type === "error" ? (
+                  <div className="bg-rose-950/30 border border-rose-500/30 p-3 rounded-xl">
+                    <span className="text-rose-400 font-semibold block mb-1 flex items-center gap-1.5">
+                      <AlertCircle className="w-4 h-4 text-rose-400" /> Runtime / Compilation Error:
+                    </span>
+                    <pre className="text-rose-300 whitespace-pre-wrap text-xs">{executionResult.error}</pre>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <span className="text-[10px] text-cyan-400 uppercase tracking-wider block">Standard Output:</span>
+                    <pre className="bg-[#03111c] p-3 rounded-xl whitespace-pre-wrap text-xs text-zinc-200 border border-cyan-500/10">
+                      {executionResult.output || "(no output)"}
+                    </pre>
+                  </div>
+                )
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 text-xs">
+                  <Play className="w-8 h-8 text-cyan-500/20 mb-2" />
+                  <span>No code execution runs recorded yet.</span>
+                  <span className="text-[11px] text-zinc-600 mt-1">
+                    When the candidate runs code, outputs and test case results stream here automatically.
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* CHAT TAB (Strictly De-duplicated) */}
+        {leftTab === "chat" && (
+          <div className="flex-1 flex flex-col overflow-hidden bg-[#031320]/70 rounded-2xl border border-cyan-500/15">
+            <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+              {messages.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 text-xs">
+                  <Send className="w-7 h-7 text-cyan-500/20 mb-2" />
+                  <span>No messages yet. Send a note to the room.</span>
+                </div>
+              ) : (
+                messages.map((msg, idx) => {
+                  const isMine = msg.isMe || msg.senderId === socket.id || msg.sender === user?.name;
+                  return (
+                    <div key={msg.id || idx} className={`flex flex-col ${isMine ? "items-end" : "items-start"}`}>
+                      <span className="text-[10px] text-cyan-300/60 mb-0.5">
+                        {isMine ? "You" : msg.sender} • {msg.time}
+                      </span>
+                      <div
+                        className={`px-3.5 py-2 rounded-2xl text-xs max-w-[85%] break-words shadow-md ${
+                          isMine
+                            ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-medium shadow-cyan-950/40"
+                            : "bg-[#061e31] border border-cyan-500/20 text-cyan-100"
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            <form
+              onSubmit={handleSendMessage}
+              className="p-2.5 border-t border-cyan-500/15 bg-[#041523] flex items-center gap-2 shrink-0"
+            >
+              <input
+                type="text"
                 value={chatMessage}
                 onChange={(e) => setChatMessage(e.target.value)}
-                placeholder="Message..."
-                className="flex-1 bg-white/[0.04] border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-white/40 placeholder:text-zinc-500"
+                placeholder="Type a message to participant..."
+                className="flex-1 bg-[#061f33] border border-cyan-500/20 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-cyan-400 placeholder:text-zinc-500 transition-colors"
               />
-              <button type="submit" disabled={!chatMessage.trim()} className="bg-white hover:bg-zinc-200 text-[#041826] px-3.5 py-1.5 rounded-xl text-xs font-medium disabled:opacity-40">
-                Send
+              <button
+                type="submit"
+                disabled={!chatMessage.trim()}
+                className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-[#02101b] px-4 py-2 rounded-xl text-xs font-semibold disabled:opacity-30 transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>Send</span>
               </button>
             </form>
           </div>
@@ -838,223 +1340,560 @@ function MeetingRoom() {
   );
 
   return (
-    <div className="h-screen w-full bg-[#041826] flex flex-col relative overflow-hidden font-sans text-white">
-      {/* HEADER SECTION */}
-      <header className="h-14 border-b border-white/10 bg-[#041826]/90 backdrop-blur-md flex items-center justify-between px-6 z-10 shrink-0">
-        <div className="flex items-center space-x-3">
-          <span className="font-normal text-white text-xl tracking-tight" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
-            Sora Session
-          </span>
-          <span className="text-[11px] font-mono bg-white/[0.04] border border-white/10 text-zinc-400 px-2 py-0.5 rounded">
-            {meetingDetails?.jobId || id}
-          </span>
-          {isRecording && <span className="text-[10px] bg-rose-500/10 border border-rose-500/20 text-rose-400 px-2 py-0.5 rounded uppercase animate-pulse">● Recording</span>}
-          {uploadingRecording && <span className="text-[10px] text-amber-300 font-mono">Uploading Recording...</span>}
+    <div className="h-screen w-full bg-gradient-to-br from-[#062438] via-[#041a2a] to-[#02101b] flex flex-col relative overflow-hidden font-sans text-white select-none">
+      {/* 1. TOP HEADER NAVIGATION */}
+      <header className="h-16 border-b border-cyan-500/15 bg-[#051726]/85 backdrop-blur-xl flex items-center justify-between px-5 sm:px-6 z-20 shrink-0 shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
+        {/* Left: Brand + Sora Logo + Job ID */}
+        <div className="flex items-center space-x-3.5">
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/Sora_Favicon.jpg"
+              alt="Sora"
+              className="w-8 h-8 rounded-xl shadow-[0_0_15px_rgba(56,189,248,0.45)] border border-cyan-400/40 object-cover"
+            />
+            <span
+              className="font-normal text-white text-xl tracking-tight hidden sm:inline"
+              style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+            >
+              Sora
+            </span>
+          </div>
+
+          <div className="h-4 w-px bg-cyan-500/20 hidden sm:block" />
+
+          {/* Job ID Badge */}
+          <div className="flex items-center gap-1.5 bg-[#082235] border border-cyan-500/25 px-2.5 py-1 rounded-xl text-xs font-mono text-cyan-300">
+            <Briefcase className="w-3.5 h-3.5 text-cyan-400" />
+            <span>{jobIdDisplay}</span>
+          </div>
+
+          {/* Recording Status */}
+          {isRecording && (
+            <span className="hidden md:flex items-center gap-1 text-[10px] bg-rose-500/15 border border-rose-500/30 text-rose-300 px-2 py-0.5 rounded-lg uppercase tracking-wider font-mono animate-pulse">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> Rec
+            </span>
+          )}
+
+          {uploadingRecording && (
+            <span className="text-[10px] text-amber-300 font-mono animate-pulse">
+              Generating AI Forensic Report...
+            </span>
+          )}
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Center: Names & Screen Share Badge */}
+        <div className="hidden lg:flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-2 bg-[#071f31] border border-cyan-500/20 px-3 py-1 rounded-xl">
+            <span className="text-cyan-300/70">Candidate:</span>
+            <span className="text-white font-medium">{candidateName}</span>
+          </div>
+
+          <div className="flex items-center gap-2 bg-[#071f31] border border-cyan-500/20 px-3 py-1 rounded-xl">
+            <span className="text-cyan-300/70">Interviewer:</span>
+            <span className="text-white font-medium">{interviewerName}</span>
+          </div>
+
+          {/* Screen Share Status Indicator */}
+          <div
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-mono border ${
+              (user?.role === "candidate" ? isSharingScreen : candidateIsSharingScreen)
+                ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-300"
+                : "bg-amber-500/15 border-amber-500/30 text-amber-300"
+            }`}
+          >
+            <ScreenShare className="w-3.5 h-3.5" />
+            <span>
+              {(user?.role === "candidate" ? isSharingScreen : candidateIsSharingScreen)
+                ? "Screen Shared"
+                : "Screen Not Shared"}
+            </span>
+          </div>
+        </div>
+
+        {/* Right: Actions (Resume, Screen share, End/Leave) */}
+        <div className="flex items-center gap-2.5">
+          {/* Interviewer View: View Resume Button */}
           {user?.role === "interviewer" && (
-            <button 
+            <button
+              onClick={() => setIsResumeOpen(true)}
+              className="text-xs bg-[#082235] hover:bg-[#0c2e47] text-cyan-300 border border-cyan-500/30 px-3 py-1.5 rounded-xl font-medium transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+              title="View Candidate's Submitted Resume"
+            >
+              <FileText className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Resume</span>
+            </button>
+          )}
+
+          {/* Interviewer View: Switch between Candidate Video/Screen & Synced Code */}
+          {user?.role === "interviewer" && (
+            <button
+              onClick={() =>
+                setActiveInterviewerMainView(activeInterviewerMainView === "video" ? "code" : "video")
+              }
+              className="text-xs bg-[#082235] hover:bg-[#0c2e47] text-cyan-300 border border-cyan-500/30 px-3 py-1.5 rounded-xl font-medium transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+            >
+              {activeInterviewerMainView === "video" ? (
+                <>
+                  <CodeIcon className="w-3.5 h-3.5 text-cyan-400" />
+                  <span className="hidden sm:inline">View Code</span>
+                </>
+              ) : (
+                <>
+                  <VideoIcon className="w-3.5 h-3.5 text-cyan-400" />
+                  <span className="hidden sm:inline">View Screen</span>
+                </>
+              )}
+            </button>
+          )}
+
+          {/* Candidate View: Screen Share Button */}
+          {user?.role === "candidate" && (
+            <button
+              onClick={toggleScreenShare}
+              className={`text-xs px-3.5 py-1.5 rounded-xl font-medium transition-all flex items-center gap-1.5 cursor-pointer border ${
+                isSharingScreen
+                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30 shadow-md shadow-emerald-950/40"
+                  : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white border-cyan-400/30 shadow-md shadow-cyan-900/40"
+              }`}
+            >
+              {isSharingScreen ? <ScreenShareOff className="w-3.5 h-3.5" /> : <ScreenShare className="w-3.5 h-3.5" />}
+              <span>{isSharingScreen ? "Stop Sharing" : "Share Screen"}</span>
+            </button>
+          )}
+
+          {/* End / Leave Button */}
+          {user?.role === "interviewer" ? (
+            <button
               onClick={endMeeting}
               disabled={uploadingRecording}
-              className="text-xs bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 px-3.5 py-1.5 rounded-xl font-medium transition-all disabled:opacity-50"
+              className="text-xs bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 px-3.5 py-1.5 rounded-xl font-semibold transition-all disabled:opacity-40 cursor-pointer"
             >
               End Session
             </button>
-          )}
-          {user?.role === "candidate" && (
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={toggleScreenShare}
-                className={`text-xs px-3.5 py-1.5 rounded-xl font-medium transition-all border ${
-                  isSharingScreen 
-                    ? "bg-amber-500/20 text-amber-300 border-amber-500/30" 
-                    : "bg-white/[0.06] hover:bg-white/10 text-white border-white/10"
-                }`}
-              >
-                {isSharingScreen ? "Stop Screen Share" : "Share Screen"}
-              </button>
-              <button 
-                onClick={() => {
-                  if (confirm("Leave this interview room?")) navigate("/candidate-dashboard");
-                }}
-                className="text-xs bg-white/[0.06] hover:bg-white/10 text-zinc-300 hover:text-white px-3.5 py-1.5 rounded-xl transition-all border border-white/10"
-              >
-                Leave
-              </button>
-            </div>
+          ) : (
+            <button
+              onClick={() => {
+                if (confirm("Leave this interview room?")) navigate("/candidate-dashboard");
+              }}
+              className="text-xs bg-[#082235] hover:bg-[#0c2e47] text-zinc-300 hover:text-white px-3.5 py-1.5 rounded-xl transition-all border border-cyan-500/20 cursor-pointer"
+            >
+              Leave
+            </button>
           )}
         </div>
       </header>
 
-      {/* MAIN VIEW: Split Pane */}
-      <div className={`flex-1 flex overflow-hidden relative ${user?.role === "interviewer" ? "bg-[#031320]" : ""}`}>
-        {/* FIRST PANEL: Video + Sidebar */}
-        <div className={`${user?.role === "interviewer" ? "flex-1 flex flex-col items-center justify-center p-6 border-r border-white/10" : "w-1/3 min-w-[320px] border-r border-white/10 flex flex-col bg-[#031320]"}`}>
-          {/* Remote Video */}
-          <div className={`${user?.role === "interviewer" ? "w-full max-w-5xl aspect-video bg-black relative border border-white/10 rounded-2xl overflow-hidden shadow-2xl shrink-0" : "aspect-video bg-black relative border-b border-white/10 shrink-0"}`}>
-            <video 
-              ref={remoteVideoRef} 
-              autoPlay 
-              playsInline 
-              className="w-full h-full object-cover"
-            />
-            {!remoteStream && (
-              <div className="absolute inset-0 flex items-center justify-center text-zinc-500 text-xs">
-                Waiting for remote participant...
-              </div>
-            )}
-            
-            {/* Self View PIP */}
-            <div className="absolute bottom-3 right-3 w-1/4 aspect-video bg-black rounded-xl border border-white/20 shadow-xl overflow-hidden z-10">
-              <video 
-                ref={pipVideoRef} 
-                autoPlay 
-                playsInline 
-                muted 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            {/* Media Controls Dock */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 shadow-2xl z-20">
-              <button 
-                onClick={toggleMic} 
-                className={`p-2 rounded-lg text-xs transition-all border ${micActive ? "bg-white/[0.08] border-white/20 text-white" : "bg-rose-500/20 border-rose-500/30 text-rose-300"}`}
-                title={micActive ? "Mute" : "Unmute"}
-              >
-                {micActive ? "Mic On" : "Mic Muted"}
-              </button>
-              <button 
-                onClick={toggleCamera} 
-                className={`p-2 rounded-lg text-xs transition-all border ${cameraActive ? "bg-white/[0.08] border-white/20 text-white" : "bg-rose-500/20 border-rose-500/30 text-rose-300"}`}
-                title={cameraActive ? "Cam Off" : "Cam On"}
-              >
-                {cameraActive ? "Cam On" : "Cam Off"}
-              </button>
-            </div>
-          </div>
-
-          {/* Candidate Tabs: Under video */}
-          {user?.role === "candidate" && renderTabsBlock()}
-        </div>
-
-        {/* Interviewer Tabs Panel */}
+      {/* 2. MAIN SPLIT SCREEN VIEW */}
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* INTERVIEWER LAYOUT */}
         {user?.role === "interviewer" && (
-          <div className="w-[420px] shrink-0 bg-[#031320] flex flex-col shadow-2xl z-10 relative">
-            {renderTabsBlock()}
-          </div>
+          <>
+            {/* Primary Center Panel: Video/Screen Stream or Synced Code */}
+            <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden bg-[#031320]/60 relative">
+              {activeInterviewerMainView === "video" ? (
+                <div className="w-full h-full max-w-6xl aspect-video bg-black rounded-3xl border border-cyan-500/20 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] relative flex items-center justify-center">
+                  <video
+                    ref={remoteVideoRef}
+                    autoPlay
+                    playsInline
+                    className="w-full h-full object-contain"
+                  />
+
+                  {!remoteStream && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 text-xs gap-3">
+                      <RefreshCw className="w-8 h-8 animate-spin text-cyan-500/30" />
+                      <span>Waiting for candidate to connect stream...</span>
+                    </div>
+                  )}
+
+                  {/* Candidate Screen Shared Pill */}
+                  {candidateIsSharingScreen && (
+                    <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-md px-3 py-1 rounded-xl border border-cyan-500/30 text-[11px] text-cyan-300 flex items-center gap-1.5 z-10 font-mono">
+                      <ScreenShare className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>Candidate Screen Feed</span>
+                    </div>
+                  )}
+
+                  {/* Interviewer Self PIP */}
+                  <div className="absolute bottom-4 right-4 w-44 aspect-video bg-[#031320] rounded-2xl border border-cyan-500/30 shadow-2xl overflow-hidden z-20">
+                    <video
+                      ref={pipVideoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Floating Media Controls Dock */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2.5 bg-black/75 backdrop-blur-md px-4 py-2 rounded-2xl border border-cyan-500/30 shadow-2xl z-20">
+                    <button
+                      onClick={toggleMic}
+                      className={`p-2 rounded-xl text-xs transition-all border cursor-pointer ${
+                        micActive
+                          ? "bg-cyan-500/20 border-cyan-400/40 text-cyan-200"
+                          : "bg-rose-500/20 border-rose-500/30 text-rose-300"
+                      }`}
+                      title={micActive ? "Mute Microphone" : "Unmute Microphone"}
+                    >
+                      {micActive ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
+                    </button>
+                    <button
+                      onClick={toggleCamera}
+                      className={`p-2 rounded-xl text-xs transition-all border cursor-pointer ${
+                        cameraActive
+                          ? "bg-cyan-500/20 border-cyan-400/40 text-cyan-200"
+                          : "bg-rose-500/20 border-rose-500/30 text-rose-300"
+                      }`}
+                      title={cameraActive ? "Turn Off Camera" : "Turn On Camera"}
+                    >
+                      {cameraActive ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Synced Read-Only Code Viewer for Interviewer */
+                <div className="w-full h-full max-w-6xl flex flex-col bg-[#051726] rounded-3xl border border-cyan-500/20 overflow-hidden shadow-2xl">
+                  <div className="h-12 bg-[#041523] border-b border-cyan-500/15 flex items-center justify-between px-4 shrink-0">
+                    <div className="flex items-center gap-2 text-xs text-cyan-300 font-mono">
+                      <CodeIcon className="w-4 h-4 text-cyan-400" />
+                      <span>Live Synced Candidate Editor ({language})</span>
+                    </div>
+                    <span className="text-[10px] text-zinc-500 font-mono">Live Mirroring</span>
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <Editor
+                      height="100%"
+                      language={language === "c" || language === "cpp" ? "cpp" : language}
+                      value={editorCode}
+                      theme="vs-dark"
+                      options={{
+                        readOnly: true,
+                        minimap: { enabled: false },
+                        fontSize: 13,
+                        padding: { top: 14 },
+                        automaticLayout: true,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Right Sidebar: Problem Statement, Candidate Output, and Chat */}
+            <div className="w-[430px] shrink-0 border-l border-cyan-500/15 flex flex-col shadow-2xl z-10">
+              {renderTabsBlock()}
+            </div>
+          </>
         )}
 
-        {/* Code Editor (Candidate View) */}
+        {/* CANDIDATE LAYOUT */}
         {user?.role === "candidate" && (
-          <div className="flex-1 flex flex-col bg-[#020d17]">
-            {/* Editor Header */}
-            <div className="h-12 bg-white/[0.01] border-b border-white/10 flex items-center justify-between px-4 shrink-0">
-              <div className="flex items-center gap-3">
-                <select 
-                  value={language}
-                  onChange={handleLanguageChange}
-                  className="bg-[#041826] border border-white/10 text-zinc-300 text-xs rounded-lg px-2.5 py-1 outline-none"
-                >
-                  {Object.keys(LANGUAGES).map(key => (
-                    <option key={key} value={key}>{LANGUAGES[key].name}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <button 
-                onClick={runCode}
-                disabled={isExecuting}
-                className="bg-white hover:bg-zinc-200 text-[#041826] px-4 py-1.5 rounded-lg text-xs font-medium transition-all disabled:opacity-40"
-              >
-                {isExecuting ? "Executing..." : "Run Code"}
-              </button>
-            </div>
-
-            {/* Monaco Editor */}
-            <div className="flex-1 min-h-[50%]">
-              <Editor
-                height="100%"
-                language={language === "c" || language === "cpp" ? "cpp" : language}
-                value={editorCode}
-                onChange={handleEditorChange}
-                theme="vs-dark"
-                options={{ 
-                  minimap: { enabled: false }, 
-                  fontSize: 13, 
-                  padding: { top: 14 },
-                  automaticLayout: true 
-                }}
-              />
-            </div>
-
-            {/* Output & Stdin Drawer */}
-            <div className="h-[28%] min-h-[140px] bg-[#031320] border-t border-white/10 flex flex-col shrink-0">
-              <div className="flex h-full">
-                {/* Stdin */}
-                <div className="w-1/3 border-r border-white/10 flex flex-col">
-                  <div className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider p-2 border-b border-white/10 bg-white/[0.01]">
-                    Custom Input
+          <>
+            {/* Left Column: Video Feeds + Problem/Chat Tabs */}
+            <div className="w-[380px] min-w-[340px] border-r border-cyan-500/15 flex flex-col bg-[#051726]/90 shrink-0">
+              {/* Remote Interviewer Video Feed */}
+              <div className="aspect-video bg-black relative border-b border-cyan-500/15 shrink-0 overflow-hidden">
+                <video
+                  ref={remoteVideoRef}
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+                {!remoteStream && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 text-xs gap-2">
+                    <RefreshCw className="w-6 h-6 animate-spin text-cyan-500/30" />
+                    <span>Waiting for interviewer...</span>
                   </div>
-                  <textarea 
-                    value={stdin}
-                    onChange={(e) => setStdin(e.target.value)}
-                    placeholder="Enter custom input..."
-                    className="flex-1 bg-transparent p-2 text-xs font-mono text-zinc-300 outline-none resize-none placeholder:text-zinc-600"
+                )}
+
+                {/* Candidate Self PIP */}
+                <div className="absolute bottom-3 right-3 w-28 aspect-video bg-black rounded-xl border border-cyan-500/30 shadow-xl overflow-hidden z-10">
+                  <video
+                    ref={pipVideoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                
-                {/* Stdout */}
-                <div className="flex-1 flex flex-col overflow-hidden">
-                  <div className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider p-2 border-b border-white/10 bg-white/[0.01] flex justify-between">
-                    <span>Output</span>
-                    {executionResult && executionResult.type === "single" && (
-                      <span className={executionResult.statusCode === 200 ? "text-emerald-400" : "text-rose-400"}>
-                        {executionResult.statusCode === 200 ? "Success" : "Error"}
-                      </span>
-                    )}
+
+                {/* Dock Controls */}
+                <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-black/75 backdrop-blur-md px-3 py-1.5 rounded-xl border border-cyan-500/30 z-20">
+                  <button
+                    onClick={toggleMic}
+                    className={`p-1.5 rounded-lg text-xs transition-all border cursor-pointer ${
+                      micActive
+                        ? "bg-cyan-500/20 border-cyan-400/40 text-cyan-200"
+                        : "bg-rose-500/20 border-rose-500/30 text-rose-300"
+                    }`}
+                  >
+                    {micActive ? <Mic className="w-3.5 h-3.5" /> : <MicOff className="w-3.5 h-3.5" />}
+                  </button>
+                  <button
+                    onClick={toggleCamera}
+                    className={`p-1.5 rounded-lg text-xs transition-all border cursor-pointer ${
+                      cameraActive
+                        ? "bg-cyan-500/20 border-cyan-400/40 text-cyan-200"
+                        : "bg-rose-500/20 border-rose-500/30 text-rose-300"
+                    }`}
+                  >
+                    {cameraActive ? <Video className="w-3.5 h-3.5" /> : <VideoOff className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Tabs Block Under Video */}
+              {renderTabsBlock()}
+            </div>
+
+            {/* Right Column: Code Editor + Screen Share Gate Overlay + Test Runner */}
+            <div className="flex-1 flex flex-col bg-[#020d17] relative overflow-hidden">
+              {/* Editor Header Toolbar */}
+              <div className="h-12 bg-[#041523] border-b border-cyan-500/15 flex items-center justify-between px-4 shrink-0">
+                <div className="flex items-center gap-3">
+                  <select
+                    value={language}
+                    onChange={handleLanguageChange}
+                    className="bg-[#082235] border border-cyan-500/30 text-cyan-100 text-xs rounded-xl px-3 py-1.5 outline-none font-medium cursor-pointer"
+                  >
+                    {Object.keys(LANGUAGES).map((key) => (
+                      <option key={key} value={key}>
+                        {LANGUAGES[key].name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {!isSharingScreen && (
+                    <span className="text-[11px] text-amber-300 font-medium flex items-center gap-1">
+                      <Lock className="w-3 h-3 text-amber-400" /> Screen share required to code
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  onClick={runCode}
+                  disabled={isExecuting || !isSharingScreen}
+                  className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-[#02101b] font-semibold px-5 py-1.5 rounded-xl text-xs transition-all disabled:opacity-40 shadow-md shadow-cyan-950/40 flex items-center gap-1.5 cursor-pointer"
+                >
+                  {isExecuting ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Executing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <span>Run Code</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Monaco Editor Container with Screen Share Gate Overlay */}
+              <div className="flex-1 min-h-[50%] relative overflow-hidden">
+                {/* 🔒 Screen Share Gate Overlay */}
+                {!isSharingScreen && (
+                  <div className="absolute inset-0 bg-[#041a2a]/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center mb-4 text-cyan-400 shadow-[0_0_30px_rgba(56,189,248,0.25)]">
+                      <ScreenShare className="w-8 h-8 animate-pulse text-cyan-300" />
+                    </div>
+                    <h3 className="text-xl font-normal text-white mb-2" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+                      Screen Sharing Required to Code
+                    </h3>
+                    <p className="text-xs text-cyan-100/70 max-w-md mb-6 leading-relaxed font-sans">
+                      For assessment integrity and live mentor review, you must share your entire screen before you can edit or execute code in this interview room.
+                    </p>
+                    <button
+                      onClick={toggleScreenShare}
+                      className="flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-[#02101b] font-semibold px-6 py-3 rounded-2xl text-xs shadow-xl shadow-cyan-900/50 hover:shadow-cyan-400/30 transition-all cursor-pointer"
+                    >
+                      <ScreenShare className="w-4 h-4" />
+                      <span>Share Screen to Unlock Editor</span>
+                    </button>
                   </div>
-                  <div className="flex-1 overflow-y-auto p-2.5 font-mono text-xs text-zinc-300">
-                    {executionResult ? (
-                      executionResult.type === "tests" ? (
-                        <div className="space-y-2">
-                          <div className="flex gap-1.5 border-b border-white/10 pb-2">
-                            {executionResult.results.map((tr, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => setActiveTestCaseTab(idx)}
-                                className={`px-2.5 py-1 text-xs rounded-lg transition-colors ${
-                                  activeTestCaseTab === idx ? "bg-white text-[#041826] font-medium" : "text-zinc-400 hover:text-white"
-                                }`}
-                              >
-                                Case {tr.testCaseNumber} {tr.passed ? '✓' : '✕'}
-                              </button>
-                            ))}
+                )}
+
+                <Editor
+                  height="100%"
+                  language={language === "c" || language === "cpp" ? "cpp" : language}
+                  value={editorCode}
+                  onChange={handleEditorChange}
+                  theme="vs-dark"
+                  options={{
+                    readOnly: !isSharingScreen,
+                    minimap: { enabled: false },
+                    fontSize: 13,
+                    padding: { top: 14 },
+                    automaticLayout: true,
+                  }}
+                />
+              </div>
+
+              {/* Bottom Custom Stdin & Output Preview */}
+              <div className="h-[28%] min-h-[140px] bg-[#041523] border-t border-cyan-500/15 flex flex-col shrink-0">
+                <div className="flex h-full">
+                  {/* Custom Stdin */}
+                  <div className="w-1/3 border-r border-cyan-500/15 flex flex-col">
+                    <div className="text-[10px] font-medium text-cyan-400 uppercase tracking-widest p-2 border-b border-cyan-500/15 bg-[#031320] flex items-center justify-between">
+                      <span>Custom Input</span>
+                      <span className="text-zinc-500 font-mono text-[9px]">Optional</span>
+                    </div>
+                    <textarea
+                      value={stdin}
+                      onChange={(e) => setStdin(e.target.value)}
+                      placeholder="Enter custom standard input..."
+                      className="flex-1 bg-transparent p-2.5 text-xs font-mono text-zinc-300 outline-none resize-none placeholder:text-zinc-600 leading-relaxed"
+                    />
+                  </div>
+
+                  {/* Stdout / Execution Preview */}
+                  <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="text-[10px] font-medium text-cyan-400 uppercase tracking-widest p-2 border-b border-cyan-500/15 bg-[#031320] flex justify-between items-center">
+                      <span>Live Output Preview</span>
+                      {executionResult && (
+                        <span
+                          className={`text-[9px] font-mono px-2 py-0.5 rounded ${
+                            executionResult.type === "tests"
+                              ? executionResult.results?.every((r) => r.passed)
+                                ? "bg-emerald-500/20 text-emerald-300"
+                                : "bg-rose-500/20 text-rose-300"
+                              : executionResult.statusCode === 200
+                              ? "bg-emerald-500/20 text-emerald-300"
+                              : "bg-rose-500/20 text-rose-300"
+                          }`}
+                        >
+                          {executionResult.type === "tests"
+                            ? `${executionResult.results?.filter((r) => r.passed).length}/${executionResult.results?.length} Passed`
+                            : executionResult.statusCode === 200
+                            ? "Success (200)"
+                            : "Error"}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-3 font-mono text-xs text-zinc-300">
+                      {isExecuting ? (
+                        <span className="text-cyan-400 flex items-center gap-1.5 animate-pulse">
+                          <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Executing code...
+                        </span>
+                      ) : executionResult ? (
+                        executionResult.type === "tests" ? (
+                          <div className="space-y-1.5 text-xs">
+                            <p className="text-cyan-300 font-semibold">
+                              Summary: {executionResult.results?.filter((r) => r.passed).length}/
+                              {executionResult.results?.length} test cases passed.
+                            </p>
+                            <p className="text-zinc-400 text-[11px]">
+                              Switch to the "Output & Tests" tab on the left for detailed input/output breakdown.
+                            </p>
                           </div>
-                          {executionResult.results[activeTestCaseTab] && (
-                            <div className="text-xs space-y-1">
-                              <p className="text-zinc-400">Input: <span className="text-zinc-200">{executionResult.results[activeTestCaseTab].input || "(empty)"}</span></p>
-                              <p className="text-zinc-400">Expected: <span className="text-emerald-400">{executionResult.results[activeTestCaseTab].expectedOutput}</span></p>
-                              <p className="text-zinc-400">Actual: <span className={executionResult.results[activeTestCaseTab].passed ? "text-emerald-400" : "text-rose-400"}>{executionResult.results[activeTestCaseTab].actualOutput}</span></p>
-                            </div>
-                          )}
-                        </div>
-                      ) : executionResult.type === "error" ? (
-                        <pre className="text-rose-400 whitespace-pre-wrap">{executionResult.error}</pre>
+                        ) : executionResult.type === "error" ? (
+                          <pre className="text-rose-400 whitespace-pre-wrap">{executionResult.error}</pre>
+                        ) : (
+                          <pre className="whitespace-pre-wrap">{executionResult.output || "(no output)"}</pre>
+                        )
                       ) : (
-                        <pre className="whitespace-pre-wrap">{executionResult.output || "(no output)"}</pre>
-                      )
-                    ) : (
-                      <span className="text-zinc-600 italic">Run code to see execution output.</span>
-                    )}
+                        <span className="text-zinc-500 italic">Click "Run Code" to view execution results.</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
+
+      {/* 3. CANDIDATE RESUME MODAL / DRAWER (Interviewer) */}
+      {isResumeOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-fade-rise">
+          <div className="bg-[#082235] border border-cyan-500/30 rounded-3xl max-w-4xl w-full h-[85vh] flex flex-col shadow-[0_25px_70px_rgba(0,0,0,0.8)] overflow-hidden">
+            {/* Modal Header */}
+            <div className="h-14 bg-[#051726] border-b border-cyan-500/15 flex items-center justify-between px-6 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <FileText className="w-4 h-4 text-cyan-400" />
+                <h3 className="text-sm font-semibold text-white">
+                  Candidate Profile & Resume • {candidateName}
+                </h3>
+              </div>
+              <div className="flex items-center gap-3">
+                {effectiveResumeUrl && (
+                  <a
+                    href={effectiveResumeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-cyan-300 hover:text-white flex items-center gap-1 font-medium underline"
+                  >
+                    <span>Open in New Tab</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+                <button
+                  onClick={() => setIsResumeOpen(false)}
+                  className="p-1.5 rounded-xl hover:bg-white/10 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="flex-1 p-6 overflow-y-auto">
+              {effectiveResumeUrl ? (
+                <div className="w-full h-full rounded-2xl overflow-hidden border border-cyan-500/20 bg-[#03111c]">
+                  <iframe
+                    src={effectiveResumeUrl}
+                    title="Candidate Resume"
+                    className="w-full h-full border-0"
+                  />
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="p-4 rounded-2xl bg-[#051726] border border-cyan-500/15">
+                    <span className="text-[10px] uppercase tracking-wider text-cyan-400 font-mono block mb-1">
+                      Candidate Bio & Overview
+                    </span>
+                    <p className="text-sm text-cyan-100 font-medium">
+                      {candidateName} ({meetingDetails?.candidate?.email || "Email provided upon request"})
+                    </p>
+                    <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
+                      {meetingDetails?.candidate?.intro || "No custom biography submitted."}
+                    </p>
+                  </div>
+
+                  {meetingDetails?.candidate?.skills && meetingDetails.candidate.skills.length > 0 && (
+                    <div className="p-4 rounded-2xl bg-[#051726] border border-cyan-500/15">
+                      <span className="text-[10px] uppercase tracking-wider text-cyan-400 font-mono block mb-2">
+                        Core Competencies & Skills
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {meetingDetails.candidate.skills.map((skill, sIdx) => (
+                          <span
+                            key={sIdx}
+                            className="bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-3 py-1 rounded-xl text-xs font-mono"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="p-4 rounded-2xl bg-[#051726] border border-cyan-500/15">
+                    <span className="text-[10px] uppercase tracking-wider text-cyan-400 font-mono block mb-1">
+                      Target Job Profile
+                    </span>
+                    <p className="text-xs font-mono text-cyan-300">{jobIdDisplay}</p>
+                    <p className="text-xs text-zinc-400 mt-2 leading-relaxed whitespace-pre-wrap">
+                      {meetingDetails?.jobDescription || "Standard Technical Assessment Loop."}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

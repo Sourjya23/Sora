@@ -130,7 +130,7 @@ exports.verifyOTP = async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "7d",
+        expiresIn: "180d",
       }
     );
 
@@ -198,7 +198,7 @@ exports.login = async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: rememberMe ? "30d" : "1d",
+        expiresIn: "180d",
       }
     );
 

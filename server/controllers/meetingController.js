@@ -236,31 +236,37 @@ exports.uploadRecording = async (req, res) => {
 
     if (req.file) {
       meeting.recordingUrl = req.file.path; // Cloudinary URL
-      meeting.status = "completed";
-      
-      // Initialize forensic report processing state
-      meeting.forensicReport = { isProcessing: true };
-      
-      await meeting.save();
-      
-      // Trigger background AI forensic job
-      let parsedTelemetry = [];
-      try {
-        if (telemetryEvents) parsedTelemetry = JSON.parse(telemetryEvents);
-      } catch(e) {}
-      
-      processInterviewVideo(
-        id, 
-        meeting.recordingUrl, 
-        finalCode || "No code submitted", 
-        problemStatement || "No problem statement", 
-        parsedTelemetry
-      );
-
-      res.status(200).json({ message: "Recording uploaded successfully, AI report generation started", recordingUrl: meeting.recordingUrl });
-    } else {
-      res.status(400).json({ message: "No recording file provided" });
     }
+    meeting.status = "completed";
+    
+    // Initialize forensic report processing state
+    meeting.forensicReport = { isProcessing: true };
+    await meeting.save();
+
+    // Also update associated ticket to completed
+    await InterviewTicket.updateOne(
+      { meetingId: id },
+      { $set: { status: "completed" } }
+    );
+    
+    // Trigger background AI forensic job
+    let parsedTelemetry = [];
+    try {
+      if (telemetryEvents) parsedTelemetry = JSON.parse(telemetryEvents);
+    } catch(e) {}
+    
+    processInterviewVideo(
+      id, 
+      meeting.recordingUrl, 
+      finalCode || "No code submitted", 
+      problemStatement || "No problem statement", 
+      parsedTelemetry
+    );
+
+    res.status(200).json({ 
+      message: "Session concluded, AI forensic analysis in progress", 
+      recordingUrl: meeting.recordingUrl 
+    });
   } catch (error) {
     console.error("Upload recording error:", error);
     res.status(500).json({ message: "Failed to upload recording" });

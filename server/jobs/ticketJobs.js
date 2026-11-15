@@ -1,18 +1,19 @@
-
 const cron = require('node-cron');
 const InterviewTicket = require('../models/InterviewTicket');
 
 const init = () => {
-  // Stale Ticket Auto-Dismissal: Daily at midnight
-  cron.schedule('0 0 * * *', async () => {
+  // Safe Ticket Maintenance: Runs weekly on Sunday
+  // Preserves pending interview tickets for at least 180 days (6 months)
+  // so candidates and interviewers can maintain their interview flow even after months of inactivity.
+  cron.schedule('0 3 * * 0', async () => {
     try {
-      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      const sixMonthsAgo = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000);
       const stale = await InterviewTicket.updateMany(
-        { status: 'pending', createdAt: { $lt: sevenDaysAgo } },
+        { status: 'pending', createdAt: { $lt: sixMonthsAgo } },
         { $set: { status: 'dismissed' } }
       );
       if (stale.modifiedCount > 0) {
-        console.log(`🎫 Auto-dismissed ${stale.modifiedCount} stale interview tickets.`);
+        console.log(`🎫 Auto-dismissed ${stale.modifiedCount} abandoned interview tickets older than 180 days.`);
       }
     } catch (error) {
       console.error('Error in Stale Ticket job:', error);

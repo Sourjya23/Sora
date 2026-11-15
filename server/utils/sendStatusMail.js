@@ -1,82 +1,63 @@
-const nodemailer = require("nodemailer");
+const { sendEmail } = require("./emailService");
 
 const sendStatusMail = async (email, status, notes, adminEmail) => {
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const statusColor = status === "approved" ? "#10B981" : "#F43F5E";
-    const statusText = status === "approved" ? "Approved" : "Rejected";
-
     const isApproved = status === "approved";
+    const statusText = isApproved ? "Approved" : "Rejected";
     const subjectPrefix = isApproved ? "🎉 Congratulations!" : "Profile Update:";
-    
-    let htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
-      </head>
-      <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9fafb; padding: 40px 20px; margin: 0;">
-        <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
-          <!-- Header -->
-          <div style="background-color: ${isApproved ? '#10B981' : '#F43F5E'}; padding: 30px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 28px; letter-spacing: -0.5px;">
-              ${isApproved ? 'You\'re Verified! 🚀' : 'Verification Status: ' + statusText}
-            </h1>
+    const frontendUrl = process.env.FRONTEND_URL || "https://sorabuild.netlify.app";
+
+    const htmlContent = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #1e293b; background-color: #041826; color: #e2e8f0; border-radius: 16px;">
+        <div style="background-color: ${isApproved ? "#064e3b" : "#4c0519"}; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+          <h1 style="color: white; margin: 0; font-size: 24px;">
+            ${isApproved ? "You're Verified on Sora! 🚀" : "Verification Status: " + statusText}
+          </h1>
+        </div>
+        
+        <div style="color: #cbd5e1; font-size: 15px; line-height: 1.6;">
+          <p>Hello,</p>
+          
+          ${
+            isApproved
+              ? `<p>The team at Sora has reviewed and verified your profile. You now have full access to schedule live 1-on-1 interview loops with mentors.</p>`
+              : `<p>Your profile verification status has been updated to: <strong style="color: #f43f5e;">${statusText}</strong>.</p>`
+          }
+
+          ${
+            notes
+              ? `
+            <div style="margin: 24px 0; padding: 16px; background-color: #07243a; border-left: 4px solid #38bdf8; border-radius: 0 8px 8px 0;">
+              <p style="margin: 0 0 6px 0; font-size: 11px; font-weight: bold; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px;">Reviewer's Note</p>
+              <p style="margin: 0; color: #e2e8f0; font-size: 14px; line-height: 1.5;">${notes}</p>
+            </div>
+          `
+              : ""
+          }
+          
+          <div style="margin: 32px 0; text-align: center;">
+            <a href="${frontendUrl}/login" style="display: inline-block; background-color: #ffffff; color: #041826; text-decoration: none; padding: 14px 28px; border-radius: 9999px; font-weight: 600; font-size: 15px;">
+              Go to Sora Dashboard &rarr;
+            </a>
           </div>
           
-          <!-- Body -->
-          <div style="padding: 40px; color: #374151; line-height: 1.6; font-size: 16px;">
-            <p>Hello there,</p>
-            
-            ${isApproved 
-              ? `<p>We have incredible news! The Founders at Team Sora have personally reviewed your profile and we are thrilled to welcome you to the platform. Your journey to mastering technical interviews starts right here.</p>`
-              : `<p>Your profile verification status has been updated to: <strong style="color: #F43F5E;">${statusText}</strong>.</p>`
-            }
-
-            ${notes ? `
-              <div style="margin: 30px 0; padding: 25px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 0 12px 12px 0;">
-                <p style="margin-top: 0; font-size: 13px; font-weight: bold; color: #b45309; text-transform: uppercase; letter-spacing: 1px;">Founder's Note</p>
-                <p style="font-family: 'Caveat', cursive; font-size: 26px; color: #92400e; margin-bottom: 0; line-height: 1.3;">
-                  "${notes}"
-                </p>
-              </div>
-            ` : ""}
-            
-            <p style="margin-top: 30px;">
-              <a href="http://localhost:5173/login" style="display: inline-block; background: #111827; color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: bold;">
-                Go to Dashboard
-              </a>
-            </p>
-            
-            <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 40px 0 20px;" />
-            <p style="font-size: 14px; color: #6b7280; margin: 0;">
-              With 💛 from Team Sora
-            </p>
-          </div>
+          <p style="font-size: 13px; color: #64748b; margin-top: 32px; border-top: 1px solid #1e293b; padding-top: 16px;">
+            With 💛 from Team Sora
+          </p>
         </div>
-      </body>
-      </html>
+      </div>
     `;
 
-    const mailOptions = {
-      from: `"Team Sora" <${process.env.EMAIL_USER}>`,
-      replyTo: adminEmail,
+    await sendEmail({
       to: email,
-      subject: `${subjectPrefix} Profile ${statusText}`,
+      subject: `${subjectPrefix} Profile ${statusText} - Sora`,
       html: htmlContent,
-    };
+      replyTo: adminEmail || undefined,
+    });
 
-    await transporter.sendMail(mailOptions);
-    console.log(`Status email sent to ${email}: ${status}`);
+    console.log(`[sendStatusMail] Status email sent to ${email}: ${status}`);
   } catch (error) {
-    console.error("Error sending status mail:", error);
+    console.error("[sendStatusMail] Error sending status mail:", error);
   }
 };
 

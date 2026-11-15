@@ -103,7 +103,13 @@ exports.getTickets = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    const tickets = await InterviewTicket.find({ status: "pending" })
+    const tickets = await InterviewTicket.find({
+      $or: [
+        { status: "pending" },
+        { status: "scheduled", interviewerId: req.user.id },
+        { status: "scheduled", interviewerId: null }
+      ]
+    })
       .populate("candidateId", "name email resumeUrl skills intro experienceLevel projects")
       .sort({ createdAt: -1 });
       
