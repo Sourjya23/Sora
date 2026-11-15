@@ -1,15 +1,132 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
+@import "./landing/styles/theme.css";
+@import "./landing/styles/fonts.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ink: #ffffff;
+  --bg: #041826;
+  --radius: 22px;
+}
+
 body {
-  background-color: #09090b;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #ffffff;
+  background-color: #041826;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .font-slogan {
   font-family: 'Caveat', cursive;
   letter-spacing: 0.02em;
+}
+
+/* Design System Utilities */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--pill);
+  color: #2c3a10;
+  letter-spacing: .01em;
+  line-height: 1.2;
+}
+
+.h2 {
+  font-size: clamp(26px, 3.1vw, 44px);
+  font-weight: 400;
+  letter-spacing: -.03em;
+  line-height: 1.12;
+  text-align: center;
+}
+
+.btn-olive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--olive);
+  color: #f3f8e4;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 2px 6px rgba(60,80,10,.25);
+  transition: transform .3s, background .3s;
+  cursor: pointer;
+}
+
+.btn-olive:hover {
+  transform: translateY(-1px);
+  background: var(--olive-hover);
+}
+
+.glass {
+  border-radius: 12px;
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.55);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+.glass-card {
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  box-shadow: 0 20px 50px rgba(77, 106, 16, 0.08), 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.ticket-notch {
+  mask: radial-gradient(circle 17px at 0 55%, #0000 97%, #000) left/51% 100% no-repeat,
+        radial-gradient(circle 17px at 100% 55%, #0000 97%, #000) right/51% 100% no-repeat;
+  -webkit-mask: radial-gradient(circle 17px at 0 55%, #0000 97%, #000) left/51% 100% no-repeat,
+                radial-gradient(circle 17px at 100% 55%, #0000 97%, #000) right/51% 100% no-repeat;
+}
+
+@keyframes driftA {
+  to { transform: translateX(26px) translateY(4px); }
+}
+@keyframes driftB {
+  to { transform: translateX(-30px) translateY(6px); }
+}
+.drift-a {
+  animation: driftA 14s ease-in-out infinite alternate;
+}
+.drift-b {
+  animation: driftB 17s ease-in-out infinite alternate;
+}
+
+@keyframes petalFall {
+  to { transform: translate(var(--dx, 20px), 110vh) rotate(540deg); }
+}
+.animate-petal {
+  animation: petalFall linear infinite;
 }

@@ -77,12 +77,12 @@ function CompleteProfile({ onComplete, user }) {
   };
 
   return (
-    <div className="bg-white/40 border border-zinc-200 rounded-3xl p-8 max-w-3xl mx-auto backdrop-blur-md">
+    <div className="bg-[#041a2a]/80 border border-white/10 rounded-3xl p-8 max-w-3xl mx-auto backdrop-blur-xl shadow-2xl">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-zinc-900 mb-2">
+        <h2 className="text-2xl font-bold text-white mb-2">
           {user && user.profileCompleted ? "Edit Your Profile" : "Complete Your Profile"}
         </h2>
-        <p className="text-zinc-600 text-sm">
+        <p className="text-zinc-400 text-sm">
           {user && user.profileCompleted 
             ? "Modify your details below to update your candidate record."
             : "Please provide your details to verify your identity and get approved for interviews."}
@@ -98,23 +98,23 @@ function CompleteProfile({ onComplete, user }) {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-xs font-medium text-zinc-600 mb-1.5 uppercase">National ID Number</label>
+            <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">National ID Number</label>
             <input
               type="text"
               required
               value={nationalId}
               onChange={(e) => setNationalId(e.target.value)}
-              className="w-full bg-white/90 border border-zinc-200 rounded-xl py-3 px-4 text-sm text-zinc-900 outline-none focus:border-zinc-900 transition-all"
+              className="w-full bg-white/[0.04] border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-white/40 transition-all placeholder:text-zinc-500"
               placeholder="e.g. 123456789"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-zinc-600 mb-1.5 uppercase">Experience Level</label>
+            <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">Experience Level</label>
             <select
               value={experienceLevel}
               onChange={(e) => setExperienceLevel(e.target.value)}
-              className="w-full bg-white/90 border border-zinc-200 rounded-xl py-3 px-4 text-sm text-zinc-900 outline-none focus:border-zinc-900 transition-all"
+              className="w-full bg-[#031320] border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-white/40 transition-all"
             >
               <option value="beginner">Beginner (0-2 years)</option>
               <option value="intermediate">Intermediate (2-5 years)</option>
@@ -124,13 +124,13 @@ function CompleteProfile({ onComplete, user }) {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-zinc-600 mb-1.5 uppercase">Resume Upload (PDF/DOC)</label>
+          <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">Resume Upload (PDF/DOC)</label>
           <input
             type="file"
             required={!(user && user.resumeUrl)}
             accept=".pdf,.doc,.docx"
             onChange={(e) => setResume(e.target.files[0])}
-            className="w-full bg-white/90 border border-zinc-200 rounded-xl py-2 px-4 text-sm text-zinc-700 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-zinc-900 file:text-white hover:file:bg-violet-500 transition-all"
+            className="w-full bg-white/[0.04] border border-white/10 rounded-xl py-2 px-4 text-sm text-zinc-300 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 transition-all"
           />
           {user && user.resumeUrl && (
             <p className="text-xs text-emerald-400 mt-2">
@@ -140,35 +140,35 @@ function CompleteProfile({ onComplete, user }) {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-zinc-600 mb-1.5 uppercase">Skills (Comma separated)</label>
+          <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">Skills (Comma separated)</label>
           <input
             type="text"
             required
             value={skills}
             onChange={(e) => setSkills(e.target.value)}
-            className="w-full bg-white/90 border border-zinc-200 rounded-xl py-3 px-4 text-sm text-zinc-900 outline-none focus:border-zinc-900 transition-all"
+            className="w-full bg-white/[0.04] border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-white/40 transition-all placeholder:text-zinc-500"
             placeholder="React, Node.js, MongoDB..."
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-zinc-600 mb-1.5 uppercase">Short Intro</label>
+          <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">Short Intro</label>
           <textarea
             required
             value={intro}
             onChange={(e) => setIntro(e.target.value)}
-            className="w-full bg-white/90 border border-zinc-200 rounded-xl py-3 px-4 text-sm text-zinc-900 outline-none focus:border-zinc-900 transition-all min-h-[100px]"
+            className="w-full bg-white/[0.04] border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-white/40 transition-all min-h-[100px] placeholder:text-zinc-500"
             placeholder="Tell us a bit about yourself..."
           />
         </div>
 
-        <div className="pt-4 border-t border-zinc-200">
+        <div className="pt-4 border-t border-white/10">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-zinc-800 uppercase tracking-wider">Projects</h3>
+            <h3 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider">Projects</h3>
             <button
               type="button"
               onClick={addProject}
-              className="text-xs bg-zinc-100 hover:bg-zinc-200 text-zinc-900 px-3 py-1.5 rounded-lg transition-colors"
+              className="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-colors border border-white/10"
             >
               + Add Project
             </button>
@@ -176,12 +176,12 @@ function CompleteProfile({ onComplete, user }) {
 
           <div className="space-y-4">
             {projects.map((project, index) => (
-              <div key={index} className="bg-zinc-50/50 p-4 rounded-xl border border-zinc-200/50 relative">
+              <div key={index} className="bg-white/[0.02] p-4 rounded-xl border border-white/10 relative">
                 {projects.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeProject(index)}
-                    className="absolute top-4 right-4 text-rose-500 hover:text-rose-400 text-xs font-semibold"
+                    className="absolute top-4 right-4 text-rose-400 hover:text-rose-300 text-xs font-semibold"
                   >
                     Remove
                   </button>
@@ -189,36 +189,36 @@ function CompleteProfile({ onComplete, user }) {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-xs font-medium text-zinc-500 mb-1 uppercase">Title</label>
+                    <label className="block text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Title</label>
                     <input
                       type="text"
                       required
                       value={project.title}
                       onChange={(e) => handleProjectChange(index, "title", e.target.value)}
-                      className="w-full bg-white border border-zinc-300 rounded-lg py-2 px-3 text-sm text-zinc-800 outline-none focus:border-zinc-900"
+                      className="w-full bg-white/[0.04] border border-white/10 rounded-lg py-2 px-3 text-sm text-white outline-none focus:border-white/40"
                       placeholder="E-commerce App"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-zinc-500 mb-1 uppercase">Link (Must be valid URL)</label>
+                    <label className="block text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Link</label>
                     <input
                       type="url"
                       required
                       value={project.link}
                       onChange={(e) => handleProjectChange(index, "link", e.target.value)}
-                      className="w-full bg-white border border-zinc-300 rounded-lg py-2 px-3 text-sm text-zinc-800 outline-none focus:border-zinc-900"
+                      className="w-full bg-white/[0.04] border border-white/10 rounded-lg py-2 px-3 text-sm text-white outline-none focus:border-white/40"
                       placeholder="https://github.com/..."
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1 uppercase">Description</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Description</label>
                   <input
                     type="text"
                     required
                     value={project.description}
                     onChange={(e) => handleProjectChange(index, "description", e.target.value)}
-                    className="w-full bg-white border border-zinc-300 rounded-lg py-2 px-3 text-sm text-zinc-800 outline-none focus:border-zinc-900"
+                    className="w-full bg-white/[0.04] border border-white/10 rounded-lg py-2 px-3 text-sm text-white outline-none focus:border-white/40"
                     placeholder="Built with React and Node.js..."
                   />
                 </div>
@@ -230,7 +230,7 @@ function CompleteProfile({ onComplete, user }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full mt-6 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all shadow-lg shadow disabled:opacity-50"
+          className="w-full mt-6 bg-white hover:bg-zinc-200 text-[#041826] font-semibold py-3 px-4 rounded-xl text-sm transition-all shadow-lg disabled:opacity-50"
         >
           {loading ? "Uploading & Saving..." : (user && user.profileCompleted ? "Update Profile Details" : "Submit Profile for Verification")}
         </button>

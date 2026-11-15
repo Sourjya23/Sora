@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
 
-function VerifyOTP() {
+export default function VerifyOTP() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
@@ -21,9 +21,9 @@ function VerifyOTP() {
   }, [cooldown]);
 
   useEffect(() => {
-    const signupEmail = sessionStorage.getItem("signup_email");
-    if (signupEmail) {
-      setEmail(signupEmail);
+    const storedEmail = localStorage.getItem("otpEmail") || sessionStorage.getItem("signup_email");
+    if (storedEmail) {
+      setEmail(storedEmail);
     }
   }, []);
 
@@ -40,7 +40,7 @@ function VerifyOTP() {
     try {
       const response = await API.post("/auth/resend-otp", { email });
       setSuccess(response.data.message || "A new OTP has been sent to your email!");
-      setCooldown(60); // Start 60-second cooldown
+      setCooldown(60);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to resend OTP. Please try again.");
     } finally {
@@ -60,64 +60,78 @@ function VerifyOTP() {
         otp,
       });
 
-      setSuccess("Account verified successfully! Redirecting...");
-      
       const { token, user } = response.data;
-      
-      // Clear any stale tokens from previous sessions to prevent data merging
-      localStorage.removeItem("token");
-      sessionStorage.removeItem("token");
-      
-      // Save token by default in sessionStorage on OTP verification
-      sessionStorage.setItem("token", token);
+      localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
+      setSuccess("Email successfully verified! Redirecting to your dashboard...");
       setTimeout(() => {
-        if (user.role === "candidate") {
+        if (user.role === "admin") {
+          navigate("/admin-dashboard");
+        } else if (user.role === "candidate") {
           navigate("/candidate-dashboard");
         } else {
           navigate("/interviewer-dashboard");
         }
-      }, 1500);
+      }, 1000);
     } catch (err) {
-      setError(err.response?.data?.message || "Verification failed. Please check your OTP.");
+      setError(err.response?.data?.message || "Invalid OTP code. Please check your spam folder or resend.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-slate-100 flex items-center justify-center relative overflow-hidden">
-      {/* Decorative Glow Elements */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-8 relative bg-gradient-to-b from-[#041826] via-[#052338] to-[#041826] text-white selection:bg-cyan-500/30 selection:text-white">
+      {/* Ambient background glow */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-cyan-900/15 rounded-full blur-[120px]" />
+      </div>
 
-      <div className="w-full max-w-md px-6 z-10">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
-            Verify Email
+      <div className="w-full max-w-md px-4 relative z-10">
+        {/* Branding */}
+        <div className="text-center mb-6">
+          <Link to="/" className="inline-flex items-center gap-2 mb-3 group">
+            <img
+              src="/Sora_Favicon.jpg"
+              alt="Sora"
+              className="w-9 h-9 rounded-xl border border-white/15 shadow-lg object-cover"
+            />
+            <span
+              className="text-2xl font-bold tracking-tight text-white group-hover:text-cyan-300 transition-colors"
+              style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+            >
+              Sora
+            </span>
+          </Link>
+          <h1
+            className="text-2xl sm:text-3xl font-medium tracking-tight text-white"
+            style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+          >
+            Verify Your Email
           </h1>
-          <p className="text-slate-400 text-sm mt-2 font-light">
-            Enter the 6-digit OTP code sent to your email address
+          <p className="text-xs text-zinc-400 mt-1">
+            Enter the 6-digit verification code sent to your inbox.
           </p>
         </div>
 
-        <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800/80 p-8 rounded-3xl shadow-2xl">
+        {/* Card */}
+        <div className="bg-[#041a2a]/85 backdrop-blur-2xl border border-white/10 p-8 rounded-[28px] shadow-[0_25px_70px_rgba(0,0,0,0.6)]">
           {error && (
-            <div className="mb-5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-medium">
+            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium">
               {error}
             </div>
           )}
 
           {success && (
-            <div className="mb-5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+            <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium">
               {success}
             </div>
           )}
 
-          <form onSubmit={handleVerify} className="space-y-5">
+          <form onSubmit={handleVerify} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                 Email Address
               </label>
               <input
@@ -125,13 +139,13 @@ function VerifyOTP() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full bg-slate-950/80 border border-slate-800 focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 rounded-xl py-3 px-4 text-sm text-slate-100 outline-none transition-all placeholder:text-slate-600"
+                placeholder="name@gmail.com"
+                className="w-full bg-white/[0.04] border border-white/15 focus:border-cyan-400 focus:bg-white/[0.07] rounded-xl py-2.5 px-3.5 text-sm text-white outline-none transition-all placeholder:text-zinc-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+              <label className="block text-xs font-medium text-zinc-300 mb-1.5 text-center">
                 One-Time Password (OTP)
               </label>
               <input
@@ -141,33 +155,33 @@ function VerifyOTP() {
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                 placeholder="123456"
-                className="w-full bg-slate-950/80 border border-slate-800 focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 rounded-xl py-3 px-4 text-center text-lg font-mono tracking-[0.5em] text-slate-100 outline-none transition-all placeholder:text-slate-700"
+                className="w-full bg-white/[0.04] border border-white/15 focus:border-cyan-400 focus:bg-white/[0.07] rounded-xl py-3 px-4 text-center text-xl font-mono tracking-[0.4em] text-white outline-none transition-all placeholder:text-zinc-600"
               />
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-violet-500/10 hover:shadow-violet-500/20 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+              disabled={loading || otp.length < 6}
+              className="w-full bg-white text-[#0A0A0A] font-semibold py-2.5 px-4 rounded-xl text-sm hover:bg-white/90 transition-all duration-200 shadow-lg active:scale-[0.99] disabled:opacity-50 mt-1 cursor-pointer"
             >
-              {loading ? "Verifying..." : "Verify OTP Code"}
+              {loading ? "Verifying..." : "Verify Code & Continue →"}
             </button>
 
             <button
               type="button"
               onClick={handleResendOtp}
               disabled={resending || cooldown > 0}
-              className="w-full bg-slate-800/50 hover:bg-slate-800 text-slate-300 font-medium py-3 px-4 rounded-xl text-sm transition-all duration-300 border border-slate-700 hover:border-slate-600 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+              className="w-full py-2.5 rounded-xl border border-white/15 bg-white/5 text-zinc-300 text-xs font-medium hover:bg-white/10 hover:text-white transition-colors disabled:opacity-50 cursor-pointer"
             >
-              {resending ? "Sending..." : cooldown > 0 ? `Resend OTP in ${cooldown}s` : "Resend OTP"}
+              {resending ? "Sending..." : cooldown > 0 ? `Resend Code in ${cooldown}s` : "Resend OTP Code"}
             </button>
           </form>
 
-          <div className="mt-6 text-center text-xs text-slate-500 flex justify-between">
-            <Link to="/signup" className="text-slate-400 hover:text-white hover:underline">
+          <div className="mt-5 text-center text-xs text-zinc-400 flex justify-between pt-3 border-t border-white/10">
+            <Link to="/signup" className="text-cyan-300 hover:text-white transition-colors">
               ← Change Email
             </Link>
-            <Link to="/" className="text-slate-400 hover:text-white hover:underline">
+            <Link to="/login" className="text-cyan-300 hover:text-white transition-colors">
               Sign In Instead
             </Link>
           </div>
@@ -176,5 +190,3 @@ function VerifyOTP() {
     </div>
   );
 }
-
-export default VerifyOTP;

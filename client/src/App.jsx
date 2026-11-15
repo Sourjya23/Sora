@@ -35,16 +35,16 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen relative text-white bg-transparent">
-        {/* Global Grid bg */}
+      <div className="min-h-screen relative text-white bg-[#041826] selection:bg-white/20 selection:text-white font-sans">
+        {/* Global Subtle Dark Grid bg */}
         <div
           className="fixed inset-0 pointer-events-none z-0"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
-            backgroundSize: "52px 52px",
-            maskImage: "radial-gradient(ellipse at center, black 20%, transparent 70%)",
-            WebkitMaskImage: "radial-gradient(ellipse at center, black 20%, transparent 70%)",
+              "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+            maskImage: "radial-gradient(ellipse at center, black 50%, transparent 90%)",
+            WebkitMaskImage: "radial-gradient(ellipse at center, black 50%, transparent 90%)",
           }}
         />
         <div className="relative z-10 flex flex-col min-h-screen w-full">

@@ -13,7 +13,7 @@ const AUTH_IMAGES = [
   "https://i.pinimg.com/736x/5e/63/e5/5e63e5bc92cda08a00d8a6c1b0fcc931.jpg"
 ];
 
-function Login() {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,21 +27,19 @@ function Login() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
-    // Shuffle images on mount
     const shuffled = [...AUTH_IMAGES].sort(() => Math.random() - 0.5);
     setShuffledImages(shuffled);
 
-    // Start carousel
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % shuffled.length);
-    }, 4500); // Crossfade every 4.5s
+    }, 4500);
 
     return () => clearInterval(interval);
   }, []);
 
-  const validateEmail = (email) => {
+  const validateEmail = (val) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    return re.test(val);
   };
 
   const handleLogin = async (e) => {
@@ -59,22 +57,16 @@ function Login() {
       const response = await API.post("/auth/login", {
         email,
         password,
-        rememberMe,
       });
 
       const { token, user } = response.data;
-
-      // Clear any stale tokens from previous sessions to prevent data merging
-      localStorage.removeItem("token");
-      sessionStorage.removeItem("token");
-
       if (rememberMe) {
         localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
       } else {
         sessionStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
       }
-
-      localStorage.setItem("user", JSON.stringify(user));
 
       if (user.role === "admin") {
         navigate("/admin-dashboard");
@@ -84,94 +76,95 @@ function Login() {
         navigate("/interviewer-dashboard");
       }
     } catch (err) {
-      const errMsg = err.response?.data?.message || "Login failed. Check your credentials.";
-      setError(errMsg);
-
-      if (errMsg.toLowerCase().includes("verify email")) {
-        sessionStorage.setItem("signup_email", email);
-      }
+      setError(err.response?.data?.message || "Invalid credentials. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      className="min-h-screen w-full flex items-center justify-center p-4 sm:p-8 relative z-10"
-      style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
-    >
-      <div className="w-full max-w-[1000px] bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[24px] overflow-hidden flex flex-col md:flex-row min-h-[600px] shadow-2xl">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-8 relative bg-gradient-to-b from-[#041826] via-[#052338] to-[#041826] text-white selection:bg-cyan-500/30 selection:text-white">
+      {/* Ambient background glow */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-cyan-900/15 rounded-full blur-[120px]" />
+        <div className="absolute bottom-10 right-10 w-[400px] h-[300px] bg-blue-900/10 rounded-full blur-[100px]" />
+      </div>
 
-        {/* Left Side: Image Carousel & Slogan */}
-        <div className="w-full md:w-1/2 relative hidden md:flex flex-col justify-end p-10 overflow-hidden border-r border-white/5">
+      {/* Main Glass Card */}
+      <div className="w-full max-w-[960px] bg-[#041a2a]/80 backdrop-blur-2xl border border-white/10 rounded-[28px] overflow-hidden flex flex-col md:flex-row min-h-[580px] shadow-[0_25px_70px_rgba(0,0,0,0.6)] relative z-10">
+
+        {/* Left Side: Image Carousel */}
+        <div className="w-full md:w-1/2 relative hidden md:block overflow-hidden border-r border-white/10">
           {shuffledImages.map((src, idx) => (
             <img
               key={src}
               src={src}
-              alt="Architecture Hero"
-              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${idx === currentImageIndex ? 'opacity-70' : 'opacity-0'} mix-blend-luminosity`}
+              alt="Visual"
+              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${
+                idx === currentImageIndex ? "opacity-100" : "opacity-0"
+              }`}
             />
           ))}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
-
-          <div className="relative z-10">
-
-          </div>
         </div>
 
         {/* Right Side: Auth Form */}
-        <div className="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-[#09090b]/80 relative">
-          <div className="max-w-[360px] w-full mx-auto relative z-10">
+        <div className="w-full md:w-1/2 p-8 sm:p-12 flex flex-col justify-center bg-[#03131f]/70 relative">
+          <div className="max-w-[340px] w-full mx-auto relative z-10">
 
-            {/* Branding Moved to Right Half Top */}
-            <div className="flex items-center gap-3 mb-10">
-              <img src="/Sora_Favicon.jpg" alt="Sora" className="w-9 h-9 rounded-xl border border-white/10 shadow-lg" />
-              <span className="text-3xl font-extrabold tracking-tight text-white">Sora</span>
-            </div>
+            {/* Branding Header */}
+            <Link to="/" className="inline-flex items-center gap-3 mb-7 group">
+              <img
+                src="/Sora_Favicon.jpg"
+                alt="Sora"
+                className="w-9 h-9 rounded-xl border border-white/15 shadow-lg object-cover"
+              />
+              <span
+                className="text-2xl font-bold tracking-tight text-white group-hover:text-cyan-300 transition-colors"
+                style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+              >
+                Sora
+              </span>
+            </Link>
 
-            <h1 className="text-[24px] font-medium tracking-tight text-white mb-2">
+            <h1
+              className="text-[26px] font-medium tracking-tight text-white mb-2 leading-tight"
+              style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+            >
               Welcome back
             </h1>
-            <p className="text-zinc-400 text-[13px] mb-8">
-              Sign in to your account to continue.
+            <p className="text-zinc-400 text-xs sm:text-[13px] mb-6">
+              Sign in to your account to continue your interview sessions.
             </p>
 
             {error && (
-              <div className="mb-6 p-3 rounded-[8px] bg-red-500/10 border border-red-500/20 text-red-400 text-[13px] font-medium flex flex-col gap-2">
+              <div className="mb-5 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium flex flex-col gap-1.5">
                 <span>{error}</span>
                 {error.toLowerCase().includes("verify email") && (
-                  <Link to="/verify-otp" className="text-red-400 hover:text-red-300 underline font-semibold mt-1">
+                  <Link to="/verify-otp" className="text-cyan-300 hover:text-white hover:underline font-semibold mt-1">
                     Go to OTP Verification Page →
                   </Link>
                 )}
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-5">
+            <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-[12px] font-medium text-zinc-300 mb-2">
-                  Email address *
+                <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                  Email address
                 </label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value.toLowerCase())}
-                  onBlur={() => {
-                    if (email && !validateEmail(email)) {
-                      setError("Invalid email format detected.");
-                    } else if (error === "Invalid email format detected.") {
-                      setError("");
-                    }
-                  }}
-                  placeholder="andrew@example.com"
-                  className="w-full bg-transparent border border-white/10 focus:border-white/30 focus:bg-white/5 rounded-[8px] py-2.5 px-3 text-[14px] text-white outline-none transition-all placeholder:text-zinc-600"
+                  placeholder="name@example.com"
+                  className="w-full bg-white/[0.04] border border-white/15 focus:border-cyan-400 focus:bg-white/[0.07] rounded-xl py-2.5 px-3.5 text-sm text-white outline-none transition-all placeholder:text-zinc-500"
                 />
               </div>
 
               <div>
-                <label className="block text-[12px] font-medium text-zinc-300 mb-2">
-                  Password *
+                <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                  Password
                 </label>
                 <div className="relative">
                   <input
@@ -180,7 +173,7 @@ function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full bg-transparent border border-white/10 focus:border-white/30 focus:bg-white/5 rounded-[8px] py-2.5 pl-3 pr-10 text-[14px] text-white outline-none transition-all placeholder:text-zinc-600"
+                    className="w-full bg-white/[0.04] border border-white/15 focus:border-cyan-400 focus:bg-white/[0.07] rounded-xl py-2.5 pl-3.5 pr-10 text-sm text-white outline-none transition-all placeholder:text-zinc-500"
                   />
                   <button
                     type="button"
@@ -192,20 +185,17 @@ function Login() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-[12px] text-zinc-400 pt-1 pb-4">
-                <label className="flex items-center space-x-2 cursor-pointer group">
-                  <div className="relative flex items-center justify-center">
-                    <input
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="peer appearance-none w-4 h-4 border border-white/20 rounded-[4px] bg-transparent checked:bg-white checked:border-white transition-all cursor-pointer"
-                    />
-                    <svg className="absolute w-2.5 h-2.5 text-black pointer-events-none opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
-                  </div>
-                  <span className="group-hover:text-zinc-300 transition-colors">Remember me</span>
+              <div className="flex items-center justify-between text-xs text-zinc-400 pt-1 pb-1">
+                <label className="flex items-center space-x-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="rounded border-white/20 bg-white/5 text-cyan-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                  />
+                  <span>Remember me</span>
                 </label>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="#" className="hover:text-cyan-300 transition-colors">
                   Forgot password?
                 </a>
               </div>
@@ -213,27 +203,21 @@ function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#d2dbbd] text-black font-medium py-2.5 px-4 rounded-[8px] text-[13px] hover:bg-[#e0e8cd] transition-all duration-200 shadow-[0_0_15px_rgba(210,219,189,0.1)] active:scale-[0.98] disabled:opacity-50"
+                className="w-full bg-white text-[#0A0A0A] font-semibold py-2.5 px-4 rounded-xl text-sm hover:bg-white/90 transition-all duration-200 shadow-lg active:scale-[0.99] disabled:opacity-50 mt-3 cursor-pointer"
               >
-                {loading ? "Signing In..." : "Sign in to account"}
+                {loading ? "Signing in..." : "Sign in to account"}
               </button>
             </form>
 
-            <div className="mt-8 text-center text-[12px] text-zinc-500">
+            <div className="mt-7 text-center text-xs text-zinc-400">
               Don't have an account?{" "}
-              <Link to="/signup" className="text-zinc-300 hover:text-white transition-colors">
-                Sign Up
+              <Link to="/signup" className="text-cyan-300 font-medium hover:text-white transition-colors">
+                Sign up for free
               </Link>
             </div>
-
-            <p className="mt-8 text-center text-[10px] text-zinc-600">
-              By signing in, you agree to our <a href="#" className="hover:text-zinc-400">Terms of Service</a> and <a href="#" className="hover:text-zinc-400">Privacy Policy</a>.
-            </p>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
-export default Login;

@@ -18,10 +18,6 @@ function InterviewerDashboard() {
   const [scheduledTime, setScheduledTime] = useState("");
   const [keyPassword, setKeyPassword] = useState("");
 
-  // Report Modal State
-  const [showReportModal, setShowReportModal] = useState(false);
-  const [selectedReport, setSelectedReport] = useState(null);
-
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -48,9 +44,7 @@ function InterviewerDashboard() {
     
     fetchData();
 
-    // Listen for candidate join notifications in real-time
     const handleJoinNotification = (data) => {
-      console.log("[socket] Received candidate join notification:", data);
       setJoinNotification(data);
     };
     socket.on("candidate-joined-notification", handleJoinNotification);
@@ -59,8 +53,6 @@ function InterviewerDashboard() {
       socket.off("candidate-joined-notification", handleJoinNotification);
     };
   }, []);
-
-
 
   const generatePassword = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -73,10 +65,8 @@ function InterviewerDashboard() {
 
   const handleOpenScheduleModal = (ticket) => {
     setSelectedTicket(ticket);
-    // Prefill date input to match preferredSlotStart
     if (ticket.preferredSlotStart) {
       const date = new Date(ticket.preferredSlotStart);
-      // Format to yyyy-MM-ddThh:mm for datetime-local value
       const localStr = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
         .toISOString()
         .slice(0, 16);
@@ -113,7 +103,7 @@ function InterviewerDashboard() {
           }
         }
       );
-      alert("Interview scheduled successfully! Meeting link and password have been emailed to the candidate.");
+      alert("Interview scheduled successfully! Notification sent to the candidate.");
       setShowScheduleModal(false);
       fetchData();
     } catch (err) {
@@ -129,7 +119,7 @@ function InterviewerDashboard() {
           Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`
         }
       });
-      alert(`Candidate successfully ${status}. Email sent.`);
+      alert(`Candidate marked as ${status}.`);
       fetchData();
     } catch (err) {
       console.error(`Failed to ${status} candidate:`, err);
@@ -138,7 +128,7 @@ function InterviewerDashboard() {
   };
 
   const handleDismissTicket = async (ticketId) => {
-    if (confirm("Are you sure you want to dismiss this meeting? It will be removed from all dashboards.")) {
+    if (confirm("Dismiss this ticket from your board?")) {
       try {
         await API.post(`/interview/dismiss/${ticketId}`, {}, {
           headers: {
@@ -161,55 +151,56 @@ function InterviewerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-white flex flex-col font-sans" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-      <header className="border-b border-white/10 bg-black/40 backdrop-blur-xl border-b border-white/10 sticky top-0 z-30">
+    <div className="min-h-screen bg-[#041826] text-white flex flex-col font-sans">
+      {/* Top Navbar */}
+      <header className="border-b border-white/10 bg-[#041826]/80 backdrop-blur-xl sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-[30px] h-[30px] rounded-[8px] bg-white flex items-center justify-center overflow-hidden">
-              <img src="/Sora_Favicon.jpg" alt="Sora Logo" className="w-full h-full object-cover" />
-            </div>
-            <span style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }} className="text-[20px] font-extrabold text-white tracking-[-0.01em]">
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate("/")}>
+            <span
+              style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+              className="text-2xl font-normal text-white tracking-tight"
+            >
               Sora
             </span>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <span className="text-xs bg-white/5 backdrop-blur-lg border border-white/10 text-zinc-400 px-3 py-1 rounded-full flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Interviewer Mode
+          <div className="flex items-center space-x-3">
+            <span className="text-xs px-3 py-1 rounded-full border border-white/10 bg-white/[0.04] text-zinc-300">
+              Interviewer
             </span>
             <button
               onClick={handleSignOut}
-              className="text-xs bg-white/5 backdrop-blur-lg hover:bg-white/20/10 border border-white/10 text-zinc-300 hover:text-white px-4 py-2 rounded-xl transition-all duration-200"
+              className="text-xs bg-white/[0.06] hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white px-3.5 py-1.5 rounded-full transition-all"
             >
               Sign Out
             </button>
           </div>
         </div>
       </header>
- 
+
+      {/* Real-time Join Notification */}
       {joinNotification && (
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-4 flex items-center justify-between shadow-lg animate-pulse shrink-0">
+        <div className="bg-emerald-950/80 border-b border-emerald-500/20 text-white px-6 py-3 flex items-center justify-between shadow-lg">
           <div className="flex items-center space-x-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-white/5 backdrop-blur-lg animate-ping"></span>
-            <p className="text-sm font-semibold">
-              Candidate <strong className="underline">{joinNotification.candidateName}</strong> has entered the meeting room!
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <p className="text-xs font-medium text-emerald-200">
+              Candidate <strong>{joinNotification.candidateName}</strong> has joined the meeting room.
             </p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             <button
               onClick={() => {
                 const id = joinNotification.meetingId;
                 setJoinNotification(null);
                 navigate(`/meeting/${id}`);
               }}
-              className="bg-white/5 backdrop-blur-lg text-emerald-700 hover:bg-emerald-50 font-bold px-4 py-2 rounded-xl text-xs transition-all shadow-md"
+              className="bg-white text-[#041826] hover:bg-zinc-200 font-medium px-3 py-1.5 rounded-lg text-xs transition-all"
             >
-              Join Meet Room
+              Enter Room
             </button>
             <button
               onClick={() => setJoinNotification(null)}
-              className="text-white/80 hover:text-white text-xs border border-white/20 hover:border-white/40 px-2 py-1 rounded-lg"
+              className="text-zinc-400 hover:text-white text-xs px-2 py-1"
             >
               Dismiss
             </button>
@@ -217,81 +208,83 @@ function InterviewerDashboard() {
         </div>
       )}
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8">
-        <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      {/* Welcome Bar */}
+      <div className="border-b border-white/10 bg-white/[0.01] py-6 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-extrabold tracking-tight">Welcome back, {userName}!</h2>
-            <p className="text-zinc-400 text-sm mt-1">
-              Manage candidate pipelines, schedule slots, and run live coding evaluations.
-            </p>
+            <h1 className="text-2xl font-normal tracking-tight text-white" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+              Welcome, {userName}
+            </h1>
+            <p className="text-xs text-zinc-400 mt-0.5">Manage evaluation slots, schedule sessions, and conduct live rounds.</p>
+          </div>
+
+          <div className="flex bg-white/[0.04] p-1 rounded-xl border border-white/10 self-start md:self-auto">
+            <button
+              onClick={() => setActiveTab("tickets")}
+              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                activeTab === "tickets" ? "bg-white text-[#041826]" : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              Assigned Tickets ({tickets.filter(t => t.status !== "dismissed").length})
+            </button>
+            <button
+              onClick={() => setActiveTab("completed")}
+              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                activeTab === "completed" ? "bg-white text-[#041826]" : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              Completed ({completedMeetings.length})
+            </button>
           </div>
         </div>
+      </div>
 
-        <div className="flex space-x-4 mb-6 border-b border-white/10 pb-1">
-          <button
-            onClick={() => setActiveTab("tickets")}
-            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "tickets" ? "border-zinc-900 text-white" : "border-transparent text-zinc-400 hover:text-zinc-200"}`}
-          >
-            Assigned Tickets ({tickets.filter(t => t.status !== "dismissed").length})
-          </button>
-          <button
-            onClick={() => setActiveTab("completed")}
-            className={`pb-2 px-1 text-sm font-semibold transition-colors border-b-2 ${activeTab === "completed" ? "border-zinc-900 text-white" : "border-transparent text-zinc-400 hover:text-zinc-200"}`}
-          >
-            Completed Interviews ({completedMeetings.length})
-          </button>
-        </div>
-
+      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8">
         {activeTab === "tickets" && (
-          <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden backdrop-blur-md">
-            <div className="p-6 border-b border-white/10 flex items-center justify-between">
-              <h3 className="font-semibold text-lg">Assigned Evaluation Slots (Tickets)</h3>
+          <div className="bg-[#041a2a]/60 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md">
+            <div className="p-6 border-b border-white/10">
+              <h3 className="font-medium text-lg text-white">Evaluation Queue</h3>
+              <p className="text-xs text-zinc-400 mt-0.5">Candidate interview requests pending schedule or live</p>
             </div>
 
-            <div className="divide-y divide-slate-900">
+            <div className="divide-y divide-white/5">
               {loading ? (
-                <div className="p-8 text-center text-zinc-400">Loading tickets...</div>
+                <div className="p-8 text-center text-zinc-500 text-xs">Loading queue...</div>
               ) : tickets.filter(t => t.status !== "dismissed").length === 0 ? (
-                <div className="p-8 text-center text-zinc-400">
-                  <p>No evaluation slots assigned yet.</p>
+                <div className="p-8 text-center text-zinc-500 text-xs">
+                  No evaluation tickets assigned currently.
                 </div>
               ) : (
                 tickets.filter(t => t.status !== "dismissed").map((ticket) => (
-                  <div key={ticket._id} className="p-6 flex flex-col hover:bg-white/20/5 transition-colors gap-4">
+                  <div key={ticket._id} className="p-6 flex flex-col gap-4 hover:bg-white/[0.02] transition-colors">
                     <div className="flex items-start justify-between flex-wrap gap-4">
-                      <div className="flex items-start gap-4">
-                        <div className="w-16 h-16 rounded-2xl bg-white/5 backdrop-blur-lg flex items-center justify-center border border-white/10 text-xs font-bold text-zinc-400 text-center uppercase p-1">
-                          {ticket.status}
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[11px] font-mono px-2 py-0.5 bg-white/[0.05] border border-white/10 rounded text-zinc-300">
+                            {ticket.jobId || "Round"}
+                          </span>
+                          <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                            {ticket.status.toUpperCase()}
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="font-semibold text-base">{ticket.title}</h4>
-                            <span className="text-xs bg-violet-500/15 text-white font-bold border border-zinc-900/20 px-2 py-0.5 rounded">
-                              {ticket.jobId || "N/A"}
-                            </span>
-                          </div>
-                          <p className="text-zinc-400 text-xs mt-0.5">
-                            Candidate: <strong>{ticket.candidateId?.name}</strong> • {ticket.candidateId?.email}
-                          </p>
-                        </div>
+                        <h4 className="font-medium text-sm text-white mt-1.5">
+                          Candidate: {ticket.candidateId?.name} ({ticket.candidateId?.email})
+                        </h4>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         {ticket.status === "scheduled" ? (
                           <>
-                            <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-xl">
-                              🔒 Scheduled & Locked
-                            </span>
                             <button
                               onClick={() => navigate(`/meeting/${ticket.meetingId}`)}
-                              className="bg-white/10 hover:bg-zinc-800 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all"
+                              className="bg-white text-[#041826] hover:bg-zinc-200 font-medium px-4 py-2 rounded-xl text-xs transition-all"
                             >
-                              Join Meet Room
+                              Join Room
                             </button>
                             <button
                               onClick={() => handleDismissTicket(ticket._id)}
-                              className="bg-white/10 hover:bg-rose-500/20 text-zinc-300 hover:text-rose-400 border border-white/20 hover:border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition-all"
-                              title="Dismiss Meeting"
+                              className="text-xs bg-white/[0.05] hover:bg-rose-500/20 text-zinc-400 hover:text-rose-300 border border-white/10 px-3 py-2 rounded-xl transition-all"
+                              title="Dismiss"
                             >
                               ✕
                             </button>
@@ -300,14 +293,14 @@ function InterviewerDashboard() {
                           <>
                             <button 
                               onClick={() => handleOpenScheduleModal(ticket)}
-                              className="bg-white/10 hover:bg-zinc-800 text-white font-semibold px-4 py-2.5 rounded-xl text-xs shadow-md shadow-black/5 transition-all"
+                              className="bg-white text-[#041826] hover:bg-zinc-200 font-medium px-4 py-2 rounded-xl text-xs transition-all"
                             >
-                              Schedule Interview
+                              Schedule Session
                             </button>
                             <button
                               onClick={() => handleDismissTicket(ticket._id)}
-                              className="bg-white/10 hover:bg-rose-500/20 text-zinc-300 hover:text-rose-400 border border-white/20 hover:border-rose-500/30 px-3 py-2.5 rounded-xl text-xs font-bold transition-all"
-                              title="Dismiss Meeting"
+                              className="text-xs bg-white/[0.05] hover:bg-rose-500/20 text-zinc-400 hover:text-rose-300 border border-white/10 px-3 py-2 rounded-xl transition-all"
+                              title="Dismiss"
                             >
                               Dismiss
                             </button>
@@ -316,45 +309,36 @@ function InterviewerDashboard() {
                       </div>
                     </div>
                     
-                    {/* Ticket Details Panel */}
-                    <div className="mt-2 space-y-3 bg-white/5/40 border border-white/10 p-4 rounded-2xl text-sm text-zinc-300">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white/[0.02] border border-white/5 p-4 rounded-xl text-xs">
                       <div>
-                        <strong>Job Description (JD):</strong>
-                        <p className="text-xs text-zinc-400 mt-1 line-clamp-3 bg-white/5 p-2.5 rounded border border-white/10 overflow-y-auto whitespace-pre-wrap max-h-[80px]">
-                          {ticket.jobDescription}
+                        <span className="text-zinc-500 uppercase tracking-wider text-[10px] block mb-1">Candidate Preferred Slot</span>
+                        <p className="text-zinc-300">
+                          {ticket.preferredSlotStart ? new Date(ticket.preferredSlotStart).toLocaleString() : "Flexible"} &rarr; {ticket.preferredSlotEnd ? new Date(ticket.preferredSlotEnd).toLocaleString() : ""}
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 text-xs text-zinc-400">
-                        <div>
-                          <strong>Candidate Preferred Slot:</strong>
-                          <div className="text-white font-semibold mt-1">
-                            Start: {ticket.preferredSlotStart ? new Date(ticket.preferredSlotStart).toLocaleString() : "N/A"}<br/>
-                            End: {ticket.preferredSlotEnd ? new Date(ticket.preferredSlotEnd).toLocaleString() : "N/A"}
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <strong>Candidate Resume:</strong>
-                          <div className="mt-1">
-                            {ticket.resumeUrl ? (
-                                <a 
-                                  href={ticket.resumeUrl} 
-                                  target="_blank" 
-                                  rel="noreferrer" 
-                                  className="text-white hover:underline font-semibold"
-                                  onClick={() => {
-                                    if (ticket.candidateId?._id) {
-                                      API.post(`/admin/profile-view/${ticket.candidateId._id}`).catch(e => console.log(e));
-                                    }
-                                  }}
-                                >
-                                View PDF Resume &rarr;
-                              </a>
-                            ) : "No resume attached"}
-                          </div>
-                        </div>
+                      <div>
+                        <span className="text-zinc-500 uppercase tracking-wider text-[10px] block mb-1">Resume</span>
+                        {ticket.resumeUrl ? (
+                          <a 
+                            href={ticket.resumeUrl} 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            className="text-zinc-200 hover:underline font-medium"
+                          >
+                            View Attached Resume &rarr;
+                          </a>
+                        ) : (
+                          <span className="text-zinc-500">None attached</span>
+                        )}
                       </div>
+
+                      {ticket.jobDescription && (
+                        <div className="md:col-span-2 pt-2 border-t border-white/5">
+                          <span className="text-zinc-500 uppercase tracking-wider text-[10px] block mb-1">Job Description Excerpt</span>
+                          <p className="text-zinc-400 line-clamp-2">{ticket.jobDescription}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))
@@ -363,113 +347,86 @@ function InterviewerDashboard() {
           </div>
         )}
 
-
-
         {activeTab === "completed" && (
-          <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden backdrop-blur-md">
+          <div className="bg-[#041a2a]/60 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md">
             <div className="p-6 border-b border-white/10">
-              <h3 className="font-semibold text-lg">Completed Interviews</h3>
+              <h3 className="font-medium text-lg text-white">Completed Rounds</h3>
+              <p className="text-xs text-zinc-400 mt-0.5">Review recordings, AI forensic analysis, and mark selection status</p>
             </div>
 
-            <div className="divide-y divide-slate-900">
+            <div className="divide-y divide-white/5">
               {loading ? (
-                <div className="p-8 text-center text-zinc-400">Loading completed meetings...</div>
+                <div className="p-8 text-center text-zinc-500 text-xs">Loading sessions...</div>
               ) : completedMeetings.length === 0 ? (
-                <div className="p-8 text-center text-zinc-400">
-                  <p>No completed interviews found.</p>
+                <div className="p-8 text-center text-zinc-500 text-xs">
+                  No completed evaluations found.
                 </div>
               ) : (
                 completedMeetings.map((meeting) => (
-                  <div key={meeting._id} className="p-6 flex flex-col hover:bg-white/20/5 transition-colors gap-4">
+                  <div key={meeting._id} className="p-6 flex flex-col gap-4 hover:bg-white/[0.02] transition-colors">
                     <div className="flex items-start justify-between flex-wrap gap-4">
                       <div>
-                        <h4 className="font-semibold text-base mb-1">
-                          Assessment with {meeting.candidateId?.name || "Unknown Candidate"}
-                        </h4>
-                        <div className="flex items-center gap-2 text-xs text-zinc-400">
-                          <span className="bg-white/10 px-2 py-0.5 rounded text-zinc-300">
-                            Job ID: {meeting.jobId || "N/A"}
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-mono px-2 py-0.5 bg-white/[0.05] border border-white/10 rounded text-zinc-300">
+                            {meeting.jobId || "N/A"}
                           </span>
-                          <span>•</span>
-                          <span>{new Date(meeting.scheduledTime).toLocaleString()}</span>
+                          <span className="text-xs text-zinc-500">
+                            {new Date(meeting.scheduledTime).toLocaleString()}
+                          </span>
                         </div>
+                        <h4 className="font-medium text-sm text-white mt-1.5">
+                          Assessment with {meeting.candidateId?.name || "Candidate"} ({meeting.candidateId?.email})
+                        </h4>
                       </div>
-                      {meeting.recordingUrl && (
-                        <a 
-                          href={meeting.recordingUrl} 
-                          target="_blank" 
-                          rel="noreferrer"
-                          className="bg-white/10 hover:bg-white/20/20 text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border border-white/20"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                          Download / View Full
-                        </a>
-                      )}
+
+                      <div className="flex items-center gap-2">
+                        {meeting.forensicReport && !meeting.forensicReport.isProcessing && (
+                          <button
+                            onClick={() => navigate(`/report/${meeting.meetingId}`)}
+                            className="bg-white/[0.06] hover:bg-white/10 text-white border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all"
+                          >
+                            Forensic Report &rarr;
+                          </button>
+                        )}
+                        {meeting.recordingUrl && (
+                          <a 
+                            href={meeting.recordingUrl} 
+                            target="_blank" 
+                            rel="noreferrer"
+                            className="bg-white/[0.06] hover:bg-white/10 text-zinc-300 hover:text-white px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all border border-white/10"
+                          >
+                            Recording
+                          </a>
+                        )}
+                      </div>
                     </div>
                     
-                    {meeting.recordingUrl ? (
-                      <div className="mt-2 w-full max-w-2xl bg-black rounded-xl overflow-hidden border border-white/10 aspect-video shadow-lg">
-                        <video 
-                          src={meeting.recordingUrl} 
-                          controls 
-                          className="w-full h-full object-contain"
-                          preload="metadata"
-                        />
-                      </div>
-                    ) : (
-                      <div className="mt-2 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-sm flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                        Recording not available for this session.
-                      </div>
-                    )}
-                    
                     {meeting.status === "completed" && (
-                      <div className="mt-4 pt-4 border-t border-white/10 flex gap-3">
+                      <div className="pt-3 border-t border-white/5 flex gap-2">
                         <button 
                           onClick={() => handleReviewCandidate(meeting.meetingId, "approved")}
-                          className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                          className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all"
                         >
                           Select Candidate
                         </button>
                         <button 
                           onClick={() => handleReviewCandidate(meeting.meetingId, "rejected")}
-                          className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 border border-rose-500/30 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                          className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all"
                         >
                           Reject Candidate
                         </button>
                       </div>
                     )}
 
-                    {meeting.forensicReport && (
-                      <div className="mt-4 pt-4 border-t border-white/10">
-                        {meeting.forensicReport.isProcessing ? (
-                          <div className="text-amber-400 text-sm animate-pulse flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                            AI Video Forensics Processing...
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => navigate(`/report/${meeting.meetingId}`)}
-                            className="relative overflow-hidden bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 border border-teal-500/30 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 group shadow-[0_0_15px_rgba(20,184,166,0.15)] hover:shadow-[0_0_20px_rgba(20,184,166,0.3)]"
-                          >
-                            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                            View AI Forensic Report
-                            <svg className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity ml-1 group-hover:translate-x-1 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                          </button>
-                        )}
-                      </div>
-                    )}
-
                     {meeting.status === "approved" && (
-                      <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-sm font-semibold">
-                        Candidate Selected - Offer Email Sent
+                      <div className="text-xs text-emerald-400 font-medium">
+                        ✓ Candidate Selected
                       </div>
                     )}
 
                     {meeting.status === "rejected" && (
-                      <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-sm font-semibold">
-                        Candidate Rejected - Rejection Email Sent
+                      <div className="text-xs text-rose-400 font-medium">
+                        ✕ Candidate Not Selected
                       </div>
                     )}
                   </div>
@@ -480,81 +437,69 @@ function InterviewerDashboard() {
         )}
       </main>
 
-      {/* Schedule & Lock Modal */}
+      {/* Schedule Modal */}
       {showScheduleModal && selectedTicket && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-[#041a2a] border border-white/10 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
             <button 
               onClick={() => setShowScheduleModal(false)}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-white"
+              className="absolute top-4 right-4 text-zinc-400 hover:text-white text-base"
             >
               ✕
             </button>
-            <h3 className="text-xl font-bold text-white mb-1">Confirm Schedule</h3>
-            <p className="text-xs text-zinc-400 mb-6">Confirm date/time and entry key password. Once locked, this meeting cannot be rescheduled.</p>
+            <h3 className="text-xl font-normal text-white mb-1" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+              Confirm Schedule
+            </h3>
+            <p className="text-xs text-zinc-400 mb-6">Set confirmed time and entry password key for the room.</p>
 
-            <form onSubmit={handleScheduleSubmit} className="space-y-5">
-              <div className="bg-white/5 p-4 border border-white/10 rounded-2xl text-xs space-y-1.5 mb-4">
-                <p><strong>Candidate:</strong> {selectedTicket.candidateId?.name}</p>
-                <p><strong>Job ID:</strong> {selectedTicket.jobId}</p>
-                <p><strong>Candidate Preferred Window:</strong></p>
-                <p className="text-white pl-2">
-                  Start: {new Date(selectedTicket.preferredSlotStart).toLocaleString()}<br/>
-                  End: {new Date(selectedTicket.preferredSlotEnd).toLocaleString()}
-                </p>
+            <form onSubmit={handleScheduleSubmit} className="space-y-4">
+              <div className="bg-white/[0.02] p-3.5 border border-white/10 rounded-xl text-xs space-y-1">
+                <p className="text-zinc-400">Candidate: <strong className="text-white">{selectedTicket.candidateId?.name}</strong></p>
+                <p className="text-zinc-400">Job: <strong className="text-white">{selectedTicket.jobId}</strong></p>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase">Confirmed Start Time</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Scheduled Time</label>
                 <input
                   type="datetime-local"
                   required
                   value={scheduledTime}
                   onChange={(e) => setScheduledTime(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-white"
+                  className="w-full bg-white/[0.04] border border-white/10 rounded-xl py-2 px-3 text-xs text-white outline-none focus:border-white/40"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase">Key Password (Alphanumeric)</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Key Password</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     required
                     value={keyPassword}
                     onChange={(e) => setKeyPassword(e.target.value.toUpperCase())}
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white outline-none focus:border-white font-mono tracking-widest font-bold"
+                    className="flex-1 bg-white/[0.04] border border-white/10 rounded-xl py-2 px-3 text-xs text-white outline-none focus:border-white/40 font-mono tracking-wider font-bold"
                     placeholder="PASS-XXXX"
                   />
                   <button
                     type="button"
                     onClick={() => setKeyPassword(generatePassword())}
-                    className="bg-white/10 hover:bg-white/20/20 text-xs px-3 rounded-xl border border-slate-750 font-bold"
+                    className="bg-white/[0.06] hover:bg-white/10 text-xs px-3 rounded-xl border border-white/10 text-zinc-300"
                   >
                     Regen
                   </button>
                 </div>
-                <p className="text-[10px] text-zinc-400 mt-1">This key is required by the candidate and you to enter the meet</p>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-white/10 hover:bg-zinc-800 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-lg"
+                className="w-full bg-white hover:bg-zinc-200 text-[#041826] font-medium py-3 px-4 rounded-xl text-xs transition-all shadow-lg mt-2"
               >
-                🔒 Confirm & Lock Interview
+                Confirm & Lock Slot
               </button>
             </form>
           </div>
         </div>
       )}
-
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes shimmer {
-          100% {
-            transform: translateX(100%);
-          }
-        }
-      `}} />
     </div>
   );
 }

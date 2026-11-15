@@ -55,7 +55,7 @@ function Signup() {
 
   const handleEmailBlur = async () => {
     if (!email) return;
-    
+
     if (!validateEmail(email)) {
       setEmailStatus("invalid");
       setError("Please enter a valid Gmail address. We currently only accept @gmail.com to prevent spam.");
@@ -82,7 +82,7 @@ function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     if (!validateEmail(email)) {
       setError("Please enter a valid Gmail address. We currently only accept @gmail.com to prevent spam.");
       return;
@@ -99,7 +99,7 @@ function Signup() {
     setLoading(true);
 
     try {
-      const response = await API.post("/auth/signup", {
+      await API.post("/auth/signup", {
         name,
         email,
         password,
@@ -107,6 +107,7 @@ function Signup() {
       });
 
       sessionStorage.setItem("signup_email", email);
+      localStorage.setItem("otpEmail", email);
       navigate("/verify-otp");
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed. Please try again.");
@@ -116,71 +117,85 @@ function Signup() {
   };
 
   return (
-    <div
-      className="min-h-screen w-full flex items-center justify-center p-4 sm:p-8 relative z-10"
-      style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
-    >
-      <div className="w-full max-w-[1000px] bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[24px] overflow-hidden flex flex-col md:flex-row min-h-[600px] shadow-2xl">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-8 relative bg-gradient-to-b from-[#041826] via-[#052338] to-[#041826] text-white selection:bg-cyan-500/30 selection:text-white">
+      {/* Ambient background glow */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-cyan-900/15 rounded-full blur-[120px]" />
+        <div className="absolute bottom-10 right-10 w-[400px] h-[300px] bg-blue-900/10 rounded-full blur-[100px]" />
+      </div>
 
-        {/* Left Side: Image Carousel & Slogan */}
-        <div className="w-full md:w-1/2 relative hidden md:flex flex-col justify-end p-10 overflow-hidden border-r border-white/5">
+      <div className="w-full max-w-[1000px] bg-[#041a2a]/80 backdrop-blur-2xl border border-white/10 rounded-[28px] overflow-hidden flex flex-col md:flex-row min-h-[620px] shadow-[0_25px_70px_rgba(0,0,0,0.6)] relative z-10">
+
+        {/* Left Side: Image Carousel */}
+        <div className="w-full md:w-1/2 relative hidden md:block overflow-hidden border-r border-white/10">
           {shuffledImages.map((src, idx) => (
             <img
               key={src}
               src={src}
-              alt="Architecture Hero"
-              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${idx === currentImageIndex ? 'opacity-70' : 'opacity-0'} mix-blend-luminosity`}
+              alt="Visual"
+              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${
+                idx === currentImageIndex ? "opacity-100" : "opacity-0"
+              }`}
             />
           ))}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
-
-          <div className="relative z-10">
-
-          </div>
         </div>
 
         {/* Right Side: Auth Form */}
-        <div className="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-[#09090b]/80 relative">
+        <div className="w-full md:w-1/2 p-8 sm:p-12 flex flex-col justify-center bg-[#03131f]/70 relative">
           <div className="max-w-[360px] w-full mx-auto relative z-10">
 
-            {/* Branding Moved to Right Half Top */}
-            <div className="flex items-center gap-3 mb-10">
-              <img src="/Sora_Favicon.jpg" alt="Sora" className="w-9 h-9 rounded-xl border border-white/10 shadow-lg" />
-              <span className="text-3xl font-extrabold tracking-tight text-white">Sora</span>
-            </div>
+            {/* Branding Header */}
+            <Link to="/" className="inline-flex items-center gap-3 mb-7 group">
+              <img
+                src="/Sora_Favicon.jpg"
+                alt="Sora"
+                className="w-9 h-9 rounded-xl border border-white/15 shadow-lg object-cover"
+              />
+              <span
+                className="text-2xl font-bold tracking-tight text-white group-hover:text-cyan-300 transition-colors"
+                style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+              >
+                Sora
+              </span>
+            </Link>
 
-            <h1 className="text-[24px] font-medium tracking-tight text-white mb-2">
+            <h1
+              className="text-[26px] font-medium tracking-tight text-white mb-2 leading-tight"
+              style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+            >
               Create your account
             </h1>
-            <p className="text-zinc-400 text-[13px] mb-8">
-              Join a network of visionaries and unlock premium design resources tailored for you.
+            <p className="text-zinc-400 text-xs sm:text-[13px] mb-6">
+              Join a network of engineers and practice real technical interview loops.
             </p>
 
             {error && (
-              <div className="mb-6 p-3 rounded-[8px] bg-red-500/10 border border-red-500/20 text-red-400 text-[13px] font-medium flex flex-col gap-2">
+              <div className="mb-5 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium flex flex-col gap-1.5">
                 <span>{error}</span>
               </div>
             )}
 
             {/* Role Toggle */}
-            <div className="flex p-1 bg-white/5 rounded-[10px] border border-white/10 mb-6">
+            <div className="flex p-1 bg-white/[0.04] rounded-xl border border-white/10 mb-5">
               <button
                 type="button"
                 onClick={() => setRole("candidate")}
-                className={`flex-1 py-2 text-[12px] font-medium rounded-[6px] transition-all duration-300 ${role === "candidate"
-                    ? "bg-white/10 text-white shadow-sm"
-                    : "text-zinc-500 hover:text-zinc-300"
-                  }`}
+                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${
+                  role === "candidate"
+                    ? "bg-white text-[#0A0A0A] font-semibold shadow-sm"
+                    : "text-zinc-400 hover:text-white"
+                }`}
               >
                 Candidate
               </button>
               <button
                 type="button"
                 onClick={() => setRole("interviewer")}
-                className={`flex-1 py-2 text-[12px] font-medium rounded-[6px] transition-all duration-300 ${role === "interviewer"
-                    ? "bg-white/10 text-white shadow-sm"
-                    : "text-zinc-500 hover:text-zinc-300"
-                  }`}
+                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${
+                  role === "interviewer"
+                    ? "bg-white text-[#0A0A0A] font-semibold shadow-sm"
+                    : "text-zinc-400 hover:text-white"
+                }`}
               >
                 Interviewer
               </button>
@@ -188,7 +203,7 @@ function Signup() {
 
             <form onSubmit={handleSignup} className="space-y-4">
               <div>
-                <label className="block text-[12px] font-medium text-zinc-300 mb-1.5">
+                <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                   Full name *
                 </label>
                 <input
@@ -197,13 +212,13 @@ function Signup() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Andrew Thomas"
-                  className="w-full bg-transparent border border-white/10 focus:border-white/30 focus:bg-white/5 rounded-[8px] py-2.5 px-3 text-[14px] text-white outline-none transition-all placeholder:text-zinc-600"
+                  className="w-full bg-white/[0.04] border border-white/15 focus:border-cyan-400 focus:bg-white/[0.07] rounded-xl py-2.5 px-3.5 text-sm text-white outline-none transition-all placeholder:text-zinc-500"
                 />
               </div>
 
               <div>
-                <label className="block text-[12px] font-medium text-zinc-300 mb-1.5">
-                  Email address *
+                <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                  Email address (@gmail.com only) *
                 </label>
                 <input
                   type="email"
@@ -214,25 +229,33 @@ function Signup() {
                     setEmailStatus("idle");
                   }}
                   onBlur={handleEmailBlur}
-                  placeholder="andrew@example.com"
-                  className={`w-full bg-transparent border ${emailStatus === 'valid' ? 'border-green-500/50 focus:border-green-500' : emailStatus === 'invalid' ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'} focus:bg-white/5 rounded-[8px] py-2.5 px-3 text-[14px] text-white outline-none transition-all placeholder:text-zinc-600`}
+                  placeholder="andrew@gmail.com"
+                  className={`w-full bg-white/[0.04] border ${
+                    emailStatus === "valid"
+                      ? "border-emerald-500/60 focus:border-emerald-400"
+                      : emailStatus === "invalid"
+                      ? "border-red-500/60 focus:border-red-400"
+                      : "border-white/15 focus:border-cyan-400"
+                  } focus:bg-white/[0.07] rounded-xl py-2.5 px-3.5 text-sm text-white outline-none transition-all placeholder:text-zinc-500`}
                 />
                 {emailStatus === "checking" && (
                   <div className="mt-2 text-[11px] text-zinc-400 flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full border-2 border-zinc-500 border-t-zinc-200 animate-spin"></span>
+                    <span className="w-3 h-3 rounded-full border-2 border-zinc-500 border-t-cyan-400 animate-spin" />
                     Verifying mailbox...
                   </div>
                 )}
                 {emailStatus === "valid" && (
-                  <div className="mt-2 text-[11px] text-green-400 flex items-center gap-1.5 font-medium bg-green-500/10 px-2 py-1.5 rounded-md border border-green-500/20">
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <div className="mt-2 text-[11px] text-emerald-400 flex items-center gap-1.5 font-medium bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
                     Valid email! You can proceed further.
                   </div>
                 )}
               </div>
 
               <div>
-                <label className="block text-[12px] font-medium text-zinc-300 mb-1.5">
+                <label className="block text-xs font-medium text-zinc-300 mb-1.5">
                   Password *
                 </label>
                 <div className="relative">
@@ -242,7 +265,7 @@ function Signup() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full bg-transparent border border-white/10 focus:border-white/30 focus:bg-white/5 rounded-[8px] py-2.5 pl-3 pr-10 text-[14px] text-white outline-none transition-all placeholder:text-zinc-600"
+                    className="w-full bg-white/[0.04] border border-white/15 focus:border-cyan-400 focus:bg-white/[0.07] rounded-xl py-2.5 pl-3.5 pr-10 text-sm text-white outline-none transition-all placeholder:text-zinc-500"
                   />
                   <button
                     type="button"
@@ -252,29 +275,36 @@ function Signup() {
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                <p className="text-[10px] text-zinc-600 mt-2">
-                  Password must be at least 8 characters, including a number and a special character.
+                <p className="text-[11px] text-zinc-500 mt-1.5">
+                  Must be at least 8 chars, 1 uppercase, 1 number, and 1 special symbol.
                 </p>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#d2dbbd] text-black font-medium py-2.5 px-4 rounded-[8px] text-[13px] hover:bg-[#e0e8cd] transition-all duration-200 shadow-[0_0_15px_rgba(210,219,189,0.1)] active:scale-[0.98] disabled:opacity-50 mt-4"
+                className="w-full bg-white text-[#0A0A0A] font-semibold py-2.5 px-4 rounded-xl text-sm hover:bg-white/90 transition-all duration-200 shadow-lg active:scale-[0.99] disabled:opacity-50 mt-4 cursor-pointer"
               >
                 {loading ? "Creating..." : "Create account"}
               </button>
             </form>
 
-            <div className="mt-8 text-center text-[12px] text-zinc-500">
+            <div className="mt-6 text-center text-xs text-zinc-400">
               Already have an account?{" "}
-              <Link to="/" className="text-zinc-300 hover:text-white transition-colors">
+              <Link to="/login" className="text-cyan-300 font-medium hover:text-white transition-colors">
                 Sign In
               </Link>
             </div>
 
-            <p className="mt-6 text-center text-[10px] text-zinc-600">
-              By creating an account, you agree to our <a href="#" className="hover:text-zinc-400">Terms of Service</a> and <a href="#" className="hover:text-zinc-400">Privacy Policy</a>.
+            <p className="mt-5 text-center text-[11px] text-zinc-500">
+              By creating an account, you agree to our{" "}
+              <Link to="/guidelines" className="text-zinc-400 hover:text-white underline underline-offset-2">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link to="/guidelines" className="text-zinc-400 hover:text-white underline underline-offset-2">
+                Privacy Policy
+              </Link>.
             </p>
           </div>
         </div>
