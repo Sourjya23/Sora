@@ -409,18 +409,18 @@ function CandidateDashboard() {
                               {meeting.jobId || "N/A"}
                             </span>
                             {meeting.status === "completed" && (
-                              <span className="text-[11px] font-medium text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                                In Review
+                              <span className="text-[11px] font-medium text-amber-300 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
+                                In Review &bull; AI & Mentor Evaluating
                               </span>
                             )}
                             {meeting.status === "approved" && (
-                              <span className="text-[11px] font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                                Selected
+                              <span className="text-[11px] font-medium text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                                ✓ Selected &bull; Offer Details Sent to Email
                               </span>
                             )}
                             {meeting.status === "rejected" && (
-                              <span className="text-[11px] font-medium text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">
-                                Not Selected
+                              <span className="text-[11px] font-medium text-rose-300 bg-rose-500/10 px-2.5 py-0.5 rounded-full border border-rose-500/20">
+                                Concluded &bull; Feedback Sent to Email
                               </span>
                             )}
                           </div>

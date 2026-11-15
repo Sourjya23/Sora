@@ -3,6 +3,7 @@ const User = require("../models/User");
 const InterviewTicket = require("../models/InterviewTicket");
 const { v4: uuidv4 } = require("uuid");
 const sendMeetingMail = require("../utils/sendMeetingMail");
+const hrAgentService = require("../services/hrAgentService");
 
 exports.scheduleMeeting = async (req, res) => {
   try {
@@ -59,17 +60,33 @@ exports.scheduleMeeting = async (req, res) => {
     const candidate = ticket.candidateId;
     const interviewer = await User.findById(interviewerId);
 
-    // Send the meeting link and password to the candidate
-    if (candidate && interviewer) {
-      await sendMeetingMail(
-        candidate.email, 
-        "invite", 
-        meetingUrl, 
-        interviewer.name, 
-        interviewer.email, 
-        keyPassword, 
-        scheduledTime
-      );
+    // Dispatch distinct custom invites via Sora HR Agent
+    try {
+      const dispatched = await hrAgentService.dispatchCustomInvites(meetingId);
+      if (!dispatched && candidate && interviewer) {
+        await sendMeetingMail(
+          candidate.email, 
+          "invite", 
+          meetingUrl, 
+          interviewer.name, 
+          interviewer.email, 
+          keyPassword, 
+          scheduledTime
+        );
+      }
+    } catch (inviteErr) {
+      console.warn("[scheduleMeeting] Custom invites fallback:", inviteErr);
+      if (candidate && interviewer) {
+        await sendMeetingMail(
+          candidate.email, 
+          "invite", 
+          meetingUrl, 
+          interviewer.name, 
+          interviewer.email, 
+          keyPassword, 
+          scheduledTime
+        );
+      }
     }
 
     res.status(201).json({
@@ -145,6 +162,11 @@ exports.getMeetingDetails = async (req, res) => {
       resumeUrl: meeting.resumeUrl,
       status: meeting.status,
       forensicReport: meeting.forensicReport,
+      aiVerdict: meeting.aiVerdict,
+      interviewerFeedback: meeting.interviewerFeedback,
+      finalDecision: meeting.finalDecision,
+      hrWorkflow: meeting.hrWorkflow,
+      recordingUrl: meeting.recordingUrl,
     });
   } catch (error) {
     console.error("Get meeting details error:", error);
@@ -249,7 +271,7 @@ exports.uploadRecording = async (req, res) => {
       { $set: { status: "completed" } }
     );
     
-    // Trigger background AI forensic job
+    // Trigger background AI forensic & HR Agent verdict job
     let parsedTelemetry = [];
     try {
       if (telemetryEvents) parsedTelemetry = JSON.parse(telemetryEvents);
@@ -263,8 +285,17 @@ exports.uploadRecording = async (req, res) => {
       parsedTelemetry
     );
 
+    // AI Analysis & Verdict Generation via HR Agent
+    hrAgentService.generateAIAnalysisAndVerdict({
+      meetingId: id,
+      recordingUrl: meeting.recordingUrl,
+      finalCode: finalCode || "No code submitted",
+      problemStatement: problemStatement || "No problem statement",
+      telemetryEvents: parsedTelemetry,
+    });
+
     res.status(200).json({ 
-      message: "Session concluded, AI forensic analysis in progress", 
+      message: "Session concluded, AI forensic analysis and HR verdict in progress", 
       recordingUrl: meeting.recordingUrl 
     });
   } catch (error) {
@@ -280,7 +311,7 @@ exports.getCompletedMeetings = async (req, res) => {
       $or: [{ candidateId: userId }, { interviewerId: userId }],
       status: { $in: ["completed", "approved", "rejected"] }
     })
-      .populate("candidateId", "name email")
+      .populate("candidateId", "name email resumeUrl skills intro experienceLevel")
       .populate("interviewerId", "name email")
       .sort({ scheduledTime: -1 });
 
@@ -291,49 +322,48 @@ exports.getCompletedMeetings = async (req, res) => {
   }
 };
 
-const sendReviewMail = require("../utils/sendReviewMail");
-
 exports.reviewCandidate = async (req, res) => {
   try {
     const { id } = req.params; // meetingId
-    const { status } = req.body; // "approved" or "rejected"
+    const { status, rating, verdict, notes } = req.body; // "approved" or "rejected"
 
     if (!["approved", "rejected"].includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
     }
 
+    const result = await hrAgentService.finalizeDecisionAndNotifyCandidate({
+      meetingId: id,
+      decision: status,
+      interviewerRating: rating,
+      interviewerVerdict: verdict,
+      interviewerNotes: notes,
+      decidedBy: req.user.id,
+    });
+
+    res.status(200).json({
+      message: `Candidate has been ${status}. Custom email dispatched by HR Agent.`,
+      ...result,
+    });
+  } catch (error) {
+    console.error("Review candidate error:", error);
+    res.status(500).json({ message: "Failed to review candidate" });
+  }
+};
+
+exports.getDecisionDossier = async (req, res) => {
+  try {
+    const { id } = req.params;
     const meeting = await Meeting.findOne({ meetingId: id })
-      .populate("candidateId")
-      .populate("interviewerId");
+      .populate("candidateId", "name email resumeUrl skills intro experienceLevel projects")
+      .populate("interviewerId", "name email");
 
     if (!meeting) {
       return res.status(404).json({ message: "Meeting not found" });
     }
 
-    // Also update ticket
-    const ticket = await InterviewTicket.findOne({ meetingId: id });
-
-    meeting.status = status;
-    await meeting.save();
-
-    if (ticket) {
-      ticket.status = status;
-      await ticket.save();
-    }
-
-    // Send email to candidate
-    if (meeting.candidateId && meeting.candidateId.email) {
-      await sendReviewMail(
-        meeting.candidateId.email,
-        meeting.candidateId.name,
-        status,
-        meeting.interviewerId ? meeting.interviewerId.name : "Your Interviewer"
-      );
-    }
-
-    res.status(200).json({ message: `Candidate has been ${status}.` });
+    res.status(200).json(meeting);
   } catch (error) {
-    console.error("Review candidate error:", error);
-    res.status(500).json({ message: "Failed to review candidate" });
+    console.error("Get decision dossier error:", error);
+    res.status(500).json({ message: "Failed to fetch decision dossier" });
   }
 };
