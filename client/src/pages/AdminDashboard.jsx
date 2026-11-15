@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import WhatsNewSection from "../components/WhatsNewSection";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -366,6 +367,11 @@ function AdminDashboard() {
             )}
           </>
         )}
+
+        {/* What's New Section */}
+        <div className="mt-8">
+          <WhatsNewSection />
+        </div>
       </main>
 
       {/* Forensic Report Modal */}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import socket from "../socket/socket";
+import WhatsNewSection from "../components/WhatsNewSection";
 
 function InterviewerDashboard() {
   const navigate = useNavigate();
@@ -435,6 +436,11 @@ function InterviewerDashboard() {
             </div>
           </div>
         )}
+
+        {/* What's New Section */}
+        <div className="mt-8">
+          <WhatsNewSection />
+        </div>
       </main>
 
       {/* Schedule Modal */}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import CompleteProfile from "../components/CompleteProfile";
+import WhatsNewSection from "../components/WhatsNewSection";
 
 function CandidateDashboard() {
   const navigate = useNavigate();
@@ -298,6 +299,9 @@ function CandidateDashboard() {
                 </span>
               </div>
             </div>
+
+            {/* What's New Section */}
+            <WhatsNewSection />
 
             {/* Interviews Section */}
             <div className="bg-[#041a2a]/60 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md">
