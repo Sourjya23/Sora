@@ -4,7 +4,7 @@ import posthog from "posthog-js";
  * Production PostHog Telemetry & Session Replay Service
  * Configured for Sora interview assessment flows, tab switches, and live coding sessions.
  */
-const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY || "phc_sora_prod_default_key";
+const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY || "phc_ByZ9ivop6X9J8vnNq4U8YVg6zuGduz8wQVXkuc2hpjJy";
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || "https://us.i.posthog.com";
 
 let isInitialized = false;

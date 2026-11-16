@@ -6,20 +6,31 @@ const { trace } = require("@opentelemetry/api");
 /**
  * OpenTelemetry Distributed Tracing & Grafana Cloud Telemetry Gateway
  */
+const DEFAULT_GRAFANA_ENDPOINT = "https://otlp-gateway-prod-ap-south-1.grafana.net/otlp";
+const DEFAULT_GRAFANA_AUTH =
+  "Basic MTkyNTkwODpnbGNfZXlKdklqb2lNVGs1TXpFeU1pSXNJbTRpT2lKemIzSmhMV0poWTJ0bGJtUXRiM1JsYkNJc0ltc2lPaUphVVVWRllUazRNRzV6TmpKNk1qVjJPRkozTWpONWVXMGlMQ0p0SWpwN0luSWlPaUp3Y205a0xXRndMWE52ZFhSb0xURWlmWDA9";
+
 const otlpEndpoint =
   process.env.OTEL_EXPORTER_OTLP_ENDPOINT ||
   process.env.GRAFANA_OTLP_ENDPOINT ||
-  null;
+  DEFAULT_GRAFANA_ENDPOINT;
 
-const otlpHeaders = {};
+const otlpHeaders = {
+  Authorization: DEFAULT_GRAFANA_AUTH,
+};
+
 if (process.env.GRAFANA_OTLP_TOKEN) {
   otlpHeaders["Authorization"] = `Basic ${process.env.GRAFANA_OTLP_TOKEN}`;
 } else if (process.env.OTEL_EXPORTER_OTLP_HEADERS) {
-  // Support key=value,key2=value2 format
-  process.env.OTEL_EXPORTER_OTLP_HEADERS.split(",").forEach((pair) => {
-    const [k, v] = pair.split("=");
-    if (k && v) otlpHeaders[k.trim()] = v.trim();
-  });
+  // Support key=value,key2=value2 or Authorization=Basic ...
+  if (process.env.OTEL_EXPORTER_OTLP_HEADERS.startsWith("Authorization=")) {
+    otlpHeaders["Authorization"] = process.env.OTEL_EXPORTER_OTLP_HEADERS.replace(/^Authorization=/, "").trim();
+  } else {
+    process.env.OTEL_EXPORTER_OTLP_HEADERS.split(",").forEach((pair) => {
+      const [k, v] = pair.split("=");
+      if (k && v) otlpHeaders[k.trim()] = v.trim();
+    });
+  }
 }
 
 let sdk = null;
