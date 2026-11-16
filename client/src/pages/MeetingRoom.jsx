@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import API from "../api/axios";
 import socket from "../socket/socket";
+import { captureAssessmentEvent, identifyUser } from "../telemetry/posthog";
 import {
   Mic,
   MicOff,
@@ -155,7 +156,9 @@ function MeetingRoom() {
     const userStr = localStorage.getItem("user") || sessionStorage.getItem("user");
     if (userStr) {
       try {
-        setUser(JSON.parse(userStr));
+        const parsed = JSON.parse(userStr);
+        setUser(parsed);
+        identifyUser(parsed);
       } catch (e) {
         navigate(`/login?redirect=${encodeURIComponent(`/meeting/${id}`)}`);
       }
@@ -165,7 +168,7 @@ function MeetingRoom() {
     fetchMeetingMetadata();
   }, [id, navigate]);
 
-  // 2. Candidate Telemetry
+  // 2. Candidate Telemetry (Synced to Socket & PostHog)
   useEffect(() => {
     if (user?.role !== "candidate") return;
 
@@ -178,6 +181,9 @@ function MeetingRoom() {
         };
         setTelemetryEvents((prev) => [...prev, newEvent]);
         socket.emit("telemetry-update", { meetingId: id, event: newEvent });
+        captureAssessmentEvent("candidate_tab_blur", { meetingId: id });
+      } else {
+        captureAssessmentEvent("candidate_tab_focus", { meetingId: id });
       }
     };
 
@@ -189,6 +195,7 @@ function MeetingRoom() {
       };
       setTelemetryEvents((prev) => [...prev, newEvent]);
       socket.emit("telemetry-update", { meetingId: id, event: newEvent });
+      captureAssessmentEvent("candidate_editor_paste", { meetingId: id });
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -625,6 +632,7 @@ function MeetingRoom() {
 
         setIsSharingScreen(true);
         socket.emit("screen-share-status", { meetingId: id, isSharing: true });
+        captureAssessmentEvent("candidate_screen_share_started", { meetingId: id });
 
         videoTrack.onended = () => {
           stopScreenShare();
@@ -718,6 +726,12 @@ function MeetingRoom() {
           candidateName: user.name,
         });
       }
+
+      captureAssessmentEvent("interview_room_joined", {
+        meetingId: id,
+        role: user?.role,
+        name: user?.name,
+      });
 
       setIsJoined(true);
     } catch (err) {
@@ -814,6 +828,12 @@ function MeetingRoom() {
         result: resultData,
         hasFailed,
         failSummary,
+      });
+      captureAssessmentEvent("candidate_code_executed", {
+        meetingId: id,
+        language,
+        hasFailed,
+        testCasesCount: testCases?.length || 0,
       });
       setLeftTab("output");
     } catch (err) {

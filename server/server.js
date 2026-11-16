@@ -1,8 +1,11 @@
+require("./telemetry/tracing"); // Initialize OpenTelemetry first
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 require("dotenv").config();
+
+const { register, activeSocketGauge } = require("./telemetry/metrics");
 
 const connectDB = require("./config/db");
 
@@ -111,6 +114,16 @@ app.get("/api/v1/sentinel/reports", async (req, res) => {
   }
 });
 
+// 📊 Prometheus & Grafana Cloud Metrics Scraping Endpoint
+app.get("/metrics", async (req, res) => {
+  try {
+    res.set("Content-Type", register.contentType);
+    res.end(await register.metrics());
+  } catch (err) {
+    res.status(500).end(err.message);
+  }
+});
+
 app.get("/", (req, res) => {
   res.send("API Running");
 });
@@ -126,6 +139,7 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
+  activeSocketGauge.inc();
   console.log("User connected:", socket.id);
 
   socket.on("join-room", ({ meetingId, userName }) => {
@@ -230,6 +244,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    activeSocketGauge.dec();
     console.log("User disconnected:", socket.id);
   });
 });

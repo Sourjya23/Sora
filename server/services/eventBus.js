@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const OutboxEvent = require("../models/OutboxEvent");
+const { outboxQueueGauge } = require("../telemetry/metrics");
 
 class EventBus {
   constructor() {
@@ -94,6 +95,8 @@ class EventBus {
       const unpublished = await OutboxEvent.find({ published: false })
         .sort({ createdAt: 1 })
         .limit(50);
+
+      outboxQueueGauge.set(unpublished.length);
 
       for (const event of unpublished) {
         await this.dispatchToSubscribers(event);

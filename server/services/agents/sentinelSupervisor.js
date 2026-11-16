@@ -8,6 +8,7 @@ const reliabilityAgent = require("./reliabilityAgent");
 const forensicAgent = require("./forensicAgent");
 const healthAgent = require("./healthAgent");
 const { sendEmail } = require("../../utils/emailService");
+const { sentinelAuditCounter } = require("../../telemetry/metrics");
 
 class SentinelSupervisor {
   constructor() {
@@ -113,6 +114,8 @@ class SentinelSupervisor {
 
       // 5. Send Email Report to Founder
       await this.deliverReportEmail(reportDoc);
+
+      sentinelAuditCounter.inc({ status: overallStatus });
 
       console.log(`[SentinelSupervisor] Audit completed: Status=${overallStatus}, Issues=${allIssues.length}`);
       return reportDoc;

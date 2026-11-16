@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const EmailJob = require("../models/EmailJob");
 const { sendEmail } = require("../utils/emailService");
 const eventBus = require("./eventBus");
+const { emailJobsCounter } = require("../telemetry/metrics");
 
 class EmailOrchestrator {
   constructor() {
@@ -144,6 +145,8 @@ class EmailOrchestrator {
       job.providerMessageId = result.messageId || `smtp_${Date.now()}`;
       job.attempts += 1;
       await job.save();
+
+      emailJobsCounter.inc({ template: job.template, status: "DELIVERED" });
 
       eventBus.emitEvent(
         "EMAIL.DELIVERED",
