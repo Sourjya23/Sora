@@ -148,16 +148,14 @@ function CandidateDashboard() {
       const successMsg = response.data.message || "Interview ticket successfully submitted!";
       setTicketSuccess(successMsg);
       toast.success("Interview Ticket Submitted!", "Mentors will review your slot and lock in your schedule.");
+      setShowTicketModal(false);
+      setJobId("");
+      setJobDescription("");
+      setSlotStart("");
+      setSlotEnd("");
+      setResumeFile(null);
+      setTicketSuccess("");
       fetchUserAndMeetings();
-      setTimeout(() => {
-        setShowTicketModal(false);
-        setJobId("");
-        setJobDescription("");
-        setSlotStart("");
-        setSlotEnd("");
-        setResumeFile(null);
-        setTicketSuccess("");
-      }, 2000);
     } catch (err) {
       const errMsg = err.response?.data?.message || "Failed to raise ticket";
       setTicketError(errMsg);

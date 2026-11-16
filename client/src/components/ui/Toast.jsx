@@ -51,7 +51,8 @@ export function Toaster({ position = "top-right" }) {
   return (
     <div
       aria-live="polite"
-      className={`fixed ${positionClasses} z-[99999] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none p-2 sm:p-0 select-none`}
+      style={{ zIndex: 999999 }}
+      className={`fixed ${positionClasses} flex flex-col gap-2.5 max-w-sm w-full pointer-events-none p-2 sm:p-0 select-none`}
     >
       {toasts.map((t) => {
         const config = {

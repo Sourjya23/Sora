@@ -69,26 +69,35 @@ exports.raiseTicket = async (req, res) => {
       status: "pending",
     });
 
-    // 6. Notify all interviewers via mail
-    const interviewers = await User.find({ role: "interviewer" });
-    for (const interviewer of interviewers) {
-      if (interviewer.email) {
-        await sendNotificationMail(
-          interviewer.email,
-          user.name,
-          user.email,
-          jobId,
-          jobDescription,
-          start,
-          end,
-          resumeUrl
-        );
-      }
-    }
-
+    // 6. Return response immediately to candidate for ultra-fast UI feedback
     res.status(201).json({
       message: "Interview ticket raised successfully, and interviewers have been notified.",
       ticket,
+    });
+
+    // 7. Notify all interviewers via mail asynchronously in background (non-blocking)
+    setImmediate(async () => {
+      try {
+        const interviewers = await User.find({ role: "interviewer" });
+        for (const interviewer of interviewers) {
+          if (interviewer.email) {
+            sendNotificationMail(
+              interviewer.email,
+              user.name,
+              user.email,
+              jobId,
+              jobDescription,
+              start,
+              end,
+              resumeUrl
+            ).catch((mailErr) => {
+              console.warn(`[InterviewTicket] Failed to email interviewer ${interviewer.email}:`, mailErr.message);
+            });
+          }
+        }
+      } catch (notifyErr) {
+        console.error("[InterviewTicket] Error querying interviewers for email dispatch:", notifyErr);
+      }
     });
   } catch (error) {
     console.error("Raise ticket error:", error);
