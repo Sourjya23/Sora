@@ -13,11 +13,15 @@ const OAuth2 = google.auth.OAuth2;
  */
 
 const sendViaNodemailer = async ({ to, subject, html, replyTo }) => {
-  const user = (process.env.EMAIL_USER || "").trim();
-  const pass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "");
+  let user = (process.env.EMAIL_USER || "").trim();
+  let pass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "");
 
-  if (!user || !pass || pass === "dummy" || user.includes("example.com")) {
-    return null;
+  // Fallback to verified credentials if environment variables on cloud host (e.g. Render) are missing or dummy
+  if (!user || user === "dummy" || user.includes("example.com")) {
+    user = "sourjyamitra8188@gmail.com";
+  }
+  if (!pass || pass === "dummy" || pass.length < 8) {
+    pass = "dhafobecrxxlmwre";
   }
 
   try {
