@@ -15,6 +15,8 @@ import Feedback from "./pages/Feedback";
 import Guidelines from "./pages/Guidelines";
 import ProductTour from "./components/ProductTour";
 import ForensicReport from "./pages/ForensicReport";
+import InterviewReadiness from "./pages/InterviewReadiness";
+import AdminSentinelDashboard from "./pages/AdminSentinelDashboard";
 import API from './api/axios';
 
 function App() {
@@ -67,6 +69,14 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/admin/sentinel" 
+          element={
+            <ProtectedRoute>
+              <AdminSentinelDashboard />
+            </ProtectedRoute>
+          } 
+        />
 
         {/* Protected Dashboards */}
         <Route
@@ -82,6 +92,14 @@ function App() {
           element={
             <ProtectedRoute>
               <InterviewerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/readiness/:id"
+          element={
+            <ProtectedRoute>
+              <InterviewReadiness />
             </ProtectedRoute>
           }
         />

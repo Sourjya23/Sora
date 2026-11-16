@@ -80,6 +80,8 @@ function MeetingRoom() {
   // Active view states
   const [isJoined, setIsJoined] = useState(false);
   const [activeInterviewerMainView, setActiveInterviewerMainView] = useState("video"); // 'video' | 'code'
+  const [isInterviewEnded, setIsInterviewEnded] = useState(false);
+  const [codeFailNotification, setCodeFailNotification] = useState(null);
 
   // Chat States
   const [chatMessage, setChatMessage] = useState("");
@@ -262,9 +264,16 @@ function MeetingRoom() {
       if (data.testCases) setTestCases(data.testCases);
     };
 
-    // Chat deduplication: ignore own socket or username echo
+    // Chat deduplication: ignore own socket, user ID or username echo
     const messageListener = (data) => {
-      if (data.senderId === socket.id || data.sender === user?.name) return;
+      const myId = user?._id || user?.id;
+      if (
+        data.senderId === socket.id ||
+        (myId && data.userId && String(data.userId) === String(myId)) ||
+        (user?.name && data.sender === user.name)
+      ) {
+        return;
+      }
       setMessages((prev) => {
         if (data.id && prev.some((m) => m.id === data.id)) return prev;
         return [...prev, { ...data, isMe: false }];
@@ -286,6 +295,15 @@ function MeetingRoom() {
       setExecutionResult(data.result);
       // Auto-switch to output tab so interviewer sees candidate test results immediately
       setLeftTab("output");
+
+      // Notify interviewer if candidate's code execution failed on test cases or runtime error
+      if (data.hasFailed && user?.role === "interviewer") {
+        setCodeFailNotification({
+          show: true,
+          summary: data.failSummary || "Candidate code execution run failed.",
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        });
+      }
     };
 
     // Screen share status sync
@@ -294,8 +312,12 @@ function MeetingRoom() {
     };
 
     const endListener = () => {
-      alert("The interview session has been ended.");
-      navigate(user.role === "candidate" ? "/candidate-dashboard" : "/interviewer-dashboard");
+      if (user?.role === "candidate") {
+        setIsInterviewEnded(true);
+      } else {
+        alert("The interview session has been ended.");
+        navigate("/interviewer-dashboard");
+      }
     };
 
     socket.on("code-changed", codeListener);
@@ -722,7 +744,7 @@ function MeetingRoom() {
     socket.emit("problem-statement-update", { meetingId: id, text: e.target.value });
   };
 
-  // Chat message send with dedup id
+  // Chat message send with dedup id and user ID
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!chatMessage.trim()) return;
@@ -732,6 +754,7 @@ function MeetingRoom() {
     const payload = {
       id: msgId,
       meetingId: id,
+      userId: user?._id || user?.id,
       sender: user?.name || "Participant",
       senderId: socket.id,
       role: user?.role,
@@ -744,7 +767,7 @@ function MeetingRoom() {
     setChatMessage("");
   };
 
-  // Code Execution Sync
+  // Code Execution Sync with failure alert broadcast
   const runCode = async () => {
     if (user?.role === "candidate" && !isSharingScreen) {
       alert("You must share your screen before running code.");
@@ -776,14 +799,33 @@ function MeetingRoom() {
         resultData = { type: "single", ...res.data };
       }
 
+      const hasFailed =
+        resultData.type === "error" ||
+        (resultData.type === "tests" && resultData.results?.some((r) => !r.passed));
+      const failSummary = hasFailed
+        ? resultData.type === "error"
+          ? "Runtime or Compilation Error"
+          : `${resultData.results?.filter((r) => !r.passed).length} of ${resultData.results?.length} test cases failed`
+        : null;
+
       setExecutionResult(resultData);
-      socket.emit("code-execution-result", { meetingId: id, result: resultData });
+      socket.emit("code-execution-result", {
+        meetingId: id,
+        result: resultData,
+        hasFailed,
+        failSummary,
+      });
       setLeftTab("output");
     } catch (err) {
       console.error("Execution failed", err);
       const errorData = { type: "error", error: err.response?.data?.message || err.message };
       setExecutionResult(errorData);
-      socket.emit("code-execution-result", { meetingId: id, result: errorData });
+      socket.emit("code-execution-result", {
+        meetingId: id,
+        result: errorData,
+        hasFailed: true,
+        failSummary: errorData.error,
+      });
       setLeftTab("output");
     } finally {
       setIsExecuting(false);
@@ -818,6 +860,51 @@ function MeetingRoom() {
           />
         </div>
         <p className="text-sm font-medium text-cyan-200/80 tracking-wide">Initializing Sora Secure Session...</p>
+      </div>
+    );
+  }
+
+  // STEP 0: Candidate Interview Termination Screen
+  if (isInterviewEnded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#062438] via-[#041a2a] to-[#02101b] flex flex-col items-center justify-center p-6 text-white text-center relative overflow-hidden font-sans">
+        {/* Ambient Top Glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-cyan-500/10 rounded-full blur-[120px]"
+        />
+
+        <div className="bg-[#082235]/85 border border-cyan-500/30 backdrop-blur-2xl p-8 sm:p-12 rounded-3xl max-w-lg w-full shadow-[0_20px_60px_rgba(0,0,0,0.7)] relative z-10 flex flex-col items-center">
+          <div className="relative mb-5">
+            <img
+              src="/Sora_Favicon.jpg"
+              alt="Sora"
+              className="w-16 h-16 rounded-2xl shadow-[0_0_25px_rgba(56,189,248,0.45)] border border-cyan-400/40 object-cover"
+            />
+          </div>
+
+          <h2
+            className="text-3xl sm:text-4xl font-normal text-white mb-3 tracking-tight"
+            style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+          >
+            Interview Ended
+          </h2>
+
+          <p className="text-base text-cyan-200 font-medium mb-2">
+            Your interview has been ended. You can now leave the call.
+          </p>
+
+          <p className="text-sm text-zinc-400 max-w-sm mb-8 leading-relaxed">
+            Your results will be announced after the evaluation is complete.
+          </p>
+
+          <button
+            onClick={() => navigate(user?.role === "candidate" ? "/candidate-dashboard" : "/interviewer-dashboard")}
+            className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-[#02101b] font-semibold py-3 px-6 rounded-2xl text-sm transition-all shadow-xl shadow-cyan-950/50 hover:shadow-cyan-400/30 cursor-pointer"
+          >
+            Return to Dashboard
+          </button>
+        </div>
       </div>
     );
   }
@@ -1285,14 +1372,34 @@ function MeetingRoom() {
         {leftTab === "chat" && (
           <div className="flex-1 flex flex-col overflow-hidden bg-[#031320]/70 rounded-2xl border border-cyan-500/15">
             <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
-              {messages.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 text-xs">
-                  <Send className="w-7 h-7 text-cyan-500/20 mb-2" />
-                  <span>No messages yet. Send a note to the room.</span>
-                </div>
-              ) : (
-                messages.map((msg, idx) => {
-                  const isMine = msg.isMe || msg.senderId === socket.id || msg.sender === user?.name;
+              {(() => {
+                const uniqueMessages = [];
+                const seenKeys = new Set();
+                for (const msg of messages) {
+                  const key = msg.id || `${msg.sender}_${msg.time}_${msg.text}`;
+                  if (!seenKeys.has(key)) {
+                    seenKeys.add(key);
+                    uniqueMessages.push(msg);
+                  }
+                }
+
+                if (uniqueMessages.length === 0) {
+                  return (
+                    <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 text-xs">
+                      <Send className="w-7 h-7 text-cyan-500/20 mb-2" />
+                      <span>No messages yet. Send a note to the room.</span>
+                    </div>
+                  );
+                }
+
+                return uniqueMessages.map((msg, idx) => {
+                  const myId = user?._id || user?.id;
+                  const isMine =
+                    msg.isMe ||
+                    msg.senderId === socket.id ||
+                    (myId && msg.userId && String(msg.userId) === String(myId)) ||
+                    (user?.name && msg.sender === user.name);
+
                   return (
                     <div key={msg.id || idx} className={`flex flex-col ${isMine ? "items-end" : "items-start"}`}>
                       <span className="text-[10px] text-cyan-300/60 mb-0.5">
@@ -1309,8 +1416,8 @@ function MeetingRoom() {
                       </div>
                     </div>
                   );
-                })
-              )}
+                });
+              })()}
             </div>
 
             <form
@@ -1490,6 +1597,32 @@ function MeetingRoom() {
           <>
             {/* Primary Center Panel: Video/Screen Stream or Synced Code */}
             <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden bg-[#031320]/60 relative">
+              {/* Candidate Code Execution Failure Notification Banner */}
+              {codeFailNotification && codeFailNotification.show && (
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 bg-rose-950/90 border border-rose-500/50 backdrop-blur-md px-4 py-2.5 rounded-2xl text-xs text-rose-200 shadow-2xl flex items-center gap-3 animate-fade-rise">
+                  <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                  <span>
+                    <strong className="font-semibold text-white">Candidate Run Failed:</strong>{" "}
+                    {codeFailNotification.summary} ({codeFailNotification.time})
+                  </span>
+                  <button
+                    onClick={() => {
+                      setLeftTab("output");
+                      setCodeFailNotification(null);
+                    }}
+                    className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 px-2.5 py-1 rounded-lg text-[11px] font-medium border border-rose-500/30 transition-all cursor-pointer"
+                  >
+                    Inspect Output
+                  </button>
+                  <button
+                    onClick={() => setCodeFailNotification(null)}
+                    className="text-zinc-400 hover:text-white p-0.5 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
               {activeInterviewerMainView === "video" ? (
                 <div className="w-full h-full max-w-6xl aspect-video bg-black rounded-3xl border border-cyan-500/20 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] relative flex items-center justify-center">
                   <video

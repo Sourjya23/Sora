@@ -85,6 +85,12 @@ function AdminDashboard() {
             </span>
           </div>
           <div className="flex items-center space-x-3">
+            <button
+              onClick={() => navigate("/admin/sentinel")}
+              className="text-xs bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>Sentinel Fleet</span>
+            </button>
             <span className="text-xs px-3 py-1 rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-300">
               Admin
             </span>

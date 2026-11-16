@@ -17,9 +17,21 @@ const adaptiveRoutes = require("./routes/adaptiveRoutes");
 const testimonialRoutes = require("./routes/testimonialRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 
+const eventBus = require("./services/eventBus");
+const emailOrchestrator = require("./services/emailOrchestrator");
+const sentinelSupervisor = require("./services/agents/sentinelSupervisor");
+const healthAgent = require("./services/agents/healthAgent");
+const AgentReport = require("./models/AgentReport");
+
 // Initialize cron jobs
 const { startCronJobs } = require('./jobs');
 startCronJobs();
+
+// Start Cloud Agents & Event Outbox Workers
+eventBus.startOutboxWorker(10000);
+emailOrchestrator.startQueueWorker(15000);
+sentinelSupervisor.startSupervision();
+
 const app = express();
 
 connectDB();
@@ -37,6 +49,67 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/adaptive", adaptiveRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/admin", adminRoutes);
+
+// 🛡️ Sentinel Supervisor Monitoring & Health Endpoints
+app.get("/api/v1/sentinel/health", async (req, res) => {
+  try {
+    const commAgent = require("./services/agents/communicationAgent");
+    const relAgent = require("./services/agents/reliabilityAgent");
+    const forAgent = require("./services/agents/forensicAgent");
+
+    const [commAudit, relAudit, forAudit, hlthAudit] = await Promise.all([
+      commAgent.runAudit(),
+      relAgent.runAudit(),
+      forAgent.runAudit(),
+      healthAgent.runAudit(),
+    ]);
+
+    const allIssues = [
+      ...commAudit.issues,
+      ...relAudit.issues,
+      ...forAudit.issues,
+      ...hlthAudit.issues,
+    ];
+
+    const criticalCount = allIssues.filter((i) => i.severity === "CRITICAL").length;
+    let overallStatus = "HEALTHY";
+    if (criticalCount > 0) overallStatus = "CRITICAL";
+    else if (allIssues.length > 0) overallStatus = "ISSUES_DETECTED";
+
+    res.status(200).json({
+      systemStatus: overallStatus,
+      lastAudit: new Date(),
+      agentAudits: {
+        agent1_communication: commAudit,
+        agent2_reliability: relAudit,
+        agent3_forensics: forAudit,
+        agent4_health: hlthAudit,
+      },
+      issues: allIssues,
+      criticalCount,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/v1/sentinel/audit-now", async (req, res) => {
+  try {
+    const report = await sentinelSupervisor.runReconciliationAudit("MANUAL_AUDIT");
+    res.status(200).json({ message: "Comprehensive audit finished", report });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/v1/sentinel/reports", async (req, res) => {
+  try {
+    const reports = await AgentReport.find().sort({ generatedAt: -1 }).limit(20);
+    res.status(200).json(reports);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.get("/", (req, res) => {
   res.send("API Running");
@@ -159,6 +232,18 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
+});
+
+// Express Global Error Handler wired to Health Agent
+app.use((err, req, res, next) => {
+  console.error("[Express Error Handler]", err);
+  healthAgent.logError(err, { url: req.originalUrl, method: req.method, ip: req.ip });
+  res.status(500).json({ message: "Internal server error", error: err.message });
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("[Unhandled Rejection]", reason);
+  healthAgent.logError(new Error(String(reason)), { context: "unhandledRejection" });
 });
 
 server.listen(PORT, () => {

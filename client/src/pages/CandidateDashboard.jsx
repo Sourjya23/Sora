@@ -370,10 +370,10 @@ function CandidateDashboard() {
 
                       <div className="flex items-center gap-2 shrink-0">
                         <button
-                          onClick={() => navigate(`/meeting/${meeting.meetingId}`)}
-                          className="bg-white text-[#041826] hover:bg-zinc-200 font-medium px-4 py-2 rounded-xl text-xs transition-all"
+                          onClick={() => navigate(`/readiness/${meeting.meetingId}`)}
+                          className="bg-white text-[#041826] hover:bg-zinc-200 font-medium px-4 py-2 rounded-xl text-xs transition-all cursor-pointer shadow-sm"
                         >
-                          Enter Room
+                          Verify & Enter
                         </button>
                         {meeting.resumeUrl && (
                           <a 

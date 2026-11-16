@@ -1,9 +1,13 @@
 const Meeting = require("../models/Meeting");
 const User = require("../models/User");
 const InterviewTicket = require("../models/InterviewTicket");
+const RecordingManifest = require("../models/RecordingManifest");
 const { v4: uuidv4 } = require("uuid");
 const sendMeetingMail = require("../utils/sendMeetingMail");
 const hrAgentService = require("../services/hrAgentService");
+const emailOrchestrator = require("../services/emailOrchestrator");
+const eventBus = require("../services/eventBus");
+const forensicAgent = require("../services/agents/forensicAgent");
 
 exports.scheduleMeeting = async (req, res) => {
   try {
@@ -48,7 +52,7 @@ exports.scheduleMeeting = async (req, res) => {
       jobId: ticket.jobId,
       jobDescription: ticket.jobDescription,
       resumeUrl: ticket.resumeUrl || ticket.candidateId.resumeUrl,
-      status: "scheduled",
+      status: "SLOT_CONFIRMED",
     });
 
     // Update ticket status to scheduled and lock it
@@ -60,37 +64,75 @@ exports.scheduleMeeting = async (req, res) => {
     const candidate = ticket.candidateId;
     const interviewer = await User.findById(interviewerId);
 
-    // Dispatch distinct custom invites via Sora HR Agent
+    // Schedule 5-minute pre-interview reminder
+    if (candidate && interviewer) {
+      emailOrchestrator.scheduleFiveMinuteReminder({
+        interviewId: meeting._id.toString(),
+        meetingId,
+        scheduledTime: new Date(scheduledTime),
+        candidate: { name: candidate.name, email: candidate.email },
+        interviewer: { name: interviewer.name, email: interviewer.email },
+        meetingUrl,
+        keyPassword,
+      }).catch((remErr) => console.warn("[scheduleMeeting] Reminder schedule fallback:", remErr.message));
+
+      // Dispatch customized candidate invite email via Central Email Orchestrator
+      emailOrchestrator.queueEmail({
+        interviewId: meeting._id.toString(),
+        meetingId,
+        recipient: candidate.email,
+        template: "INVITE_CANDIDATE",
+        subject: `Technical Assessment Confirmed: Role ${ticket.jobId || "Assessment"} on Sora`,
+        html: emailOrchestrator.templates.INVITE_CANDIDATE({
+          candidateName: candidate.name,
+          interviewerName: interviewer.name,
+          scheduledTime: new Date(scheduledTime).toLocaleString(),
+          meetingUrl,
+          keyPassword,
+          jobId: ticket.jobId,
+        }),
+        idempotencyKey: `INVITE_CANDIDATE_${meetingId}`,
+      }).catch((e) => console.warn("[scheduleMeeting] Candidate invite queue err:", e.message));
+
+      // Dispatch customized interviewer invite email via Central Email Orchestrator
+      emailOrchestrator.queueEmail({
+        interviewId: meeting._id.toString(),
+        meetingId,
+        recipient: interviewer.email,
+        template: "INVITE_INTERVIEWER",
+        subject: `Session Scheduled: Technical Interview with ${candidate.name}`,
+        html: emailOrchestrator.templates.INVITE_INTERVIEWER({
+          interviewerName: interviewer.name,
+          candidateName: candidate.name,
+          candidateEmail: candidate.email,
+          scheduledTime: new Date(scheduledTime).toLocaleString(),
+          meetingUrl,
+          keyPassword,
+          jobId: ticket.jobId,
+          resumeUrl: ticket.resumeUrl || candidate.resumeUrl,
+        }),
+        idempotencyKey: `INVITE_INTERVIEWER_${meetingId}`,
+      }).catch((e) => console.warn("[scheduleMeeting] Interviewer invite queue err:", e.message));
+    }
+
+    // Emit Transactional Outbox Event
+    eventBus.emitEvent("INTERVIEW.SLOT_CONFIRMED", "INTERVIEW", meeting._id.toString(), {
+      meetingId,
+      candidateId: candidateId.toString(),
+      interviewerId: interviewerId.toString(),
+      scheduledTime,
+      jobId: ticket.jobId,
+    }).catch((busErr) => console.warn("[scheduleMeeting] Outbox event err:", busErr.message));
+
+    // Also notify legacy HR Agent
     try {
-      const dispatched = await hrAgentService.dispatchCustomInvites(meetingId);
-      if (!dispatched && candidate && interviewer) {
-        await sendMeetingMail(
-          candidate.email, 
-          "invite", 
-          meetingUrl, 
-          interviewer.name, 
-          interviewer.email, 
-          keyPassword, 
-          scheduledTime
-        );
-      }
+      await hrAgentService.dispatchCustomInvites(meetingId);
     } catch (inviteErr) {
       console.warn("[scheduleMeeting] Custom invites fallback:", inviteErr);
-      if (candidate && interviewer) {
-        await sendMeetingMail(
-          candidate.email, 
-          "invite", 
-          meetingUrl, 
-          interviewer.name, 
-          interviewer.email, 
-          keyPassword, 
-          scheduledTime
-        );
-      }
     }
 
     res.status(201).json({
-      message: "Meeting scheduled and locked. Details sent to candidate.",
+      message: "Meeting scheduled and locked. Details sent to candidate and interviewer.",
       meeting,
     });
   } catch (error) {
@@ -244,6 +286,47 @@ exports.getAllProblems = async (req, res) => {
   }
 };
 
+exports.submitReadiness = async (req, res) => {
+  try {
+    const { id } = req.params; // meetingId
+    const { cameraVerified, micVerified, screenShareVerified, networkLatencyMs, browserChecked } = req.body;
+
+    const meeting = await Meeting.findOne({ meetingId: id });
+    if (!meeting) {
+      return res.status(404).json({ message: "Meeting not found" });
+    }
+
+    meeting.readiness = {
+      cameraVerified: Boolean(cameraVerified),
+      micVerified: Boolean(micVerified),
+      screenShareVerified: Boolean(screenShareVerified),
+      networkLatencyMs: Number(networkLatencyMs) || 45,
+      browserChecked: Boolean(browserChecked),
+      verifiedAt: new Date(),
+    };
+
+    if (["scheduled", "SLOT_CONFIRMED", "PRE_INTERVIEW_CHECK"].includes(meeting.status)) {
+      meeting.status = "READY_FOR_INTERVIEW";
+    }
+    await meeting.save();
+
+    eventBus.emitEvent("MEETING.READINESS_UPDATED", "MEETING", meeting._id.toString(), {
+      meetingId: id,
+      readiness: meeting.readiness,
+      status: meeting.status,
+    }).catch((e) => console.warn("[submitReadiness] Event emit failed:", e.message));
+
+    res.status(200).json({
+      message: "System readiness recorded successfully",
+      readiness: meeting.readiness,
+      status: meeting.status,
+    });
+  } catch (err) {
+    console.error("Submit readiness error:", err);
+    res.status(500).json({ message: "Failed to record readiness" });
+  }
+};
+
 const { processInterviewVideo } = require("../utils/aiForensics");
 
 exports.uploadRecording = async (req, res) => {
@@ -259,11 +342,43 @@ exports.uploadRecording = async (req, res) => {
     if (req.file) {
       meeting.recordingUrl = req.file.path; // Cloudinary URL
     }
-    meeting.status = "completed";
+    meeting.status = "RECORDING_VERIFIED";
     
     // Initialize forensic report processing state
     meeting.forensicReport = { isProcessing: true };
+
+    // Create Multi-track Recording Manifest
+    const manifestId = `rmf_${uuidv4().replace(/-/g, "").slice(0, 16)}`;
+    const recordingManifest = await RecordingManifest.create({
+      manifestId,
+      meetingId: id,
+      interviewId: meeting._id.toString(),
+      status: req.file ? "VERIFIED" : "INITIALIZED",
+      tracks: [
+        ...(req.file
+          ? [
+              {
+                type: "COMPOSITE_AV",
+                storageUrl: req.file.path,
+                mimeType: req.file.mimetype || "video/webm",
+                sizeBytes: req.file.size || 0,
+                verified: true,
+              },
+            ]
+          : []),
+      ],
+      totalDurationSeconds: 0,
+      verifiedAt: new Date(),
+    });
+    meeting.recordingManifestId = recordingManifest._id;
     await meeting.save();
+
+    // Emit RECORDING.VERIFIED Outbox event
+    eventBus.emitEvent("RECORDING.VERIFIED", "RECORDING", manifestId, {
+      meetingId: id,
+      storageUrl: req.file?.path,
+      hasVideo: Boolean(req.file),
+    }).catch((e) => console.warn("[uploadRecording] Outbox event failed:", e.message));
 
     // Also update associated ticket to completed
     await InterviewTicket.updateOne(
@@ -276,6 +391,11 @@ exports.uploadRecording = async (req, res) => {
     try {
       if (telemetryEvents) parsedTelemetry = JSON.parse(telemetryEvents);
     } catch(e) {}
+
+    // Process granular findings via Agent 3 (Forensic Intelligence)
+    forensicAgent.processTelemetryIntoFindings(id, parsedTelemetry).catch((fErr) => {
+      console.warn("[uploadRecording] Granular forensic finding process err:", fErr.message);
+    });
     
     processInterviewVideo(
       id, 
@@ -295,8 +415,9 @@ exports.uploadRecording = async (req, res) => {
     });
 
     res.status(200).json({ 
-      message: "Session concluded, AI forensic analysis and HR verdict in progress", 
-      recordingUrl: meeting.recordingUrl 
+      message: "Session concluded, multi-track manifest created, AI forensic analysis and HR verdict in progress", 
+      recordingUrl: meeting.recordingUrl,
+      manifestId: recordingManifest.manifestId,
     });
   } catch (error) {
     console.error("Upload recording error:", error);

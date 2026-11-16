@@ -13,11 +13,13 @@ const {
   getCompletedMeetings,
   getAllProblems,
   reviewCandidate,
-  getDecisionDossier
+  getDecisionDossier,
+  submitReadiness
 } = require("../controllers/meetingController");
 
 router.post("/schedule", authMiddleware, scheduleMeeting);
 router.post("/join/:id", authMiddleware, notifyJoin);
+router.post("/readiness/:id", authMiddleware, submitReadiness);
 router.get("/details/:id", authMiddleware, getMeetingDetails);
 router.get("/decision-hub/:id", authMiddleware, getDecisionDossier);
 router.post("/verify-password/:id", authMiddleware, verifyPassword);
