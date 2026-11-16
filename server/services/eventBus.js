@@ -104,13 +104,22 @@ class EventBus {
       this.isPublishing = false;
     }
   }
+
+  /**
+   * Start or restart periodic outbox reconciliation worker
+   */
+  startOutboxWorker(intervalMs = 10000) {
+    if (this._workerInterval) clearInterval(this._workerInterval);
+    this._workerInterval = setInterval(() => {
+      this.drainOutbox().catch((e) => console.error("[EventBus Worker] Error:", e));
+    }, intervalMs);
+    console.log(`[EventBus] Outbox worker started with interval ${intervalMs}ms`);
+  }
 }
 
 const eventBus = new EventBus();
 
 // Start periodic outbox reconciliation every 10 seconds
-setInterval(() => {
-  eventBus.drainOutbox().catch((e) => console.error("[EventBus Worker] Error:", e));
-}, 10000);
+eventBus.startOutboxWorker(10000);
 
 module.exports = eventBus;

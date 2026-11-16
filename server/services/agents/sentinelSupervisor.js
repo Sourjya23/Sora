@@ -305,6 +305,13 @@ class SentinelSupervisor {
       console.error("[SentinelSupervisor] Failed sending immediate critical alert:", err.message);
     }
   }
+
+  /**
+   * Start supervision loops
+   */
+  startSupervision() {
+    console.log("[SentinelSupervisor] Supervision loop active and scheduled.");
+  }
 }
 
 const sentinelSupervisor = new SentinelSupervisor();

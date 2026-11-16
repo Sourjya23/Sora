@@ -248,13 +248,22 @@ class EmailOrchestrator {
       this.isProcessing = false;
     }
   }
+
+  /**
+   * Start or restart email queue worker
+   */
+  startQueueWorker(intervalMs = 15000) {
+    if (this._workerInterval) clearInterval(this._workerInterval);
+    this._workerInterval = setInterval(() => {
+      this.processPendingJobs().catch((e) => console.error("[Email Queue Worker] Error:", e));
+    }, intervalMs);
+    console.log(`[EmailOrchestrator] Queue worker started with interval ${intervalMs}ms`);
+  }
 }
 
 const emailOrchestrator = new EmailOrchestrator();
 
 // Run email queue processor every 15 seconds
-setInterval(() => {
-  emailOrchestrator.processPendingJobs().catch((e) => console.error("[Email Queue Worker] Error:", e));
-}, 15000);
+emailOrchestrator.startQueueWorker(15000);
 
 module.exports = emailOrchestrator;
