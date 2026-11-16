@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import { toast } from "../components/ui/Toast";
 import {
   Video,
   VideoOff,
@@ -101,6 +102,7 @@ export default function InterviewReadiness() {
       }
       setCameraAllowed(true);
       setMicAllowed(true);
+      toast.success("Media Permissions Granted", "Camera and microphone streams verified.");
 
       // Setup audio level meter
       try {
@@ -133,7 +135,7 @@ export default function InterviewReadiness() {
       console.error("Media permission error:", err);
       setCameraAllowed(false);
       setMicAllowed(false);
-      alert("Please allow Camera and Microphone permissions in your browser to proceed.");
+      toast.error("Permission Denied", "Camera and microphone access are required.");
     }
   };
 
@@ -146,11 +148,13 @@ export default function InterviewReadiness() {
       });
       // Test passed immediately
       setScreenShareTested(true);
+      toast.success("Screen Sharing Verified", "You are ready to write code during the assessment.");
       // Cleanly stop the test screen tracks
       screenStream.getTracks().forEach((track) => track.stop());
     } catch (err) {
       console.warn("Screen share test cancelled or failed", err);
       setScreenShareTested(false);
+      toast.warning("Screen Share Test Cancelled", "Screen sharing will be required to write code.");
     }
   };
 
@@ -166,14 +170,18 @@ export default function InterviewReadiness() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setPasswordVerified(true);
+      toast.success("Passcode Verified", "Session credentials authenticated.");
     } catch (err) {
-      setPasswordError(err.response?.data?.message || "Invalid meeting key password.");
+      const msg = err.response?.data?.message || "Invalid meeting key password.";
+      setPasswordError(msg);
+      toast.error("Invalid Passcode", msg);
     }
   };
 
   // 5. Submit readiness and proceed to meeting room
   const handleProceedToMeeting = async () => {
     setSubmitting(true);
+    toast.info("Connecting to Room", "Entering secure interview session...");
     try {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
       await API.post(

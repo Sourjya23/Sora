@@ -4,6 +4,7 @@ import Editor from "@monaco-editor/react";
 import API from "../api/axios";
 import socket from "../socket/socket";
 import { captureAssessmentEvent, identifyUser } from "../telemetry/posthog";
+import { toast } from "../components/ui/Toast";
 import {
   Mic,
   MicOff,
@@ -139,7 +140,7 @@ function MeetingRoom() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.data.status === "completed") {
-        alert("This meeting has already concluded.");
+        toast.info("Meeting Concluded", "This interview session has already ended.");
         navigate("/candidate-dashboard");
         return;
       }
@@ -244,6 +245,7 @@ function MeetingRoom() {
 
     setProblemStatement(fullText);
     setTestCases(problem.testCases || []);
+    toast.success("Problem Dispatched", `${problem.title} is now active.`);
 
     socket.emit("problem-statement-update", {
       meetingId: id,
@@ -263,11 +265,17 @@ function MeetingRoom() {
     };
 
     const langListener = (data) => {
-      if (data.language !== language) setLanguage(data.language);
+      if (data.language !== language) {
+        setLanguage(data.language);
+        toast.info(`Language Changed to ${LANGUAGES[data.language]?.name || data.language}`);
+      }
     };
 
     const problemListener = (data) => {
-      if (data.text !== problemStatement) setProblemStatement(data.text);
+      if (data.text !== problemStatement) {
+        setProblemStatement(data.text);
+        toast.info("Problem Statement Updated", "Interviewer synced a new problem.");
+      }
       if (data.testCases) setTestCases(data.testCases);
     };
 
@@ -281,6 +289,7 @@ function MeetingRoom() {
       ) {
         return;
       }
+      toast.info(`Message from ${data.sender}`, data.text.length > 35 ? `${data.text.slice(0, 35)}...` : data.text);
       setMessages((prev) => {
         if (data.id && prev.some((m) => m.id === data.id)) return prev;
         return [...prev, { ...data, isMe: false }];
@@ -295,6 +304,9 @@ function MeetingRoom() {
     const executionStartedListener = () => {
       setIsExecuting(true);
       setExecutionResult(null);
+      if (user?.role === "interviewer") {
+        toast.info("Candidate Executing Code", "Running tests against compiler...");
+      }
     };
 
     const executionResultListener = (data) => {
@@ -304,25 +316,31 @@ function MeetingRoom() {
       setLeftTab("output");
 
       // Notify interviewer if candidate's code execution failed on test cases or runtime error
-      if (data.hasFailed && user?.role === "interviewer") {
-        setCodeFailNotification({
-          show: true,
-          summary: data.failSummary || "Candidate code execution run failed.",
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        });
+      if (user?.role === "interviewer") {
+        if (data.hasFailed) {
+          toast.error("Candidate Run Failed", data.failSummary || "Test cases failed.");
+          setCodeFailNotification({
+            show: true,
+            summary: data.failSummary || "Candidate code execution run failed.",
+            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          });
+        } else {
+          toast.success("Candidate Code Passed", "All test cases passed successfully.");
+        }
       }
     };
 
     // Screen share status sync
     const screenShareStatusListener = (data) => {
       setCandidateIsSharingScreen(Boolean(data.isSharing));
+      toast.info(data.isSharing ? "Candidate Sharing Screen" : "Candidate Stopped Screen Share");
     };
 
     const endListener = () => {
       if (user?.role === "candidate") {
         setIsInterviewEnded(true);
       } else {
-        alert("The interview session has been ended.");
+        toast.info("Session Ended", "The interview session has been ended.");
         navigate("/interviewer-dashboard");
       }
     };
@@ -407,6 +425,7 @@ function MeetingRoom() {
 
     const peerJoinedListener = () => {
       console.log("Peer joined, synchronizing WebRTC offer...");
+      toast.info("Participant Connected", "Video/audio stream synchronizing...");
       if (user?.role === "interviewer") {
         setTimeout(sendOffer, 600);
       }
@@ -551,6 +570,7 @@ function MeetingRoom() {
       recorder.start(1000);
       setMediaRecorder(recorder);
       setIsRecording(true);
+      toast.info("Session Recording Active", "Auto-archiving session for AI compliance & forensics.");
       console.log("Interview screen recording started successfully.");
     } catch (err) {
       console.error("Screen recording initialization error:", err);
@@ -586,9 +606,11 @@ function MeetingRoom() {
             "Content-Type": "multipart/form-data",
           },
         });
+        toast.success("Interview Concluded", "Video, telemetry & code synced. Cloud AI analysis running.");
         console.log("Forensics & recording payload submitted successfully.");
       } catch (err) {
         console.error("Failed to upload recording/forensics payload", err);
+        toast.warning("Sync Incomplete", "Meeting ended. Forensics upload encountered an issue.");
       } finally {
         setUploadingRecording(false);
         socket.emit("end-meeting", { meetingId: id });
@@ -633,12 +655,14 @@ function MeetingRoom() {
         setIsSharingScreen(true);
         socket.emit("screen-share-status", { meetingId: id, isSharing: true });
         captureAssessmentEvent("candidate_screen_share_started", { meetingId: id });
+        toast.success("Screen Sharing Active", "Your screen is visible and code editing is unlocked.");
 
         videoTrack.onended = () => {
           stopScreenShare();
         };
       } catch (err) {
         console.error("Failed to share screen", err);
+        toast.error("Screen Share Denied", "Permission was cancelled or denied.");
       }
     } else {
       stopScreenShare();
@@ -660,6 +684,7 @@ function MeetingRoom() {
     }
     setIsSharingScreen(false);
     socket.emit("screen-share-status", { meetingId: id, isSharing: false });
+    toast.warning("Screen Sharing Stopped", "Screen share required to edit code.");
   };
 
   // 10. Passcode verification
@@ -676,9 +701,12 @@ function MeetingRoom() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setPasswordVerified(true);
+      toast.success("Passcode Verified", "Session credentials authenticated.");
       requestPermissions();
     } catch (err) {
-      setPasswordError(err.response?.data?.message || "Invalid meeting key password.");
+      const msg = err.response?.data?.message || "Invalid meeting key password.";
+      setPasswordError(msg);
+      toast.error("Authentication Failed", msg);
     } finally {
       setVerifyingPassword(false);
     }
@@ -689,9 +717,10 @@ function MeetingRoom() {
       const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       setStream(localStream);
       setHasGrantedPermissions(true);
+      toast.success("Camera & Mic Connected", "Audio and video streams active.");
     } catch (err) {
       console.error("Permission denied", err);
-      alert("Please grant camera and microphone access to proceed.");
+      toast.error("Permissions Denied", "Camera and microphone access required.");
     }
   };
 
@@ -701,6 +730,7 @@ function MeetingRoom() {
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
         setCameraActive(videoTrack.enabled);
+        toast.info(videoTrack.enabled ? "Camera Turned On" : "Camera Turned Off");
       }
     }
   };
@@ -711,6 +741,7 @@ function MeetingRoom() {
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
         setMicActive(audioTrack.enabled);
+        toast.info(audioTrack.enabled ? "Microphone Unmuted" : "Microphone Muted");
       }
     }
   };
@@ -734,6 +765,7 @@ function MeetingRoom() {
       });
 
       setIsJoined(true);
+      toast.success("Joined Meeting Room", `Logged in as ${user?.name || "Participant"}`);
     } catch (err) {
       console.error("Join registration fallback", err);
       setIsJoined(true);
@@ -751,6 +783,7 @@ function MeetingRoom() {
     setEditorCode(LANGUAGES[newLang].defaultCode);
     socket.emit("language-change", { meetingId: id, language: newLang });
     socket.emit("code-update", { meetingId: id, code: LANGUAGES[newLang].defaultCode });
+    toast.info(`Language Switched to ${LANGUAGES[newLang].name}`);
   };
 
   const handleProblemChange = (e) => {
@@ -779,18 +812,20 @@ function MeetingRoom() {
     socket.emit("send-message", payload);
     setMessages((prev) => [...prev, { ...payload, isMe: true }]);
     setChatMessage("");
+    toast.success("Message Delivered");
   };
 
   // Code Execution Sync with failure alert broadcast
   const runCode = async () => {
     if (user?.role === "candidate" && !isSharingScreen) {
-      alert("You must share your screen before running code.");
+      toast.warning("Screen Share Required", "Please share your screen before running code.");
       return;
     }
 
     setIsExecuting(true);
     setExecutionResult(null);
     socket.emit("code-execution-started", { meetingId: id });
+    toast.info("Executing Code", "Running against compiler and test cases...");
 
     try {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -836,6 +871,12 @@ function MeetingRoom() {
         testCasesCount: testCases?.length || 0,
       });
       setLeftTab("output");
+
+      if (hasFailed) {
+        toast.error("Execution Failed", failSummary || "Check compiler output.");
+      } else {
+        toast.success("Execution Successful!", resultData.type === "tests" ? "All test cases passed!" : "Code ran without errors.");
+      }
     } catch (err) {
       console.error("Execution failed", err);
       const errorData = { type: "error", error: err.response?.data?.message || err.message };
@@ -847,6 +888,7 @@ function MeetingRoom() {
         failSummary: errorData.error,
       });
       setLeftTab("output");
+      toast.error("Execution Error", errorData.error || "Execution failed.");
     } finally {
       setIsExecuting(false);
     }

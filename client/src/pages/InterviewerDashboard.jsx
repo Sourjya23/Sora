@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import socket from "../socket/socket";
 import WhatsNewSection from "../components/WhatsNewSection";
+import { toast } from "../components/ui/Toast";
 import {
   CheckCircle2,
   XCircle,
@@ -107,11 +108,11 @@ function InterviewerDashboard() {
   const handleScheduleSubmit = async (e) => {
     e.preventDefault();
     if (!scheduledTime) {
-      alert("Please confirm a scheduled date and time.");
+      toast.warning("Missing Scheduled Time", "Please select a scheduled date and time.");
       return;
     }
     if (!keyPassword.trim()) {
-      alert("Key password is required.");
+      toast.warning("Passcode Required", "A key password is required for meeting security.");
       return;
     }
 
@@ -129,12 +130,12 @@ function InterviewerDashboard() {
           }
         }
       );
-      alert("Interview scheduled successfully! Notification sent to the candidate.");
+      toast.success("Interview Scheduled!", "Meeting room locked & custom invites dispatched to the candidate.");
       setShowScheduleModal(false);
       fetchData();
     } catch (err) {
       console.error("Failed to schedule meeting:", err);
-      alert("Failed to schedule: " + (err.response?.data?.message || err.message));
+      toast.error("Scheduling Failed", err.response?.data?.message || err.message);
     }
   };
 
@@ -164,16 +165,22 @@ function InterviewerDashboard() {
           },
         }
       );
-      alert(
-        status === "approved"
-          ? "Candidate officially selected! Custom offer notification dispatched by Sora HR Agent."
-          : "Candidate not selected. Personalized constructive feedback dispatched by Sora HR Agent."
-      );
+      if (status === "approved") {
+        toast.success(
+          "Candidate Selected!",
+          "Official selection offer notification dispatched by Sora HR Agent."
+        );
+      } else {
+        toast.info(
+          "Candidate Not Selected",
+          "Constructive feedback & encouragement dispatched by Sora HR Agent."
+        );
+      }
       setShowDecisionModal(false);
       fetchData();
     } catch (err) {
       console.error("Failed to submit decision:", err);
-      alert("Failed to submit decision: " + (err.response?.data?.message || err.message));
+      toast.error("Decision Submission Failed", err.response?.data?.message || err.message);
     } finally {
       setSubmittingDecision(false);
     }
@@ -186,11 +193,15 @@ function InterviewerDashboard() {
           Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`
         }
       });
-      alert(`Candidate marked as ${status}. Custom email dispatched by HR Agent.`);
+      if (status === "approved") {
+        toast.success("Candidate Approved!", "Selection confirmation email dispatched by Sora HR Agent.");
+      } else {
+        toast.info("Candidate Rejected", "Status update email dispatched by Sora HR Agent.");
+      }
       fetchData();
     } catch (err) {
       console.error(`Failed to ${status} candidate:`, err);
-      alert("Failed to review candidate.");
+      toast.error("Review Update Failed", err.response?.data?.message || "Failed to review candidate.");
     }
   };
 
@@ -202,10 +213,11 @@ function InterviewerDashboard() {
             Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`
           }
         });
+        toast.info("Ticket Dismissed", "The interview ticket was removed from your active queue.");
         fetchData();
       } catch (err) {
         console.error("Failed to dismiss ticket:", err);
-        alert("Failed to dismiss: " + (err.response?.data?.message || err.message));
+        toast.error("Dismiss Failed", err.response?.data?.message || err.message);
       }
     }
   };

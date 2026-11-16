@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import API from "../api/axios";
+import { toast } from "../components/ui/Toast";
 
 const AUTH_IMAGES = [
   "https://i.pinimg.com/736x/6c/66/3c/6c663c35befeee95d2e3998c15db8666.jpg",
@@ -64,6 +65,8 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(user));
       sessionStorage.setItem("token", token);
 
+      toast.success("Welcome Back!", `Successfully signed in as ${user.name || user.email}`);
+
       const params = new URLSearchParams(window.location.search);
       const redirectPath = params.get("redirect");
       if (redirectPath && redirectPath.startsWith("/")) {
@@ -79,7 +82,9 @@ export default function Login() {
         navigate("/interviewer-dashboard");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid credentials. Please try again.");
+      const errMsg = err.response?.data?.message || "Invalid credentials. Please try again.";
+      setError(errMsg);
+      toast.error("Sign In Failed", errMsg);
     } finally {
       setLoading(false);
     }

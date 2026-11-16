@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
+import { toast } from "../components/ui/Toast";
 
 export default function VerifyOTP() {
   const [email, setEmail] = useState("");
@@ -29,7 +30,9 @@ export default function VerifyOTP() {
 
   const handleResendOtp = async () => {
     if (!email) {
-      setError("Please enter your email address to resend OTP.");
+      const err = "Please enter your email address to resend OTP.";
+      setError(err);
+      toast.warning("Email Required", err);
       return;
     }
 
@@ -39,10 +42,14 @@ export default function VerifyOTP() {
 
     try {
       const response = await API.post("/auth/resend-otp", { email });
-      setSuccess(response.data.message || "A new OTP has been sent to your email!");
+      const msg = response.data.message || "A new OTP has been sent to your email!";
+      setSuccess(msg);
+      toast.success("OTP Sent!", "A new 6-digit code has been dispatched to your inbox.");
       setCooldown(60);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to resend OTP. Please try again.");
+      const errMsg = err.response?.data?.message || "Failed to resend OTP. Please try again.";
+      setError(errMsg);
+      toast.error("Resend Failed", errMsg);
     } finally {
       setResending(false);
     }
@@ -65,6 +72,7 @@ export default function VerifyOTP() {
       localStorage.setItem("user", JSON.stringify(user));
 
       setSuccess("Email successfully verified! Redirecting to your dashboard...");
+      toast.success("Email Verified!", "Welcome to Sora. Redirecting to your dashboard...");
       setTimeout(() => {
         if (user.role === "admin") {
           navigate("/admin-dashboard");
@@ -75,7 +83,9 @@ export default function VerifyOTP() {
         }
       }, 1000);
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid OTP code. Please check your spam folder or resend.");
+      const errMsg = err.response?.data?.message || "Invalid OTP code. Please check your spam folder or resend.";
+      setError(errMsg);
+      toast.error("Verification Failed", errMsg);
     } finally {
       setLoading(false);
     }

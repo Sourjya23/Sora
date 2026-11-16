@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import { Panel, Group, Separator } from "react-resizable-panels";
 import API from "../api/axios";
+import { toast } from "../components/ui/Toast";
 
 const LANGUAGES = {
   javascript: { name: "JavaScript", monaco: "javascript", jdoodle: "nodejs", versionIndex: "4" },
@@ -105,8 +106,10 @@ export default function AdaptivePractice() {
     try {
       await API.delete("/adaptive/history", getAuthHeaders());
       setHistory([]);
+      toast.info("History Cleared", "Your problem history has been reset.");
     } catch (err) {
       console.error("Failed to clear history", err);
+      toast.error("Failed to Clear History", err.response?.data?.message || err.message);
     }
   };
 
@@ -187,10 +190,19 @@ export default function AdaptivePractice() {
         getAuthHeaders()
       );
       setEvaluationResult(res.data);
+      if (res.data?.results?.every((r) => r.passed)) {
+        toast.success("All Tests Passed!", "Great job! Code successfully evaluated.");
+      } else if (res.data?.error) {
+        toast.error("Execution Error", res.data.error);
+      } else {
+        toast.warning("Test Failures", "Some test cases failed. Check output for details.");
+      }
       fetchHistory();
     } catch (err) {
       console.error("Evaluation failed", err);
-      setEvaluationResult({ error: err.response?.data?.message || "Evaluation failed" });
+      const errMsg = err.response?.data?.message || "Evaluation failed";
+      setEvaluationResult({ error: errMsg });
+      toast.error("Evaluation Failed", errMsg);
     } finally {
       setIsEvaluating(false);
     }

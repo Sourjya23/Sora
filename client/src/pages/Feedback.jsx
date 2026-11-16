@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import { Star } from "lucide-react";
+import { toast } from "../components/ui/Toast";
 
 export default function Feedback() {
   const [username, setUsername] = useState("");
@@ -19,7 +20,9 @@ export default function Feedback() {
     setError("");
     
     if (!username.trim() || rating === 0 || !content.trim()) {
-      setError("Please provide your name, a star rating, and a review.");
+      const err = "Please provide your name, a star rating, and a review.";
+      setError(err);
+      toast.warning("Incomplete Feedback", err);
       return;
     }
 
@@ -27,9 +30,12 @@ export default function Feedback() {
     try {
       await API.post("/testimonials", { username, rating, content });
       setSuccess(true);
+      toast.success("Thank You!", "Your testimonial has been published.");
       setTimeout(() => navigate("/"), 3000);
     } catch (err) {
-      setError("Failed to submit feedback. Please try again.");
+      const errMsg = "Failed to submit feedback. Please try again.";
+      setError(errMsg);
+      toast.error("Submission Failed", errMsg);
       console.error(err);
     } finally {
       setIsSubmitting(false);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import WhatsNewSection from "../components/WhatsNewSection";
+import { toast } from "../components/ui/Toast";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -52,13 +53,17 @@ function AdminDashboard() {
       await API.put(`/profile/review-profile/${id}`, { status, adminNotes: reviewNotes }, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}` }
       });
-      alert(`Profile ${status} successfully.`);
+      if (status === "approved") {
+        toast.success("Profile Approved", "Candidate has been verified and granted interview scheduling access.");
+      } else {
+        toast.info("Profile Reviewed", `Candidate status updated to ${status}.`);
+      }
       setPendingProfiles(pendingProfiles.filter(p => p._id !== id));
       setReviewNotes("");
       fetchData();
     } catch (err) {
       console.error("Failed to review profile", err);
-      alert("Failed to review profile.");
+      toast.error("Review Failed", err.response?.data?.message || "Failed to review profile.");
     } finally {
       setReviewingId(null);
     }

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import CompleteProfile from "../components/CompleteProfile";
 import WhatsNewSection from "../components/WhatsNewSection";
+import { toast } from "../components/ui/Toast";
 
 function CandidateDashboard() {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ function CandidateDashboard() {
 
   const handleProfileComplete = (updatedUser) => {
     setUser(updatedUser);
-    alert("Profile updated successfully!");
+    toast.success("Profile Updated", "Your candidate profile has been saved successfully.");
     fetchUserAndMeetings();
   };
 
@@ -80,32 +81,44 @@ function CandidateDashboard() {
     setTicketSuccess("");
 
     if (!/^JOB-\d{5}$/.test(jobId)) {
-      setTicketError("Job ID must be in format JOB-XXXXX (e.g., JOB-12345).");
+      const err = "Job ID must be in format JOB-XXXXX (e.g., JOB-12345).";
+      setTicketError(err);
+      toast.warning("Invalid Job ID", err);
       return;
     }
 
     if (jobDescription.trim().length < 50) {
-      setTicketError("Job Description (JD) must be at least 50 characters long.");
+      const err = "Job Description (JD) must be at least 50 characters long.";
+      setTicketError(err);
+      toast.warning("Job Description Too Short", err);
       return;
     }
 
     const start = new Date(slotStart);
     const end = new Date(slotEnd);
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      setTicketError("Please enter valid dates and times for preferred slots.");
+      const err = "Please enter valid dates and times for preferred slots.";
+      setTicketError(err);
+      toast.warning("Invalid Slot Time", err);
       return;
     }
     if (start < new Date()) {
-      setTicketError("Preferred start time must be in the future.");
+      const err = "Preferred start time must be in the future.";
+      setTicketError(err);
+      toast.warning("Slot In Past", err);
       return;
     }
     if (end <= start) {
-      setTicketError("Preferred end time must be after the start time.");
+      const err = "Preferred end time must be after the start time.";
+      setTicketError(err);
+      toast.warning("Invalid Slot Duration", err);
       return;
     }
 
     if (!resumeFile && !user?.resumeUrl) {
-      setTicketError("Please upload your updated resume.");
+      const err = "Please upload your updated resume.";
+      setTicketError(err);
+      toast.warning("Resume Required", err);
       return;
     }
 
@@ -132,7 +145,9 @@ function CandidateDashboard() {
         }
       );
       
-      setTicketSuccess(response.data.message);
+      const successMsg = response.data.message || "Interview ticket successfully submitted!";
+      setTicketSuccess(successMsg);
+      toast.success("Interview Ticket Submitted!", "Mentors will review your slot and lock in your schedule.");
       fetchUserAndMeetings();
       setTimeout(() => {
         setShowTicketModal(false);
@@ -144,7 +159,9 @@ function CandidateDashboard() {
         setTicketSuccess("");
       }, 2000);
     } catch (err) {
-      setTicketError(err.response?.data?.message || "Failed to raise ticket");
+      const errMsg = err.response?.data?.message || "Failed to raise ticket";
+      setTicketError(errMsg);
+      toast.error("Ticket Submission Failed", errMsg);
     } finally {
       setTicketLoading(false);
     }
@@ -363,8 +380,30 @@ function CandidateDashboard() {
                         
                         <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-zinc-400">
                           <span>{new Date(meeting.scheduledTime).toLocaleString()}</span>
-                          <span>Room: <strong className="font-mono text-zinc-300">{meeting.meetingId}</strong></span>
-                          <span>Key: <strong className="font-mono text-white bg-white/10 px-1.5 py-0.5 rounded">{meeting.keyPassword}</strong></span>
+                          <span
+                            onClick={() => {
+                              if (navigator.clipboard) {
+                                navigator.clipboard.writeText(meeting.meetingId);
+                                toast.info("Copied Room ID", meeting.meetingId);
+                              }
+                            }}
+                            className="cursor-pointer hover:text-cyan-300 transition-colors"
+                            title="Click to copy Room ID"
+                          >
+                            Room: <strong className="font-mono text-zinc-300 underline decoration-dotted decoration-white/30">{meeting.meetingId}</strong>
+                          </span>
+                          <span
+                            onClick={() => {
+                              if (navigator.clipboard) {
+                                navigator.clipboard.writeText(meeting.keyPassword);
+                                toast.info("Copied Key Passcode", meeting.keyPassword);
+                              }
+                            }}
+                            className="cursor-pointer hover:text-cyan-300 transition-colors"
+                            title="Click to copy Passcode"
+                          >
+                            Key: <strong className="font-mono text-white bg-white/10 hover:bg-white/20 px-1.5 py-0.5 rounded underline decoration-dotted decoration-white/30">{meeting.keyPassword}</strong>
+                          </span>
                         </div>
                       </div>
 

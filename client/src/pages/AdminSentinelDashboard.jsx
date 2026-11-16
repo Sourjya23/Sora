@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import { toast } from "../components/ui/Toast";
 import {
   Shield,
   Activity,
@@ -61,11 +62,14 @@ export default function AdminSentinelDashboard() {
       const res = await API.post("/v1/sentinel/audit-now", {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setAuditSuccessMsg("Audit complete! Report synchronized & intelligence digest emailed.");
+      const msg = "Audit complete! Report synchronized & intelligence digest emailed.";
+      setAuditSuccessMsg(msg);
+      toast.success("Sentinel Audit Complete", "System state reconciled and digest dispatched.");
       fetchHealthAndReports();
     } catch (err) {
       console.error("Manual audit failed", err);
-      alert("Failed to run manual audit: " + (err.response?.data?.error || err.message));
+      const errMsg = err.response?.data?.error || err.message;
+      toast.error("Audit Execution Failed", errMsg);
     } finally {
       setAuditing(false);
       setTimeout(() => setAuditSuccessMsg(""), 6000);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API from "../api/axios";
+import { toast } from "./ui/Toast";
 
 function CompleteProfile({ onComplete, user }) {
   const [nationalId, setNationalId] = useState("");
@@ -70,7 +71,9 @@ function CompleteProfile({ onComplete, user }) {
       localStorage.setItem("user", JSON.stringify(response.data.user));
       onComplete(response.data.user);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to complete profile");
+      const errMsg = err.response?.data?.message || "Failed to complete profile";
+      setError(errMsg);
+      toast.error("Profile Save Failed", errMsg);
     } finally {
       setLoading(false);
     }

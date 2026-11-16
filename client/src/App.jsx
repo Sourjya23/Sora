@@ -17,6 +17,7 @@ import ProductTour from "./components/ProductTour";
 import ForensicReport from "./pages/ForensicReport";
 import InterviewReadiness from "./pages/InterviewReadiness";
 import AdminSentinelDashboard from "./pages/AdminSentinelDashboard";
+import { Toaster } from "./components/ui/Toast";
 import API from './api/axios';
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
           }}
         />
         <div className="relative z-10 flex flex-col min-h-screen w-full">
+          <Toaster position="top-right" />
           <ProductTour />
           <Routes>
         {/* Public Routes */}

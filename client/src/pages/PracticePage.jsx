@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import API from "../api/axios";
+import { toast } from "../components/ui/Toast";
 
 const LANGUAGES = {
   javascript: { name: "JavaScript", monaco: "javascript", jdoodle: "nodejs", versionIndex: "4" },
@@ -129,6 +130,7 @@ export default function PracticePage() {
     
     try {
       await API.put(`/ai/lessons/${lessonId}/complete`, {}, getAuthHeaders());
+      toast.success("Lesson Completed!", "Topic successfully finished and archived.");
       setLesson(null);
       setTopicInput("");
       setCurrentTopic("");
@@ -138,7 +140,7 @@ export default function PracticePage() {
       setFrontendHtml(null);
     } catch (err) {
       console.error("Failed to complete lesson:", err);
-      alert("Failed to mark lesson as completed.");
+      toast.error("Failed to Complete Lesson", err.response?.data?.message || err.message);
     }
   };
 
@@ -325,8 +327,14 @@ export default function PracticePage() {
         stdin: "",
       }, getAuthHeaders());
       setExecutionOutput(res.data);
+      if (res.data?.statusCode === 200) {
+        toast.success("Execution Successful", "Output generated successfully.");
+      } else {
+        toast.warning("Execution Finished with Errors", res.data?.error || "Non-zero exit status");
+      }
     } catch (err) {
       setExecutionOutput({ output: err.response?.data?.message || "Execution failed", statusCode: 500 });
+      toast.error("Execution Failed", err.response?.data?.message || "Execution request failed");
     } finally {
       setIsExecuting(false);
     }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import API from "../api/axios";
+import { toast } from "../components/ui/Toast";
 
 const AUTH_IMAGES = [
   "https://i.pinimg.com/736x/6c/66/3c/6c663c35befeee95d2e3998c15db8666.jpg",
@@ -108,9 +109,12 @@ function Signup() {
 
       sessionStorage.setItem("signup_email", email);
       localStorage.setItem("otpEmail", email);
+      toast.success("Account Created!", "A 6-digit verification code has been dispatched to your email.");
       navigate("/verify-otp");
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed. Please try again.");
+      const errMsg = err.response?.data?.message || "Signup failed. Please try again.";
+      setError(errMsg);
+      toast.error("Registration Failed", errMsg);
     } finally {
       setLoading(false);
     }
