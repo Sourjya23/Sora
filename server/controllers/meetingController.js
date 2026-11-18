@@ -8,6 +8,13 @@ const hrAgentService = require("../services/hrAgentService");
 const emailOrchestrator = require("../services/emailOrchestrator");
 const eventBus = require("../services/eventBus");
 const forensicAgent = require("../services/agents/forensicAgent");
+const sentinelSupervisor = require("../services/agents/sentinelSupervisor");
+const { sendEmail } = require("../utils/emailService");
+const {
+  templateSlotConfirmed,
+  templateInterviewCompleted,
+  FROM_EMAIL,
+} = require("../utils/emailTemplates");
 
 exports.scheduleMeeting = async (req, res) => {
   try {
@@ -64,55 +71,75 @@ exports.scheduleMeeting = async (req, res) => {
     const candidate = ticket.candidateId;
     const interviewer = await User.findById(interviewerId);
 
-    // Schedule 5-minute pre-interview reminder
+    // Dispatch Template 4 (Slot Confirmed) and Schedule Template 5 (5-minute reminder)
     if (candidate && interviewer) {
+      const startObj = new Date(scheduledTime);
+      const confirmedDate = startObj.toLocaleDateString("en-US", {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+      const confirmedTime = startObj.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+      const refId = ticket.jobId || `REQ-${meetingId.slice(0, 6).toUpperCase()}`;
+
+      // 1. Dispatch Template 4 to Candidate
+      const candidateSlotTpl = templateSlotConfirmed({
+        recipientName: candidate.name,
+        recipientEmail: candidate.email,
+        candidateName: candidate.name,
+        interviewerName: interviewer.name,
+        position: ticket.jobId,
+        confirmedDate,
+        confirmedTime,
+        duration: "45 - 60 minutes",
+        timezone: "IST (UTC+5:30)",
+        referenceId: refId,
+      });
+      sendEmail({
+        to: candidate.email,
+        subject: candidateSlotTpl.subject,
+        html: candidateSlotTpl.html,
+        text: candidateSlotTpl.text,
+        from: `"Sora HR & Operations Team" <${FROM_EMAIL}>`,
+      }).catch((e) => console.warn("[scheduleMeeting] Candidate slot confirmed mail err:", e.message));
+
+      // 2. Dispatch Template 4 to Interviewer
+      const interviewerSlotTpl = templateSlotConfirmed({
+        recipientName: interviewer.name,
+        recipientEmail: interviewer.email,
+        candidateName: candidate.name,
+        interviewerName: interviewer.name,
+        position: ticket.jobId,
+        confirmedDate,
+        confirmedTime,
+        duration: "45 - 60 minutes",
+        timezone: "IST (UTC+5:30)",
+        referenceId: refId,
+      });
+      sendEmail({
+        to: interviewer.email,
+        subject: interviewerSlotTpl.subject,
+        html: interviewerSlotTpl.html,
+        text: interviewerSlotTpl.text,
+        from: `"Sora HR & Operations Team" <${FROM_EMAIL}>`,
+      }).catch((e) => console.warn("[scheduleMeeting] Interviewer slot confirmed mail err:", e.message));
+
+      // 3. Schedule 5-minute pre-interview reminder (Template 5)
       emailOrchestrator.scheduleFiveMinuteReminder({
         interviewId: meeting._id.toString(),
         meetingId,
-        scheduledTime: new Date(scheduledTime),
+        scheduledTime: startObj,
         candidate: { name: candidate.name, email: candidate.email },
         interviewer: { name: interviewer.name, email: interviewer.email },
         meetingUrl,
         keyPassword,
+        referenceId: refId,
       }).catch((remErr) => console.warn("[scheduleMeeting] Reminder schedule fallback:", remErr.message));
-
-      // Dispatch customized candidate invite email via Central Email Orchestrator
-      emailOrchestrator.queueEmail({
-        interviewId: meeting._id.toString(),
-        meetingId,
-        recipient: candidate.email,
-        template: "INVITE_CANDIDATE",
-        subject: `Technical Assessment Confirmed: Role ${ticket.jobId || "Assessment"} on Sora`,
-        html: emailOrchestrator.templates.INVITE_CANDIDATE({
-          candidateName: candidate.name,
-          interviewerName: interviewer.name,
-          scheduledTime: new Date(scheduledTime).toLocaleString(),
-          meetingUrl,
-          keyPassword,
-          jobId: ticket.jobId,
-        }),
-        idempotencyKey: `INVITE_CANDIDATE_${meetingId}`,
-      }).catch((e) => console.warn("[scheduleMeeting] Candidate invite queue err:", e.message));
-
-      // Dispatch customized interviewer invite email via Central Email Orchestrator
-      emailOrchestrator.queueEmail({
-        interviewId: meeting._id.toString(),
-        meetingId,
-        recipient: interviewer.email,
-        template: "INVITE_INTERVIEWER",
-        subject: `Session Scheduled: Technical Interview with ${candidate.name}`,
-        html: emailOrchestrator.templates.INVITE_INTERVIEWER({
-          interviewerName: interviewer.name,
-          candidateName: candidate.name,
-          candidateEmail: candidate.email,
-          scheduledTime: new Date(scheduledTime).toLocaleString(),
-          meetingUrl,
-          keyPassword,
-          jobId: ticket.jobId,
-          resumeUrl: ticket.resumeUrl || candidate.resumeUrl,
-        }),
-        idempotencyKey: `INVITE_INTERVIEWER_${meetingId}`,
-      }).catch((e) => console.warn("[scheduleMeeting] Interviewer invite queue err:", e.message));
     }
 
     // Emit Transactional Outbox Event
@@ -341,6 +368,31 @@ exports.uploadRecording = async (req, res) => {
 
     if (req.file) {
       meeting.recordingUrl = req.file.path; // Cloudinary URL
+    } else {
+      // Trigger Template 8D: Recording failure incident report to founder
+      setImmediate(async () => {
+        try {
+          const candidateUser = await User.findById(meeting.candidateId);
+          const interviewerUser = await User.findById(meeting.interviewerId);
+          await sentinelSupervisor.dispatchIncidentReport({
+            incidentType: "RECORDING_FAILURE",
+            severity: "P1 - HIGH",
+            referenceId: meeting.jobId || meeting.meetingId,
+            candidateName: candidateUser?.name || "Candidate",
+            candidateEmail: candidateUser?.email || "N/A",
+            interviewerName: interviewerUser?.name || "Interviewer",
+            interviewerEmail: interviewerUser?.email || "N/A",
+            description: `Concluded interview ${id} submitted without video recording asset.`,
+            actualBehaviour: "Upload endpoint received request without file payload or multipart upload timed out.",
+            recordingStatus: "FAILED",
+            recordingReference: "MISSING_ASSET",
+            actionTaken: "Flagged in Sentinel supervisor audit trail; triggered forensic evaluation on available telemetry.",
+            pendingAction: "Inspect client MediaRecorder stream termination and network logs.",
+          });
+        } catch (incErr) {
+          console.warn("[uploadRecording] Incident 8D dispatch error:", incErr.message);
+        }
+      });
     }
     meeting.status = "RECORDING_VERIFIED";
     
@@ -385,6 +437,45 @@ exports.uploadRecording = async (req, res) => {
       { meetingId: id },
       { $set: { status: "completed" } }
     );
+
+    // Dispatch Template 6 (Interview Completed) to candidate asynchronously
+    setImmediate(async () => {
+      try {
+        const candidateUser = await User.findById(meeting.candidateId);
+        const interviewerUser = await User.findById(meeting.interviewerId);
+        if (candidateUser && candidateUser.email) {
+          const compDate = new Date().toLocaleDateString("en-US", {
+            weekday: "short",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+          const compTpl = templateInterviewCompleted({
+            candidateName: candidateUser.name || "Candidate",
+            candidateEmail: candidateUser.email,
+            referenceId: meeting.jobId || `REQ-${id.slice(0, 6).toUpperCase()}`,
+            position: meeting.jobId || "Software Engineer Technical Assessment",
+            interviewerName: interviewerUser?.name || "Interviewer",
+            date: compDate,
+            actualDuration: "45 - 60 minutes",
+          });
+
+          sendEmail({
+            to: candidateUser.email,
+            subject: compTpl.subject,
+            html: compTpl.html,
+            text: compTpl.text,
+            from: `"Sora HR & Operations Team" <${FROM_EMAIL}>`,
+          }).then(() => {
+            console.log(`[uploadRecording] Template 6 delivered to candidate ${candidateUser.email}`);
+          }).catch((mErr) => {
+            console.warn("[uploadRecording] Template 6 delivery warning:", mErr.message);
+          });
+        }
+      } catch (cErr) {
+        console.error("[uploadRecording] Error creating Template 6:", cErr);
+      }
+    });
     
     // Trigger background AI forensic & HR Agent verdict job
     let parsedTelemetry = [];

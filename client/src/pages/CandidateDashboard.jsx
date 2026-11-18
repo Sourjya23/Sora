@@ -123,6 +123,7 @@ function CandidateDashboard() {
     }
 
     setTicketLoading(true);
+    toast.info("Submitting Ticket...", "Uploading details and notifying available interviewers.");
 
     try {
       const formData = new FormData();

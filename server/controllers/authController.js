@@ -78,7 +78,7 @@ exports.signup = async (req, res) => {
       otpExpiry,
     });
 
-    await sendMail(email, otp);
+    await sendMail(email, otp, user.name || "Candidate");
 
     res.status(201).json({
       message: "OTP sent successfully",
@@ -257,7 +257,7 @@ exports.resendOTP = async (req, res) => {
     user.otpExpiry = otpExpiry;
     await user.save();
 
-    await sendMail(email, otp);
+    await sendMail(email, otp, user.name || "Candidate");
 
     res.status(200).json({ message: "A new OTP has been sent to your email" });
   } catch (error) {

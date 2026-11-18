@@ -12,16 +12,20 @@ const OAuth2 = google.auth.OAuth2;
  * 4. Safe fallback (prevents app crashes)
  */
 
-const sendViaNodemailer = async ({ to, subject, html, replyTo }) => {
+const SENDER_EMAIL = process.env.EMAIL_USER || "teamsora23@gmail.com";
+const FOUNDER_EMAIL = process.env.FOUNDER_EMAIL || "tickmelodie@gmail.com";
+
+const sendViaNodemailer = async ({ to, subject, html, text, from, replyTo }) => {
   let user = (process.env.EMAIL_USER || "").trim();
   let pass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "");
 
   // Fallback to verified credentials if environment variables on cloud host (e.g. Render) are missing or dummy
   if (!user || user === "dummy" || user.includes("example.com")) {
-    user = "sourjyamitra8188@gmail.com";
+    user = "teamsora23@gmail.com";
   }
   if (!pass || pass === "dummy" || pass.length < 8) {
-    pass = "dhafobecrxxlmwre";
+    // If teamsora23 password is not explicitly set, use available working smtp secret
+    pass = process.env.GMAIL_APP_PASSWORD || "dhafobecrxxlmwre";
   }
 
   try {
@@ -33,15 +37,16 @@ const sendViaNodemailer = async ({ to, subject, html, replyTo }) => {
       },
     });
 
-    const fromAddress = `"Sora" <${user}>`;
+    const fromAddress = from || `"Sora HR & Operations Team" <${SENDER_EMAIL}>`;
 
-    console.log(`[EmailService] Sending via Nodemailer to ${to}...`);
+    console.log(`[EmailService] Sending via Nodemailer from ${fromAddress} to ${to}...`);
     const info = await transporter.sendMail({
       from: fromAddress,
       to,
       subject,
       html,
-      replyTo: replyTo || user,
+      text: text || undefined,
+      replyTo: replyTo || SENDER_EMAIL,
     });
 
     console.log("[EmailService] Email sent successfully via Nodemailer:", info.messageId);
@@ -52,7 +57,7 @@ const sendViaNodemailer = async ({ to, subject, html, replyTo }) => {
   }
 };
 
-const sendViaResend = async ({ to, subject, html, replyTo }) => {
+const sendViaResend = async ({ to, subject, html, text, from, replyTo }) => {
   const apiKey = (process.env.RESEND_API_KEY || "").trim();
   if (!apiKey || apiKey === "dummy" || apiKey === "your_resend_api_key" || !apiKey.startsWith("re_")) {
     return null;
@@ -60,7 +65,7 @@ const sendViaResend = async ({ to, subject, html, replyTo }) => {
 
   try {
     const resend = new Resend(apiKey);
-    const fromAddress = process.env.EMAIL_FROM || "Sora <onboarding@resend.dev>";
+    const fromAddress = from || process.env.EMAIL_FROM || `"Sora HR & Operations Team" <${SENDER_EMAIL}>`;
 
     console.log(`[EmailService] Attempting send via Resend to ${to}...`);
     const { data, error } = await resend.emails.send({
@@ -68,7 +73,8 @@ const sendViaResend = async ({ to, subject, html, replyTo }) => {
       to: Array.isArray(to) ? to : [to],
       subject,
       html,
-      reply_to: replyTo || process.env.EMAIL_USER || undefined,
+      text: text || undefined,
+      reply_to: replyTo || SENDER_EMAIL,
     });
 
     if (error) {
@@ -143,13 +149,13 @@ const sendViaGmailOAuth = async ({ to, subject, html }) => {
   }
 };
 
-const sendEmail = async ({ to, subject, html, replyTo }) => {
+const sendEmail = async ({ to, subject, html, text, from, replyTo }) => {
   // 1. Try Nodemailer (authenticated with working app password)
-  const nodemailerResult = await sendViaNodemailer({ to, subject, html, replyTo });
+  const nodemailerResult = await sendViaNodemailer({ to, subject, html, text, from, replyTo });
   if (nodemailerResult) return nodemailerResult;
 
   // 2. Try Resend API
-  const resendResult = await sendViaResend({ to, subject, html, replyTo });
+  const resendResult = await sendViaResend({ to, subject, html, text, from, replyTo });
   if (resendResult) return resendResult;
 
   // 3. Try Gmail OAuth API
@@ -165,4 +171,6 @@ const sendEmail = async ({ to, subject, html, replyTo }) => {
 
 module.exports = {
   sendEmail,
+  SENDER_EMAIL,
+  FOUNDER_EMAIL,
 };

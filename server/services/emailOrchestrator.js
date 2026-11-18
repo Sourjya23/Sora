@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const EmailJob = require("../models/EmailJob");
 const { sendEmail } = require("../utils/emailService");
+const { templateFiveMinuteReminder, FROM_EMAIL } = require("../utils/emailTemplates");
 const eventBus = require("./eventBus");
 const { emailJobsCounter } = require("../telemetry/metrics");
 
@@ -79,20 +80,37 @@ class EmailOrchestrator {
   }
 
   /**
-   * Schedule the 5-minute advance reminder for candidate & interviewer
+   * Schedule the 5-minute advance reminder for candidate & interviewer (Template 5)
    */
-  async scheduleFiveMinuteReminder({ interviewId, meetingId, scheduledTime, candidate, interviewer, meetingUrl, keyPassword }) {
+  async scheduleFiveMinuteReminder({ interviewId, meetingId, scheduledTime, candidate, interviewer, meetingUrl, keyPassword, referenceId }) {
     // 5 minutes before scheduled start time
     const start = new Date(scheduledTime);
     const reminderTime = new Date(start.getTime() - 5 * 60 * 1000);
 
-    // Candidate reminder
+    const refId = referenceId || `REQ-${(meetingId || interviewId || "").toString().slice(-6).toUpperCase()}`;
+    const dateFormatted = start.toLocaleDateString("en-US", { weekday: "short", year: "numeric", month: "short", day: "numeric" });
+    const timeFormatted = start.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+    // Candidate reminder (Template 5)
+    const candidateTpl = templateFiveMinuteReminder({
+      recipientName: candidate.name,
+      recipientEmail: candidate.email,
+      candidateName: candidate.name,
+      interviewerName: interviewer.name,
+      date: dateFormatted,
+      time: timeFormatted,
+      meetingUrl,
+      meetingPasscode: keyPassword,
+      referenceId: refId,
+    });
+
     await this.queueEmail({
       interviewId,
       meetingId,
       recipient: candidate.email,
       template: "FIVE_MIN_REMINDER",
-      subject: `Starts in 5 minutes: Your Technical Assessment on Sora`,
+      subject: candidateTpl.subject,
+      html: candidateTpl.html,
       scheduledFor: reminderTime > new Date() ? reminderTime : new Date(),
       idempotencyKey: `REMINDER_CANDIDATE_${meetingId || interviewId}`,
       metadata: {
@@ -101,16 +119,31 @@ class EmailOrchestrator {
         meetingUrl,
         keyPassword,
         scheduledTime: start,
+        html: candidateTpl.html,
+        text: candidateTpl.text,
       },
     });
 
-    // Interviewer reminder
+    // Interviewer reminder (Template 5)
+    const interviewerTpl = templateFiveMinuteReminder({
+      recipientName: interviewer.name,
+      recipientEmail: interviewer.email,
+      candidateName: candidate.name,
+      interviewerName: interviewer.name,
+      date: dateFormatted,
+      time: timeFormatted,
+      meetingUrl,
+      meetingPasscode: keyPassword,
+      referenceId: refId,
+    });
+
     await this.queueEmail({
       interviewId,
       meetingId,
       recipient: interviewer.email,
       template: "FIVE_MIN_REMINDER",
-      subject: `Starts in 5 minutes: Interview with ${candidate.name} on Sora`,
+      subject: interviewerTpl.subject,
+      html: interviewerTpl.html,
       scheduledFor: reminderTime > new Date() ? reminderTime : new Date(),
       idempotencyKey: `REMINDER_INTERVIEWER_${meetingId || interviewId}`,
       metadata: {
@@ -120,6 +153,8 @@ class EmailOrchestrator {
         meetingUrl,
         keyPassword,
         scheduledTime: start,
+        html: interviewerTpl.html,
+        text: interviewerTpl.text,
       },
     });
   }
@@ -132,11 +167,14 @@ class EmailOrchestrator {
 
     try {
       const htmlContent = job.metadata?.html || this.generateTemplateHtml(job);
+      const textContent = job.metadata?.text || undefined;
 
       const result = await sendEmail({
         to: job.recipient,
         subject: job.subject,
         html: htmlContent,
+        text: textContent,
+        from: `"Sora HR & Operations Team" <${FROM_EMAIL}>`,
       });
 
       job.status = "DELIVERED";

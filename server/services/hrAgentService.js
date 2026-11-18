@@ -2,6 +2,11 @@ const Meeting = require("../models/Meeting");
 const InterviewTicket = require("../models/InterviewTicket");
 const User = require("../models/User");
 const { sendEmail } = require("../utils/emailService");
+const {
+  templateSelectionConfirmation,
+  templateRejectionConfirmation,
+  FROM_EMAIL,
+} = require("../utils/emailTemplates");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const axios = require("axios");
 
@@ -722,40 +727,44 @@ exports.finalizeDecisionAndNotifyCandidate = async ({
       { $set: { status: finalStatus } }
     );
 
-    // Send the custom selection/rejection email to the candidate
+    // Send the custom selection/rejection email to the candidate (Templates 7A / 7B)
     const candidate = meeting.candidateId;
     const interviewer = meeting.interviewerId;
 
     if (candidate && candidate.email) {
-      const emailHtml = isSelected
-        ? buildCandidateSelectionEmail({
-            candidateName: candidate.name,
-            interviewerName: interviewer?.name || "Your Interviewer",
-            jobId: meeting.jobId,
-            aiVerdict: meeting.aiVerdict || {},
-            interviewerNotes,
-          })
-        : buildCandidateRejectionEmail({
-            candidateName: candidate.name,
-            interviewerName: interviewer?.name || "Your Interviewer",
-            jobId: meeting.jobId,
-            aiVerdict: meeting.aiVerdict || {},
-            interviewerNotes,
-          });
+      const interviewDate = meeting.scheduledTime
+        ? new Date(meeting.scheduledTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+        : new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+      const refId = meeting.jobId || `REQ-${meetingId.slice(0, 6).toUpperCase()}`;
 
-      const subject = isSelected
-        ? `Congratulations! You have been selected for ${meeting.jobId || "Role"} on Sora 🎉`
-        : `Update regarding your technical assessment on Sora (${meeting.jobId || "Assessment"})`;
+      const tpl = isSelected
+        ? templateSelectionConfirmation({
+            candidateName: candidate.name,
+            candidateEmail: candidate.email,
+            position: meeting.jobId || "Software Engineer Technical Assessment",
+            date: interviewDate,
+            referenceId: refId,
+            confirmedAt: new Date().toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }),
+            nextSteps: "Our recruitment team will schedule a final leadership discussion and dispatch your formal compensation offer package within 2 business days.",
+          })
+        : templateRejectionConfirmation({
+            candidateName: candidate.name,
+            candidateEmail: candidate.email,
+            position: meeting.jobId || "Software Engineer Technical Assessment",
+            referenceId: refId,
+          });
 
       await sendEmail({
         to: candidate.email,
-        subject,
-        html: emailHtml,
+        subject: tpl.subject,
+        html: tpl.html,
+        text: tpl.text,
+        from: `"Sora HR & Operations Team" <${FROM_EMAIL}>`,
       });
 
       meeting.finalDecision.customEmailSent = true;
       meeting.finalDecision.customEmailSentAt = new Date();
-      console.log(`[HRAgent] Custom ${finalStatus} email delivered to ${candidate.email}`);
+      console.log(`[HRAgent] Template ${isSelected ? "7A (Selection)" : "7B (Rejection)"} delivered to ${candidate.email}`);
     }
 
     await meeting.save();

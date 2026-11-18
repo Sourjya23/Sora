@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from "lucide-react";
 
 // In-memory listeners for zero-dependency global toast dispatch
@@ -38,7 +39,7 @@ export function Toaster({ position = "top-right" }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  if (toasts.length === 0) return null;
+  if (toasts.length === 0 || typeof document === "undefined") return null;
 
   const positionClasses = {
     "top-right": "top-5 right-5",
@@ -48,10 +49,10 @@ export function Toaster({ position = "top-right" }) {
     "top-center": "top-5 left-1/2 -translate-x-1/2",
   }[position] || "top-5 right-5";
 
-  return (
+  return createPortal(
     <div
       aria-live="polite"
-      style={{ zIndex: 999999 }}
+      style={{ zIndex: 9999999 }}
       className={`fixed ${positionClasses} flex flex-col gap-2.5 max-w-sm w-full pointer-events-none p-2 sm:p-0 select-none`}
     >
       {toasts.map((t) => {
@@ -119,7 +120,8 @@ export function Toaster({ position = "top-right" }) {
           </div>
         );
       })}
-    </div>
+    </div>,
+    document.body
   );
 }
 

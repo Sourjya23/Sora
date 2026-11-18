@@ -198,7 +198,7 @@ export default function AdminSentinelDashboard() {
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>{auditSuccessMsg}</span>
             </div>
-            <span className="text-[11px] text-zinc-400">Recipient: sourjyamitra8188@gmail.com</span>
+            <span className="text-[11px] text-zinc-400">Recipient: tickmelodie@gmail.com</span>
           </div>
         )}
 
@@ -241,7 +241,7 @@ export default function AdminSentinelDashboard() {
               Alert Dispatch Gate
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="text-xs font-mono text-cyan-300 truncate">sourjyamitra8188@gmail.com</span>
+              <span className="text-xs font-mono text-cyan-300 truncate">tickmelodie@gmail.com</span>
             </div>
           </div>
         </div>

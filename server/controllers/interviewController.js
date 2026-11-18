@@ -1,6 +1,8 @@
 const InterviewTicket = require("../models/InterviewTicket");
 const User = require("../models/User");
 const sendNotificationMail = require("../utils/sendNotificationMail");
+const { sendEmail } = require("../utils/emailService");
+const { templateTicketCreated } = require("../utils/emailTemplates");
 
 exports.raiseTicket = async (req, res) => {
   try {
@@ -75,9 +77,34 @@ exports.raiseTicket = async (req, res) => {
       ticket,
     });
 
-    // 7. Notify all interviewers via mail asynchronously in background (non-blocking)
+    // 7. Dispatch Template 2 (Candidate Ticket Confirmation) and Template 3 (Interviewer Invites)
     setImmediate(async () => {
       try {
+        // Dispatch Template 2 to candidate
+        if (user.email) {
+          const candidateEmailTpl = templateTicketCreated({
+            candidateName: user.name || "Candidate",
+            candidateEmail: user.email,
+            referenceId: jobId,
+            position: jobId,
+            department: "Engineering / Technical Assessment",
+            createdAt: new Date().toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }),
+          });
+
+          sendEmail({
+            to: user.email,
+            subject: candidateEmailTpl.subject,
+            html: candidateEmailTpl.html,
+            text: candidateEmailTpl.text,
+            from: `"Sora HR & Operations Team" <${candidateEmailTpl.from}>`,
+          }).then(() => {
+            console.log(`[InterviewTicket] Template 2 delivered to candidate ${user.email}`);
+          }).catch((cErr) => {
+            console.warn(`[InterviewTicket] Failed delivering Template 2 to candidate ${user.email}:`, cErr.message);
+          });
+        }
+
+        // Dispatch Template 3 to all interviewers
         const interviewers = await User.find({ role: "interviewer" });
         for (const interviewer of interviewers) {
           if (interviewer.email) {
@@ -89,14 +116,15 @@ exports.raiseTicket = async (req, res) => {
               jobDescription,
               start,
               end,
-              resumeUrl
+              resumeUrl,
+              interviewer.name
             ).catch((mailErr) => {
               console.warn(`[InterviewTicket] Failed to email interviewer ${interviewer.email}:`, mailErr.message);
             });
           }
         }
       } catch (notifyErr) {
-        console.error("[InterviewTicket] Error querying interviewers for email dispatch:", notifyErr);
+        console.error("[InterviewTicket] Error in ticket creation notifications:", notifyErr);
       }
     });
   } catch (error) {
